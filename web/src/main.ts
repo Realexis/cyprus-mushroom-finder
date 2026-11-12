@@ -118,14 +118,17 @@ async function main() {
     }
   }
 
+  // Map files get the data version in their address, so after each daily update the browser
+  // fetches fresh pieces instead of mixing in old cached copies (which breaks PMTiles reads).
+  const v = (p: string) => `${abs(p)}?v=${encodeURIComponent(meta.generated_utc)}`;
   const urls: LayerUrls = {
-    terrain: abs("tiles/terrain.pmtiles"), hexes: abs("data/hexes.geojson"),
+    terrain: v("tiles/terrain.pmtiles"), hexes: abs("data/hexes.geojson"),
     rain: abs("data/rain.geojson"), reserves: abs("data/reserves.geojson"),
-    cells: priv ? abs("data/cells.pmtiles") : undefined,
-    hotspots: priv && hotZonesGeo ? abs("data/hotspots.pmtiles") : undefined,
+    cells: priv ? v("data/cells.pmtiles") : undefined,
+    hotspots: priv && hotZonesGeo ? v("data/hotspots.pmtiles") : undefined,
     hotspotZones: hotZonesGeo,
   };
-  const basemap = abs("tiles/basemap.pmtiles");
+  const basemap = v("tiles/basemap.pmtiles");
   let theme: Theme = currentTheme();
 
   const map = new maplibregl.Map({
