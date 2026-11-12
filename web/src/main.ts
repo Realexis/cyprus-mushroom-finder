@@ -195,6 +195,20 @@ async function main() {
     const b = document.querySelector<HTMLElement>(sel);
     if (b) { b.removeAttribute("title"); b.dataset.tip = tip; }
   }
+  // The location button shows crossed out when the browser gives no location: say why, in plain words.
+  const geo = document.querySelector<HTMLButtonElement>(".maplibregl-ctrl-geolocate");
+  if (geo) {
+    const sayGeo = () => {
+      const off = geo.disabled;
+      geo.removeAttribute("title");
+      geo.dataset.tip = off
+        ? "Your location is off: this browser gives no location. Allow location for this site in your browser settings to see where you are."
+        : ctlTips[".maplibregl-ctrl-geolocate"];
+      geo.setAttribute("aria-label", off ? "Your location (off: no location permission)" : "Show your location");
+    };
+    sayGeo();
+    new MutationObserver(sayGeo).observe(geo, { attributes: true, attributeFilter: ["disabled", "title"] });
+  }
 
   const sheet = document.getElementById("sheet")!;
   const phone = matchMedia("(max-width: 899px)");

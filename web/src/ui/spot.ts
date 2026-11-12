@@ -111,7 +111,8 @@ function speciesHere(s: SpotData, ctx: SpotContext): string {
   return `<h3 class="spot-h" data-tip="Each species needs its own trees, altitude and season. This ranks them by how well this spot's conditions suit their habitat. It is not a sighting.">Species habitat here</h3>
     ${good.length ? `<ul class="sp-here-list">${good.map(item).join("")}</ul>`
       : `<p class="muted small">No target species is in season with habitat here on this day.</p>`}
-    ${off.length ? `<p class="muted small"><b>Out of season:</b> ${names(off, true)}.</p>` : ""}
+    ${off.length ? `<details class="oos"><summary>Show out-of-season species (${off.length})</summary>
+      <p class="muted small">${names(off, true)}.</p></details>` : ""}
     ${none.length ? `<p class="muted small"><b>No habitat here:</b> ${names(none, false)}.</p>` : ""}
     <p class="muted small">A high number means good conditions for that species' habitat, not that it is there.</p>`;
 }
@@ -191,12 +192,13 @@ function mapsLinks(s: SpotData): string {
   return `<div class="maps-link">
     <div class="maps-btns">
       <a class="maps-btn primary" href="${mapsDirectionsUrl(a.lat, a.lon)}" target="_blank" rel="noopener"
-        data-tip="Opens Google Maps with driving directions to ${what}. Free, no sign-in."><span aria-hidden="true">🚗</span> Drive there</a>
+        data-tip="Opens Google Maps with driving directions to ${what}. Free, no sign-in. Forest tracks may be rough.">
+        <span class="maps-main"><span aria-hidden="true">🚗</span> Drive there</span>
+        <span class="maps-warn"><span aria-hidden="true">⚠</span> tracks may be rough</span></a>
       <button type="button" class="maps-btn" data-share-url="${mapsPinUrl(a.lat, a.lon)}" data-share-text="${esc(text)}"
         data-tip="Send a Google Maps pin of ${what} to a friend. On a computer it copies the link."><span aria-hidden="true">📍</span> <span class="maps-btn-label">Share location</span></button>
     </div>
-    <p class="muted small maps-note">${note}
-      Forest tracks may be rough.</p>
+    <p class="muted small maps-note">${note}</p>
   </div>`;
 }
 

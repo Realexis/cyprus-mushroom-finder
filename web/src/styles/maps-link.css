@@ -19,3 +19,10 @@
 @media (max-width: 340px) {
   .maps-btns { grid-template-columns: 1fr; }
 }
+/* Polish: the rough-track warning sits on the Drive there button itself. */
+.maps-btn.primary { flex-direction: column; gap: 0; min-height: 56px; line-height: 1.2; }
+.maps-main { display: inline-flex; align-items: center; gap: 8px; }
+.maps-warn { font-size: 0.78rem; font-weight: 700; opacity: 0.9; }
+.maps-btns { align-items: stretch; }
+.maps-btns { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.maps-btn { white-space: normal; text-align: center; padding: 4px 8px; }

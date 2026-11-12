@@ -212,10 +212,12 @@ export class Panel {
       ${sp ? "" : (() => {
         const on = SPECIES.filter((x) => x.months.includes(this.monthOf(this.day)));
         const off = SPECIES.filter((x) => !x.months.includes(this.monthOf(this.day)));
-        return `<p class="filter-line" data-tip="Species whose season includes this day's month. Tap one to colour the map for its habitat.">
-          <b>In season on this day:</b> ${on.length ? on.map((x) => `<button type="button" class="chip" data-pick-species="${x.code}">${esc(x.common)}</button>`).join(" ") : "none of our target species"}
-          ${off.length ? `<span class="oos-note"><b>Out of season:</b> ${off.map((x) => `${esc(x.common)} (${esc(x.season_text)})`).join(", ")}.
-            If you pick one, its habitat shows <b>grey</b> with no score, because it is the wrong month.</span>` : ""}</p>`;
+        return `<div class="filter-line">
+          <p data-tip="Species whose season includes this day's month. Tap one to colour the map for its habitat.">
+          <b>In season on this day:</b> ${on.length ? on.map((x) => `<button type="button" class="chip" data-pick-species="${x.code}">${esc(x.common)}</button>`).join(" ") : "none of our target species"}</p>
+          ${off.length ? `<details class="oos"><summary>Show out-of-season species (${off.length})</summary>
+            <ul>${off.map((x) => `<li>${esc(x.common)} · ${esc(x.season_text)}</li>`).join("")}</ul>
+            <p>Picked anyway, its habitat shows <b>grey</b> with no score.</p></details>` : ""}</div>`;
       })()}
       ${seasonMsg}
       <h2 id="layer-h">Show</h2>

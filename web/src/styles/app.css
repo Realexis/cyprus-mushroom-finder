@@ -542,3 +542,11 @@ dialog.guide-dlg::backdrop { background: rgba(0, 0, 0, 0.55); }
   /* Colour key: top-left over the sea, so it never covers forest above the taller panel. */
   .map-legend { top: 8px; bottom: auto; }
 }
+
+/* ================================================================ ux-v2 polish */
+.filter-line > p { margin: 0; }
+details.oos { margin-top: 6px; font-size: var(--fs-0); }
+details.oos summary { cursor: pointer; min-height: 32px; display: flex; align-items: center; color: var(--ink-soft); font-weight: 700; }
+details.oos summary:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: 6px; }
+details.oos ul { margin: 2px 0 4px; padding-left: 1.2em; }
+details.oos p { margin: 2px 0; }
