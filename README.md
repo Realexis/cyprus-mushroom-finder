@@ -7,6 +7,8 @@ A map of Cyprus showing where **growing conditions** are right for wild mushroom
 
 **Live site:** https://realexis.github.io/cyprus-mushroom-finder/
 **For Claude:** https://realexis.github.io/cyprus-mushroom-finder/data/summary.json
+**Preview of the `dev` branch (test version, data frozen, no daily update):** https://realexis.github.io/cyprus-mushroom-finder-preview/
+Update it with `DEPLOY_REMOTE=https://github.com/Realexis/cyprus-mushroom-finder-preview.git ./scripts/deploy-pages.sh`.
 
 ## How it updates
 
