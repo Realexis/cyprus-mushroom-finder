@@ -1,0 +1,1365 @@
+{
+ "title": "Cyprus Mushroom Finder — growing conditions summary",
+ "safety": "Conditions only. Never eat a wild mushroom based on this map, an app or an AI.",
+ "how_to_read": "Scores 0-100 = how good GROWING CONDITIONS are (rain, temperature, soil moisture, season for the altitude, shade) in ~2 km forest zones. It never says a mushroom is there, and never says anything about eating one. Nature reserves are closed and never listed. Confidence: high = days 0-2, medium = 3-4, low = 5+ (forecast). Picking rules: no rakes or tools; pick by hand or knife; put the leaf litter back.",
+ "emergency": "Poisoning: call 112. Cyprus Poison Centre: 1401. Do not wait for symptoms.",
+ "weather_run": "2026-11-12",
+ "generated_utc": "2026-11-12T13:12+00:00",
+ "site": "https://realexis.github.io/cyprus-mushroom-finder/",
+ "days": [
+  {
+   "date": "2026-11-12",
+   "weekday": "Thursday",
+   "confidence": "high",
+   "island": {
+    "median_score": 76,
+    "zones_70_plus": 559,
+    "zones_total": 911
+   },
+   "top_zones": [
+    {
+     "rank": 1,
+     "where": "1 km SE of Agios Georgios",
+     "lat": 34.7733,
+     "lon": 32.6622,
+     "score": 90,
+     "why": "Good: 29 mm soaking rain 7-20 days ago; 15 °C average this week; 77 mm rain in 30 days; soil wetter than 67% of last season.",
+     "mushroom_clock": "Soaking rain 13 days ago. Window OPEN — about 7 more days.",
+     "trees": {
+      "Other broadleaf": 1.0
+     },
+     "altitude_m": [
+      193,
+      413
+     ],
+     "inputs": {
+      "rain_30d_mm": 76.7,
+      "pulse_mm": 29.4,
+      "t7_mean_c": 14.6,
+      "soil_percentile": 67.2,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.95,
+      "rain_pulse": 1.0,
+      "temperature": 1.0,
+      "soil_moisture": 0.79,
+      "season_altitude": 1.0,
+      "shade": 0.46
+     }
+    },
+    {
+     "rank": 2,
+     "where": "2 km SE of Theletra",
+     "lat": 34.8978,
+     "lon": 32.4637,
+     "score": 90,
+     "why": "Good: 13 °C average this week; 27 mm soaking rain 7-20 days ago; 82 mm rain in 30 days; soil wetter than 66% of last season.",
+     "mushroom_clock": "Soaking rain 13 days ago. Window OPEN — about 7 more days.",
+     "trees": {
+      "Other broadleaf": 1.0
+     },
+     "altitude_m": [
+      383,
+      512
+     ],
+     "inputs": {
+      "rain_30d_mm": 81.8,
+      "pulse_mm": 27.1,
+      "t7_mean_c": 13.0,
+      "soil_percentile": 66.2,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.98,
+      "rain_pulse": 0.99,
+      "temperature": 1.0,
+      "soil_moisture": 0.77,
+      "season_altitude": 1.0,
+      "shade": 0.4
+     }
+    },
+    {
+     "rank": 3,
+     "where": "15 km NE of Rizokarpaso",
+     "lat": 35.6582,
+     "lon": 34.5286,
+     "score": 90,
+     "why": "Good: 84 mm rain in 30 days; 32 mm soaking rain 7-20 days ago; soil wetter than 100% of last season; 19 °C average this week. Weak: shady slopes and valleys.",
+     "mushroom_clock": "Soaking rain 14 days ago. Window OPEN — about 6 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.99
+     },
+     "altitude_m": [
+      25,
+      150
+     ],
+     "inputs": {
+      "rain_30d_mm": 83.9,
+      "pulse_mm": 31.5,
+      "t7_mean_c": 18.7,
+      "soil_percentile": 100.0,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 1.0,
+      "rain_pulse": 1.0,
+      "temperature": 0.88,
+      "soil_moisture": 1.0,
+      "season_altitude": 1.0,
+      "shade": 0.28
+     }
+    },
+    {
+     "rank": 4,
+     "where": "2 km N of Pelathousa",
+     "lat": 35.041,
+     "lon": 32.4694,
+     "score": 89,
+     "why": "Good: 16 °C average this week; 25 mm soaking rain 7-20 days ago; 73 mm rain in 30 days; soil wetter than 69% of last season.",
+     "mushroom_clock": "Soaking rain 12 days ago. Window OPEN — about 8 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.64,
+      "Golden oak (likely)": 0.14,
+      "Other broadleaf": 0.21
+     },
+     "altitude_m": [
+      77,
+      161
+     ],
+     "inputs": {
+      "rain_30d_mm": 73.1,
+      "pulse_mm": 24.8,
+      "t7_mean_c": 16.3,
+      "soil_percentile": 68.6,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.89,
+      "rain_pulse": 0.98,
+      "temperature": 1.0,
+      "soil_moisture": 0.81,
+      "season_altitude": 1.0,
+      "shade": 0.47
+     }
+    },
+    {
+     "rank": 5,
+     "where": "Aksilou",
+     "lat": 34.8045,
+     "lon": 32.5658,
+     "score": 89,
+     "why": "Good: 26 mm soaking rain 7-20 days ago; 14 °C average this week; 80 mm rain in 30 days; soil wetter than 60% of last season.",
+     "mushroom_clock": "Soaking rain 14 days ago. Window OPEN — about 6 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.21,
+      "Other broadleaf": 0.79
+     },
+     "altitude_m": [
+      263,
+      403
+     ],
+     "inputs": {
+      "rain_30d_mm": 79.7,
+      "pulse_mm": 26.5,
+      "t7_mean_c": 14.4,
+      "soil_percentile": 60.0,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.98,
+      "rain_pulse": 1.0,
+      "temperature": 1.0,
+      "soil_moisture": 0.67,
+      "season_altitude": 1.0,
+      "shade": 0.43
+     }
+    }
+   ]
+  },
+  {
+   "date": "2026-11-13",
+   "weekday": "Friday",
+   "confidence": "high",
+   "island": {
+    "median_score": 74,
+    "zones_70_plus": 517,
+    "zones_total": 911
+   },
+   "top_zones": [
+    {
+     "rank": 1,
+     "where": "15 km NE of Rizokarpaso",
+     "lat": 35.6582,
+     "lon": 34.5286,
+     "score": 90,
+     "why": "Good: 81 mm rain in 30 days; 32 mm soaking rain 7-20 days ago; soil wetter than 100% of last season; 19 °C average this week. Weak: shady slopes and valleys.",
+     "mushroom_clock": "Soaking rain 15 days ago. Window OPEN — about 5 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.99
+     },
+     "altitude_m": [
+      25,
+      150
+     ],
+     "inputs": {
+      "rain_30d_mm": 81.2,
+      "pulse_mm": 31.5,
+      "t7_mean_c": 18.7,
+      "soil_percentile": 100.0,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 1.0,
+      "rain_pulse": 1.0,
+      "temperature": 0.89,
+      "soil_moisture": 1.0,
+      "season_altitude": 1.0,
+      "shade": 0.28
+     }
+    },
+    {
+     "rank": 2,
+     "where": "3 km NE of Lagoudera",
+     "lat": 34.9777,
+     "lon": 33.0376,
+     "score": 88,
+     "why": "Good: 10 °C average this week; soil wetter than 91% of last season; 73 mm rain in 30 days; 21 mm soaking rain 7-20 days ago.",
+     "mushroom_clock": "Last soaking rain was 28 days ago. Fruiting window has closed.",
+     "trees": {
+      "Calabrian pine (likely)": 0.87,
+      "Golden oak (likely)": 0.11
+     },
+     "altitude_m": [
+      671,
+      1221
+     ],
+     "inputs": {
+      "rain_30d_mm": 72.6,
+      "pulse_mm": 21.0,
+      "t7_mean_c": 10.2,
+      "soil_percentile": 91.1,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.88,
+      "rain_pulse": 0.73,
+      "temperature": 1.0,
+      "soil_moisture": 1.0,
+      "season_altitude": 1.0,
+      "shade": 0.4
+     }
+    },
+    {
+     "rank": 3,
+     "where": "1 km S of Agios Theodoros Soleas",
+     "lat": 35.0309,
+     "lon": 32.93,
+     "score": 86,
+     "why": "Good: 13 °C average this week; soil wetter than 91% of last season; 77 mm rain in 30 days. Weak: shady slopes and valleys.",
+     "mushroom_clock": "Last soaking rain was 28 days ago. Fruiting window has closed.",
+     "trees": {
+      "Calabrian pine (likely)": 0.99
+     },
+     "altitude_m": [
+      456,
+      818
+     ],
+     "inputs": {
+      "rain_30d_mm": 76.6,
+      "pulse_mm": 18.1,
+      "t7_mean_c": 12.6,
+      "soil_percentile": 91.1,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.94,
+      "rain_pulse": 0.54,
+      "temperature": 1.0,
+      "soil_moisture": 1.0,
+      "season_altitude": 1.0,
+      "shade": 0.38
+     }
+    },
+    {
+     "rank": 4,
+     "where": "4 km S of Tsakistra",
+     "lat": 34.9942,
+     "lon": 32.7083,
+     "score": 85,
+     "why": "Good: 10 °C average this week; soil wetter than 83% of last season; shady slopes and valleys; 60 mm rain in 30 days; 20 mm soaking rain 7-20 days ago.",
+     "mushroom_clock": "Last soaking rain was 27 days ago. Fruiting window has closed.",
+     "trees": {
+      "Calabrian pine (likely)": 0.1,
+      "Golden oak (likely)": 0.9
+     },
+     "altitude_m": [
+      771,
+      983
+     ],
+     "inputs": {
+      "rain_30d_mm": 59.9,
+      "pulse_mm": 19.7,
+      "t7_mean_c": 10.1,
+      "soil_percentile": 82.9,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.67,
+      "rain_pulse": 0.65,
+      "temperature": 1.0,
+      "soil_moisture": 1.0,
+      "season_altitude": 1.0,
+      "shade": 0.68
+     }
+    },
+    {
+     "rank": 5,
+     "where": "1 km SE of Agios Georgios",
+     "lat": 34.7733,
+     "lon": 32.6622,
+     "score": 85,
+     "why": "Good: 29 mm soaking rain 7-20 days ago; 15 °C average this week; soil wetter than 69% of last season; 58 mm rain in 30 days.",
+     "mushroom_clock": "Soaking rain 14 days ago. Window OPEN — about 6 more days.",
+     "trees": {
+      "Other broadleaf": 1.0
+     },
+     "altitude_m": [
+      193,
+      413
+     ],
+     "inputs": {
+      "rain_30d_mm": 58.5,
+      "pulse_mm": 29.4,
+      "t7_mean_c": 14.7,
+      "soil_percentile": 68.6,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.64,
+      "rain_pulse": 1.0,
+      "temperature": 1.0,
+      "soil_moisture": 0.81,
+      "season_altitude": 1.0,
+      "shade": 0.46
+     }
+    }
+   ]
+  },
+  {
+   "date": "2026-11-14",
+   "weekday": "Saturday",
+   "confidence": "high",
+   "island": {
+    "median_score": 71,
+    "zones_70_plus": 473,
+    "zones_total": 911
+   },
+   "top_zones": [
+    {
+     "rank": 1,
+     "where": "2 km E of Louvaras",
+     "lat": 34.8315,
+     "lon": 33.0593,
+     "score": 88,
+     "why": "Good: 25 mm soaking rain 7-20 days ago; 11 °C average this week; soil wetter than 86% of last season; 63 mm rain in 30 days. Weak: shady slopes and valleys.",
+     "mushroom_clock": "Soaking rain 7 days ago. Window OPEN — about 13 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.94
+     },
+     "altitude_m": [
+      547,
+      964
+     ],
+     "inputs": {
+      "rain_30d_mm": 63.4,
+      "pulse_mm": 25.3,
+      "t7_mean_c": 10.9,
+      "soil_percentile": 85.9,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.72,
+      "rain_pulse": 1.0,
+      "temperature": 1.0,
+      "soil_moisture": 1.0,
+      "season_altitude": 1.0,
+      "shade": 0.4
+     }
+    },
+    {
+     "rank": 2,
+     "where": "2 km N of Lagoudera",
+     "lat": 34.9809,
+     "lon": 33.0092,
+     "score": 84,
+     "why": "Good: 10 °C average this week; soil wetter than 81% of last season; 23 mm soaking rain 7-20 days ago; 56 mm rain in 30 days.",
+     "mushroom_clock": "Soaking rain 7 days ago. Window OPEN — about 13 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.95
+     },
+     "altitude_m": [
+      715,
+      1161
+     ],
+     "inputs": {
+      "rain_30d_mm": 56.5,
+      "pulse_mm": 22.8,
+      "t7_mean_c": 10.1,
+      "soil_percentile": 80.6,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.61,
+      "rain_pulse": 0.86,
+      "temperature": 1.0,
+      "soil_moisture": 0.97,
+      "season_altitude": 1.0,
+      "shade": 0.43
+     }
+    },
+    {
+     "rank": 3,
+     "where": "15 km NE of Rizokarpaso",
+     "lat": 35.6582,
+     "lon": 34.5286,
+     "score": 84,
+     "why": "Good: 32 mm soaking rain 7-20 days ago; soil wetter than 100% of last season; 19 °C average this week; 62 mm rain in 30 days. Weak: shady slopes and valleys.",
+     "mushroom_clock": "Soaking rain 16 days ago. Window OPEN — about 4 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.99
+     },
+     "altitude_m": [
+      25,
+      150
+     ],
+     "inputs": {
+      "rain_30d_mm": 62.1,
+      "pulse_mm": 31.5,
+      "t7_mean_c": 18.8,
+      "soil_percentile": 100.0,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.7,
+      "rain_pulse": 1.0,
+      "temperature": 0.87,
+      "soil_moisture": 1.0,
+      "season_altitude": 1.0,
+      "shade": 0.28
+     }
+    },
+    {
+     "rank": 4,
+     "where": "1 km N of Omodos",
+     "lat": 34.8602,
+     "lon": 32.8043,
+     "score": 81,
+     "why": "Good: 11 °C average this week; soil wetter than 76% of last season; 23 mm soaking rain 7-20 days ago.",
+     "mushroom_clock": "Soaking rain 14 days ago. Window OPEN — about 6 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.18,
+      "Golden oak (likely)": 0.18,
+      "Other broadleaf": 0.65
+     },
+     "altitude_m": [
+      830,
+      990
+     ],
+     "inputs": {
+      "rain_30d_mm": 46.8,
+      "pulse_mm": 23.4,
+      "t7_mean_c": 11.4,
+      "soil_percentile": 76.1,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.45,
+      "rain_pulse": 0.89,
+      "temperature": 1.0,
+      "soil_moisture": 0.93,
+      "season_altitude": 1.0,
+      "shade": 0.43
+     }
+    },
+    {
+     "rank": 5,
+     "where": "1 km SE of Agios Georgios",
+     "lat": 34.7733,
+     "lon": 32.6622,
+     "score": 80,
+     "why": "Good: 29 mm soaking rain 7-20 days ago; 15 °C average this week; soil wetter than 66% of last season.",
+     "mushroom_clock": "Soaking rain 15 days ago. Window OPEN — about 5 more days.",
+     "trees": {
+      "Other broadleaf": 1.0
+     },
+     "altitude_m": [
+      193,
+      413
+     ],
+     "inputs": {
+      "rain_30d_mm": 47.5,
+      "pulse_mm": 29.4,
+      "t7_mean_c": 14.8,
+      "soil_percentile": 66.4,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.46,
+      "rain_pulse": 1.0,
+      "temperature": 1.0,
+      "soil_moisture": 0.77,
+      "season_altitude": 1.0,
+      "shade": 0.46
+     }
+    }
+   ]
+  },
+  {
+   "date": "2026-11-15",
+   "weekday": "Sunday",
+   "confidence": "medium",
+   "island": {
+    "median_score": 70,
+    "zones_70_plus": 468,
+    "zones_total": 911
+   },
+   "top_zones": [
+    {
+     "rank": 1,
+     "where": "2 km E of Louvaras",
+     "lat": 34.8315,
+     "lon": 33.0593,
+     "score": 88,
+     "why": "Good: 25 mm soaking rain 7-20 days ago; 11 °C average this week; soil wetter than 87% of last season; 63 mm rain in 30 days. Weak: shady slopes and valleys.",
+     "mushroom_clock": "Soaking rain 8 days ago. Window OPEN — about 12 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.94
+     },
+     "altitude_m": [
+      547,
+      964
+     ],
+     "inputs": {
+      "rain_30d_mm": 63.3,
+      "pulse_mm": 25.3,
+      "t7_mean_c": 11.5,
+      "soil_percentile": 86.6,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.72,
+      "rain_pulse": 1.0,
+      "temperature": 1.0,
+      "soil_moisture": 1.0,
+      "season_altitude": 1.0,
+      "shade": 0.4
+     }
+    },
+    {
+     "rank": 2,
+     "where": "2 km N of Lagoudera",
+     "lat": 34.9809,
+     "lon": 33.0092,
+     "score": 83,
+     "why": "Good: 11 °C average this week; soil wetter than 82% of last season; 23 mm soaking rain 7-20 days ago.",
+     "mushroom_clock": "Soaking rain 8 days ago. Window OPEN — about 12 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.95
+     },
+     "altitude_m": [
+      715,
+      1161
+     ],
+     "inputs": {
+      "rain_30d_mm": 53.7,
+      "pulse_mm": 22.8,
+      "t7_mean_c": 10.9,
+      "soil_percentile": 82.4,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.56,
+      "rain_pulse": 0.86,
+      "temperature": 1.0,
+      "soil_moisture": 0.98,
+      "season_altitude": 1.0,
+      "shade": 0.43
+     }
+    },
+    {
+     "rank": 3,
+     "where": "15 km NE of Rizokarpaso",
+     "lat": 35.6582,
+     "lon": 34.5286,
+     "score": 81,
+     "why": "Good: 32 mm soaking rain 7-20 days ago; soil wetter than 100% of last season; 19 °C average this week; 61 mm rain in 30 days. Weak: shady slopes and valleys.",
+     "mushroom_clock": "Soaking rain 17 days ago. Window OPEN — about 3 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.99
+     },
+     "altitude_m": [
+      25,
+      150
+     ],
+     "inputs": {
+      "rain_30d_mm": 61.2,
+      "pulse_mm": 31.5,
+      "t7_mean_c": 19.3,
+      "soil_percentile": 100.0,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.69,
+      "rain_pulse": 1.0,
+      "temperature": 0.79,
+      "soil_moisture": 1.0,
+      "season_altitude": 1.0,
+      "shade": 0.28
+     }
+    },
+    {
+     "rank": 4,
+     "where": "1 km N of Omodos",
+     "lat": 34.8602,
+     "lon": 32.8043,
+     "score": 81,
+     "why": "Good: 12 °C average this week; soil wetter than 81% of last season; 23 mm soaking rain 7-20 days ago.",
+     "mushroom_clock": "Soaking rain 15 days ago. Window OPEN — about 5 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.18,
+      "Golden oak (likely)": 0.18,
+      "Other broadleaf": 0.65
+     },
+     "altitude_m": [
+      830,
+      990
+     ],
+     "inputs": {
+      "rain_30d_mm": 45.7,
+      "pulse_mm": 23.4,
+      "t7_mean_c": 12.0,
+      "soil_percentile": 80.8,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.43,
+      "rain_pulse": 0.89,
+      "temperature": 1.0,
+      "soil_moisture": 1.0,
+      "season_altitude": 1.0,
+      "shade": 0.43
+     }
+    },
+    {
+     "rank": 5,
+     "where": "2 km E of Pentalia",
+     "lat": 34.8574,
+     "lon": 32.6454,
+     "score": 80,
+     "why": "Good: 26 mm soaking rain 7-20 days ago; 15 °C average this week; soil wetter than 70% of last season. Weak: 44 mm rain in 30 days.",
+     "mushroom_clock": "Soaking rain 17 days ago. Window OPEN — about 3 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.25,
+      "Other broadleaf": 0.75
+     },
+     "altitude_m": [
+      352,
+      432
+     ],
+     "inputs": {
+      "rain_30d_mm": 43.7,
+      "pulse_mm": 26.4,
+      "t7_mean_c": 14.7,
+      "soil_percentile": 70.1,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.4,
+      "rain_pulse": 1.0,
+      "temperature": 1.0,
+      "soil_moisture": 0.83,
+      "season_altitude": 1.0,
+      "shade": 0.49
+     }
+    }
+   ]
+  },
+  {
+   "date": "2026-11-16",
+   "weekday": "Monday",
+   "confidence": "medium",
+   "island": {
+    "median_score": 69,
+    "zones_70_plus": 451,
+    "zones_total": 911
+   },
+   "top_zones": [
+    {
+     "rank": 1,
+     "where": "2 km E of Louvaras",
+     "lat": 34.8315,
+     "lon": 33.0593,
+     "score": 89,
+     "why": "Good: 25 mm soaking rain 7-20 days ago; 12 °C average this week; soil wetter than 83% of last season; 64 mm rain in 30 days. Weak: shady slopes and valleys.",
+     "mushroom_clock": "Soaking rain 9 days ago. Window OPEN — about 11 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.94
+     },
+     "altitude_m": [
+      547,
+      964
+     ],
+     "inputs": {
+      "rain_30d_mm": 63.6,
+      "pulse_mm": 25.3,
+      "t7_mean_c": 12.1,
+      "soil_percentile": 83.4,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.73,
+      "rain_pulse": 1.0,
+      "temperature": 1.0,
+      "soil_moisture": 1.0,
+      "season_altitude": 1.0,
+      "shade": 0.4
+     }
+    },
+    {
+     "rank": 2,
+     "where": "2 km N of Lagoudera",
+     "lat": 34.9809,
+     "lon": 33.0092,
+     "score": 83,
+     "why": "Good: 12 °C average this week; soil wetter than 80% of last season; 23 mm soaking rain 7-20 days ago.",
+     "mushroom_clock": "Soaking rain 9 days ago. Window OPEN — about 11 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.95
+     },
+     "altitude_m": [
+      715,
+      1161
+     ],
+     "inputs": {
+      "rain_30d_mm": 55.3,
+      "pulse_mm": 22.8,
+      "t7_mean_c": 11.6,
+      "soil_percentile": 80.1,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.59,
+      "rain_pulse": 0.86,
+      "temperature": 1.0,
+      "soil_moisture": 0.96,
+      "season_altitude": 1.0,
+      "shade": 0.43
+     }
+    },
+    {
+     "rank": 3,
+     "where": "15 km NE of Rizokarpaso",
+     "lat": 35.6582,
+     "lon": 34.5286,
+     "score": 80,
+     "why": "Good: 32 mm soaking rain 7-20 days ago; soil wetter than 100% of last season; 20 °C average this week; 62 mm rain in 30 days. Weak: shady slopes and valleys.",
+     "mushroom_clock": "Soaking rain 18 days ago. Window OPEN — about 2 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.99
+     },
+     "altitude_m": [
+      25,
+      150
+     ],
+     "inputs": {
+      "rain_30d_mm": 62.2,
+      "pulse_mm": 31.5,
+      "t7_mean_c": 19.7,
+      "soil_percentile": 100.0,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.7,
+      "rain_pulse": 1.0,
+      "temperature": 0.71,
+      "soil_moisture": 1.0,
+      "season_altitude": 1.0,
+      "shade": 0.28
+     }
+    },
+    {
+     "rank": 4,
+     "where": "1 km N of Omodos",
+     "lat": 34.8602,
+     "lon": 32.8043,
+     "score": 79,
+     "why": "Good: 13 °C average this week; soil wetter than 76% of last season; 23 mm soaking rain 7-20 days ago. Weak: 42 mm rain in 30 days.",
+     "mushroom_clock": "Soaking rain 16 days ago. Window OPEN — about 4 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.18,
+      "Golden oak (likely)": 0.18,
+      "Other broadleaf": 0.65
+     },
+     "altitude_m": [
+      830,
+      990
+     ],
+     "inputs": {
+      "rain_30d_mm": 41.7,
+      "pulse_mm": 23.4,
+      "t7_mean_c": 12.6,
+      "soil_percentile": 75.9,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.36,
+      "rain_pulse": 0.89,
+      "temperature": 1.0,
+      "soil_moisture": 0.93,
+      "season_altitude": 1.0,
+      "shade": 0.43
+     }
+    },
+    {
+     "rank": 5,
+     "where": "3 km E of Kritou Terra",
+     "lat": 34.9601,
+     "lon": 32.458,
+     "score": 79,
+     "why": "Good: 15 °C average this week; 24 mm soaking rain 7-20 days ago; soil wetter than 74% of last season. Weak: 40 mm rain in 30 days.",
+     "mushroom_clock": "Soaking rain 16 days ago. Window OPEN — about 4 more days.",
+     "trees": {
+      "Other broadleaf": 1.0
+     },
+     "altitude_m": [
+      127,
+      349
+     ],
+     "inputs": {
+      "rain_30d_mm": 39.7,
+      "pulse_mm": 24.2,
+      "t7_mean_c": 15.3,
+      "soil_percentile": 74.3,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.33,
+      "rain_pulse": 0.94,
+      "temperature": 1.0,
+      "soil_moisture": 0.9,
+      "season_altitude": 1.0,
+      "shade": 0.46
+     }
+    }
+   ]
+  },
+  {
+   "date": "2026-11-17",
+   "weekday": "Tuesday",
+   "confidence": "low",
+   "island": {
+    "median_score": 68,
+    "zones_70_plus": 434,
+    "zones_total": 911
+   },
+   "top_zones": [
+    {
+     "rank": 1,
+     "where": "2 km E of Louvaras",
+     "lat": 34.8315,
+     "lon": 33.0593,
+     "score": 89,
+     "why": "Good: 25 mm soaking rain 7-20 days ago; 13 °C average this week; soil wetter than 81% of last season; 64 mm rain in 30 days. Weak: shady slopes and valleys.",
+     "mushroom_clock": "Soaking rain 10 days ago. Window OPEN — about 10 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.94
+     },
+     "altitude_m": [
+      547,
+      964
+     ],
+     "inputs": {
+      "rain_30d_mm": 63.9,
+      "pulse_mm": 25.3,
+      "t7_mean_c": 12.7,
+      "soil_percentile": 80.9,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.73,
+      "rain_pulse": 1.0,
+      "temperature": 1.0,
+      "soil_moisture": 1.0,
+      "season_altitude": 1.0,
+      "shade": 0.4
+     }
+    },
+    {
+     "rank": 2,
+     "where": "2 km N of Lagoudera",
+     "lat": 34.9809,
+     "lon": 33.0092,
+     "score": 83,
+     "why": "Good: 12 °C average this week; soil wetter than 81% of last season; 22 mm soaking rain 7-20 days ago.",
+     "mushroom_clock": "Soaking rain 10 days ago. Window OPEN — about 10 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.95
+     },
+     "altitude_m": [
+      715,
+      1161
+     ],
+     "inputs": {
+      "rain_30d_mm": 55.5,
+      "pulse_mm": 22.2,
+      "t7_mean_c": 12.0,
+      "soil_percentile": 80.9,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.59,
+      "rain_pulse": 0.82,
+      "temperature": 1.0,
+      "soil_moisture": 0.96,
+      "season_altitude": 1.0,
+      "shade": 0.43
+     }
+    },
+    {
+     "rank": 3,
+     "where": "1 km NW of Karvounas",
+     "lat": 34.9501,
+     "lon": 32.9182,
+     "score": 79,
+     "why": "Good: 11 °C average this week; soil wetter than 72% of last season; 19 mm soaking rain 7-20 days ago.",
+     "mushroom_clock": "No soaking rain (20 mm+) in the last month. Fruiting window closed.",
+     "trees": {
+      "Calabrian pine (likely)": 0.42,
+      "Troodos black pine (likely)": 0.57
+     },
+     "altitude_m": [
+      954,
+      1644
+     ],
+     "inputs": {
+      "rain_30d_mm": 54.5,
+      "pulse_mm": 19.3,
+      "t7_mean_c": 10.8,
+      "soil_percentile": 71.6,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.57,
+      "rain_pulse": 0.62,
+      "temperature": 1.0,
+      "soil_moisture": 0.86,
+      "season_altitude": 1.0,
+      "shade": 0.49
+     }
+    },
+    {
+     "rank": 4,
+     "where": "Theletra",
+     "lat": 34.9196,
+     "lon": 32.4523,
+     "score": 79,
+     "why": "Good: 14 °C average this week; 27 mm soaking rain 7-20 days ago; soil wetter than 64% of last season.",
+     "mushroom_clock": "Soaking rain 17 days ago. Window OPEN — about 3 more days.",
+     "trees": {
+      "Other broadleaf": 1.0
+     },
+     "altitude_m": [
+      262,
+      630
+     ],
+     "inputs": {
+      "rain_30d_mm": 44.6,
+      "pulse_mm": 26.9,
+      "t7_mean_c": 14.3,
+      "soil_percentile": 63.7,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.41,
+      "rain_pulse": 1.0,
+      "temperature": 1.0,
+      "soil_moisture": 0.73,
+      "season_altitude": 1.0,
+      "shade": 0.45
+     }
+    },
+    {
+     "rank": 5,
+     "where": "1 km SE of Agios Georgios",
+     "lat": 34.7733,
+     "lon": 32.6622,
+     "score": 78,
+     "why": "Good: 29 mm soaking rain 7-20 days ago; 16 °C average this week; soil wetter than 64% of last season. Weak: 43 mm rain in 30 days.",
+     "mushroom_clock": "Soaking rain 18 days ago. Window OPEN — about 2 more days.",
+     "trees": {
+      "Other broadleaf": 1.0
+     },
+     "altitude_m": [
+      193,
+      413
+     ],
+     "inputs": {
+      "rain_30d_mm": 42.9,
+      "pulse_mm": 29.4,
+      "t7_mean_c": 15.9,
+      "soil_percentile": 64.1,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.38,
+      "rain_pulse": 1.0,
+      "temperature": 1.0,
+      "soil_moisture": 0.73,
+      "season_altitude": 1.0,
+      "shade": 0.46
+     }
+    }
+   ]
+  },
+  {
+   "date": "2026-11-18",
+   "weekday": "Wednesday",
+   "confidence": "low",
+   "island": {
+    "median_score": 67,
+    "zones_70_plus": 383,
+    "zones_total": 911
+   },
+   "top_zones": [
+    {
+     "rank": 1,
+     "where": "2 km E of Louvaras",
+     "lat": 34.8315,
+     "lon": 33.0593,
+     "score": 89,
+     "why": "Good: 25 mm soaking rain 7-20 days ago; 13 °C average this week; soil wetter than 83% of last season; 64 mm rain in 30 days. Weak: shady slopes and valleys.",
+     "mushroom_clock": "Soaking rain 11 days ago. Window OPEN — about 9 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.94
+     },
+     "altitude_m": [
+      547,
+      964
+     ],
+     "inputs": {
+      "rain_30d_mm": 63.9,
+      "pulse_mm": 25.3,
+      "t7_mean_c": 12.8,
+      "soil_percentile": 83.3,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.73,
+      "rain_pulse": 1.0,
+      "temperature": 1.0,
+      "soil_moisture": 1.0,
+      "season_altitude": 1.0,
+      "shade": 0.4
+     }
+    },
+    {
+     "rank": 2,
+     "where": "2 km N of Lagoudera",
+     "lat": 34.9809,
+     "lon": 33.0092,
+     "score": 83,
+     "why": "Good: 12 °C average this week; soil wetter than 78% of last season; 22 mm soaking rain 7-20 days ago; 56 mm rain in 30 days.",
+     "mushroom_clock": "Soaking rain 11 days ago. Window OPEN — about 9 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.95
+     },
+     "altitude_m": [
+      715,
+      1161
+     ],
+     "inputs": {
+      "rain_30d_mm": 56.1,
+      "pulse_mm": 22.2,
+      "t7_mean_c": 12.2,
+      "soil_percentile": 78.3,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.6,
+      "rain_pulse": 0.81,
+      "temperature": 1.0,
+      "soil_moisture": 0.94,
+      "season_altitude": 1.0,
+      "shade": 0.43
+     }
+    },
+    {
+     "rank": 3,
+     "where": "1 km NW of Karvounas",
+     "lat": 34.9501,
+     "lon": 32.9182,
+     "score": 78,
+     "why": "Good: 11 °C average this week; soil wetter than 71% of last season; 19 mm soaking rain 7-20 days ago.",
+     "mushroom_clock": "No soaking rain (20 mm+) in the last month. Fruiting window closed.",
+     "trees": {
+      "Calabrian pine (likely)": 0.42,
+      "Troodos black pine (likely)": 0.57
+     },
+     "altitude_m": [
+      954,
+      1644
+     ],
+     "inputs": {
+      "rain_30d_mm": 54.5,
+      "pulse_mm": 19.2,
+      "t7_mean_c": 11.0,
+      "soil_percentile": 71.0,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.58,
+      "rain_pulse": 0.61,
+      "temperature": 1.0,
+      "soil_moisture": 0.85,
+      "season_altitude": 1.0,
+      "shade": 0.49
+     }
+    },
+    {
+     "rank": 4,
+     "where": "2 km E of Kinousa",
+     "lat": 35.0348,
+     "lon": 32.5263,
+     "score": 77,
+     "why": "Good: 16 °C average this week; soil wetter than 86% of last season; 22 mm soaking rain 7-20 days ago. Weak: 39 mm rain in 30 days; shady slopes and valleys.",
+     "mushroom_clock": "Soaking rain 18 days ago. Window OPEN — about 2 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 1.0
+     },
+     "altitude_m": [
+      133,
+      527
+     ],
+     "inputs": {
+      "rain_30d_mm": 39.4,
+      "pulse_mm": 21.9,
+      "t7_mean_c": 15.8,
+      "soil_percentile": 85.8,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.32,
+      "rain_pulse": 0.79,
+      "temperature": 1.0,
+      "soil_moisture": 1.0,
+      "season_altitude": 1.0,
+      "shade": 0.4
+     }
+    },
+    {
+     "rank": 5,
+     "where": "1 km N of Omodos",
+     "lat": 34.8602,
+     "lon": 32.8043,
+     "score": 77,
+     "why": "Good: 13 °C average this week; 23 mm soaking rain 7-20 days ago; soil wetter than 71% of last season. Weak: 42 mm rain in 30 days.",
+     "mushroom_clock": "Soaking rain 18 days ago. Window OPEN — about 2 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.18,
+      "Golden oak (likely)": 0.18,
+      "Other broadleaf": 0.65
+     },
+     "altitude_m": [
+      830,
+      990
+     ],
+     "inputs": {
+      "rain_30d_mm": 42.0,
+      "pulse_mm": 22.9,
+      "t7_mean_c": 13.2,
+      "soil_percentile": 71.3,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.37,
+      "rain_pulse": 0.86,
+      "temperature": 1.0,
+      "soil_moisture": 0.85,
+      "season_altitude": 1.0,
+      "shade": 0.43
+     }
+    }
+   ]
+  },
+  {
+   "date": "2026-11-19",
+   "weekday": "Thursday",
+   "confidence": "low",
+   "island": {
+    "median_score": 67,
+    "zones_70_plus": 284,
+    "zones_total": 911
+   },
+   "top_zones": [
+    {
+     "rank": 1,
+     "where": "2 km E of Louvaras",
+     "lat": 34.8315,
+     "lon": 33.0593,
+     "score": 94,
+     "why": "Good: 84 mm rain in 30 days; 25 mm soaking rain 7-20 days ago; 13 °C average this week; soil wetter than 98% of last season. Weak: shady slopes and valleys.",
+     "mushroom_clock": "Soaking rain 0 days ago. Window opens in 7 days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.94
+     },
+     "altitude_m": [
+      547,
+      964
+     ],
+     "inputs": {
+      "rain_30d_mm": 84.0,
+      "pulse_mm": 25.3,
+      "t7_mean_c": 12.9,
+      "soil_percentile": 97.7,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 1.0,
+      "rain_pulse": 1.0,
+      "temperature": 1.0,
+      "soil_moisture": 1.0,
+      "season_altitude": 1.0,
+      "shade": 0.4
+     }
+    },
+    {
+     "rank": 2,
+     "where": "3 km S of Prastio",
+     "lat": 34.7814,
+     "lon": 33.1382,
+     "score": 86,
+     "why": "Good: 15 °C average this week; soil wetter than 91% of last season; 75 mm rain in 30 days; 19 mm soaking rain 7-20 days ago. Weak: shady slopes and valleys.",
+     "mushroom_clock": "No soaking rain (20 mm+) in the last month. Fruiting window closed.",
+     "trees": {
+      "Calabrian pine (likely)": 1.0
+     },
+     "altitude_m": [
+      271,
+      662
+     ],
+     "inputs": {
+      "rain_30d_mm": 74.6,
+      "pulse_mm": 19.2,
+      "t7_mean_c": 14.9,
+      "soil_percentile": 91.3,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.91,
+      "rain_pulse": 0.62,
+      "temperature": 1.0,
+      "soil_moisture": 1.0,
+      "season_altitude": 1.0,
+      "shade": 0.34
+     }
+    },
+    {
+     "rank": 3,
+     "where": "2 km N of Lagoudera",
+     "lat": 34.9809,
+     "lon": 33.0092,
+     "score": 85,
+     "why": "Good: 12 °C average this week; soil wetter than 87% of last season; 21 mm soaking rain 7-20 days ago; 63 mm rain in 30 days.",
+     "mushroom_clock": "Soaking rain 12 days ago. Window OPEN — about 8 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.95
+     },
+     "altitude_m": [
+      715,
+      1161
+     ],
+     "inputs": {
+      "rain_30d_mm": 62.8,
+      "pulse_mm": 21.4,
+      "t7_mean_c": 12.2,
+      "soil_percentile": 87.0,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.71,
+      "rain_pulse": 0.76,
+      "temperature": 1.0,
+      "soil_moisture": 1.0,
+      "season_altitude": 1.0,
+      "shade": 0.43
+     }
+    },
+    {
+     "rank": 4,
+     "where": "Melini",
+     "lat": 34.8622,
+     "lon": 33.1502,
+     "score": 82,
+     "why": "Good: 14 °C average this week; soil wetter than 78% of last season; 70 mm rain in 30 days. Weak: shady slopes and valleys.",
+     "mushroom_clock": "No soaking rain (20 mm+) in the last month. Fruiting window closed.",
+     "trees": {
+      "Calabrian pine (likely)": 0.99
+     },
+     "altitude_m": [
+      491,
+      814
+     ],
+     "inputs": {
+      "rain_30d_mm": 70.0,
+      "pulse_mm": 18.9,
+      "t7_mean_c": 14.1,
+      "soil_percentile": 78.0,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.83,
+      "rain_pulse": 0.59,
+      "temperature": 1.0,
+      "soil_moisture": 0.92,
+      "season_altitude": 1.0,
+      "shade": 0.29
+     }
+    },
+    {
+     "rank": 5,
+     "where": "1 km NW of Karvounas",
+     "lat": 34.9501,
+     "lon": 32.9182,
+     "score": 81,
+     "why": "Good: 11 °C average this week; soil wetter than 76% of last season; 62 mm rain in 30 days.",
+     "mushroom_clock": "No soaking rain (20 mm+) in the last month. Fruiting window closed.",
+     "trees": {
+      "Calabrian pine (likely)": 0.42,
+      "Troodos black pine (likely)": 0.57
+     },
+     "altitude_m": [
+      954,
+      1644
+     ],
+     "inputs": {
+      "rain_30d_mm": 62.4,
+      "pulse_mm": 17.7,
+      "t7_mean_c": 11.0,
+      "soil_percentile": 76.0,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.71,
+      "rain_pulse": 0.51,
+      "temperature": 1.0,
+      "soil_moisture": 0.93,
+      "season_altitude": 1.0,
+      "shade": 0.49
+     }
+    }
+   ]
+  }
+ ],
+ "species": "Species filters arrive in Phase 5."
+}
