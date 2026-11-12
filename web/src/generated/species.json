@@ -57,7 +57,35 @@
      "name": "Lactarius deliciosus",
      "url": "https://www.inaturalist.org/taxa/155197"
     }
-   ]
+   ],
+   "records": {
+    "gbif_total": 5,
+    "inat_research": 1,
+    "months": {
+     "2": 1,
+     "4": 1,
+     "11": 1,
+     "12": 1
+    },
+    "links": [
+     {
+      "label": "GBIF: Lactarius deliciosus",
+      "url": "https://www.gbif.org/species/5248629"
+     },
+     {
+      "label": "GBIF records in Cyprus: Lactarius deliciosus",
+      "url": "https://www.gbif.org/occurrence/search?country=CY&taxon_key=5248629"
+     },
+     {
+      "label": "iNaturalist: Lactarius deliciosus",
+      "url": "https://www.inaturalist.org/taxa/155197"
+     },
+     {
+      "label": "iNaturalist sightings in Cyprus: Lactarius deliciosus",
+      "url": "https://www.inaturalist.org/observations?place_id=10289,96773&taxon_id=155197"
+     }
+    ]
+   }
   },
   {
    "code": "lsa",
@@ -107,7 +135,30 @@
      "name": "Lactarius sanguifluus",
      "url": "https://www.inaturalist.org/taxa/332501"
     }
-   ]
+   ],
+   "records": {
+    "gbif_total": 0,
+    "inat_research": 0,
+    "months": {},
+    "links": [
+     {
+      "label": "GBIF: Lactarius sanguifluus",
+      "url": "https://www.gbif.org/species/5248648"
+     },
+     {
+      "label": "GBIF records in Cyprus: Lactarius sanguifluus",
+      "url": "https://www.gbif.org/occurrence/search?country=CY&taxon_key=5248648"
+     },
+     {
+      "label": "iNaturalist: Lactarius sanguifluus",
+      "url": "https://www.inaturalist.org/taxa/332501"
+     },
+     {
+      "label": "iNaturalist sightings in Cyprus: Lactarius sanguifluus",
+      "url": "https://www.inaturalist.org/observations?place_id=10289,96773&taxon_id=332501"
+     }
+    ]
+   }
   },
   {
    "code": "rde",
@@ -163,7 +214,30 @@
      "name": "Russula delica",
      "url": "https://www.inaturalist.org/taxa/352278"
     }
-   ]
+   ],
+   "records": {
+    "gbif_total": 0,
+    "inat_research": 0,
+    "months": {},
+    "links": [
+     {
+      "label": "GBIF: Russula delica",
+      "url": "https://www.gbif.org/species/2551331"
+     },
+     {
+      "label": "GBIF records in Cyprus: Russula delica",
+      "url": "https://www.gbif.org/occurrence/search?country=CY&taxon_key=2551331"
+     },
+     {
+      "label": "iNaturalist: Russula delica",
+      "url": "https://www.inaturalist.org/taxa/352278"
+     },
+     {
+      "label": "iNaturalist sightings in Cyprus: Russula delica",
+      "url": "https://www.inaturalist.org/observations?place_id=10289,96773&taxon_id=352278"
+     }
+    ]
+   }
   },
   {
    "code": "tca",
@@ -217,7 +291,32 @@
      "name": "Tricholoma caligatum",
      "url": "https://www.inaturalist.org/taxa/125704"
     }
-   ]
+   ],
+   "records": {
+    "gbif_total": 2,
+    "inat_research": 0,
+    "months": {
+     "12": 2
+    },
+    "links": [
+     {
+      "label": "GBIF: Tricholoma caligatum",
+      "url": "https://www.gbif.org/species/5241764"
+     },
+     {
+      "label": "GBIF records in Cyprus: Tricholoma caligatum",
+      "url": "https://www.gbif.org/occurrence/search?country=CY&taxon_key=5241764"
+     },
+     {
+      "label": "iNaturalist: Tricholoma caligatum",
+      "url": "https://www.inaturalist.org/taxa/125704"
+     },
+     {
+      "label": "iNaturalist sightings in Cyprus: Tricholoma caligatum",
+      "url": "https://www.inaturalist.org/observations?place_id=10289,96773&taxon_id=125704"
+     }
+    ]
+   }
   },
   {
    "code": "mor",
@@ -275,7 +374,49 @@
      "name": "Morchella elata",
      "url": "https://www.inaturalist.org/taxa/1467061"
     }
-   ]
+   ],
+   "records": {
+    "gbif_total": 8,
+    "inat_research": 0,
+    "months": {
+     "3": 3,
+     "4": 3
+    },
+    "links": [
+     {
+      "label": "GBIF: Morchella esculenta",
+      "url": "https://www.gbif.org/species/2594602"
+     },
+     {
+      "label": "GBIF records in Cyprus: Morchella esculenta",
+      "url": "https://www.gbif.org/occurrence/search?country=CY&taxon_key=2594602"
+     },
+     {
+      "label": "iNaturalist: Morchella esculenta",
+      "url": "https://www.inaturalist.org/taxa/58682"
+     },
+     {
+      "label": "iNaturalist sightings in Cyprus: Morchella esculenta",
+      "url": "https://www.inaturalist.org/observations?place_id=10289,96773&taxon_id=58682"
+     },
+     {
+      "label": "GBIF: Morchella elata",
+      "url": "https://www.gbif.org/species/2594626"
+     },
+     {
+      "label": "GBIF records in Cyprus: Morchella elata",
+      "url": "https://www.gbif.org/occurrence/search?country=CY&taxon_key=2594626"
+     },
+     {
+      "label": "iNaturalist: Morchella elata",
+      "url": "https://www.inaturalist.org/taxa/1467061"
+     },
+     {
+      "label": "iNaturalist sightings in Cyprus: Morchella elata",
+      "url": "https://www.inaturalist.org/observations?place_id=10289,96773&taxon_id=1467061"
+     }
+    ]
+   }
   },
   {
    "code": "slu",
@@ -330,7 +471,32 @@
      "name": "Suillus luteus",
      "url": "https://www.inaturalist.org/taxa/53488"
     }
-   ]
+   ],
+   "records": {
+    "gbif_total": 1,
+    "inat_research": 0,
+    "months": {
+     "1": 1
+    },
+    "links": [
+     {
+      "label": "GBIF: Suillus luteus",
+      "url": "https://www.gbif.org/species/7777157"
+     },
+     {
+      "label": "GBIF records in Cyprus: Suillus luteus",
+      "url": "https://www.gbif.org/occurrence/search?country=CY&taxon_key=7777157"
+     },
+     {
+      "label": "iNaturalist: Suillus luteus",
+      "url": "https://www.inaturalist.org/taxa/53488"
+     },
+     {
+      "label": "iNaturalist sightings in Cyprus: Suillus luteus",
+      "url": "https://www.inaturalist.org/observations?place_id=10289,96773&taxon_id=53488"
+     }
+    ]
+   }
   }
  ],
  "lookalikes": [

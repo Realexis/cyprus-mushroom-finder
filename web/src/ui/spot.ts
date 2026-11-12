@@ -68,7 +68,11 @@ export interface SpotContext {
   meta: Meta; day: number;
   species: { code: string; latin: string; season_text: string } | null;
   inSeason: (day: number) => boolean;
+  monthOf: (day: number) => number;
+  all: SpeciesLite[];
 }
+export interface SpeciesLite { code: string; latin: string; common: string; months: number[]; season_text: string;
+  trees: number[]; bands: number[]; photos: { url: string }[]; }
 
 /** A tapped spot, already turned into numbers per day. */
 export interface SpotData {
@@ -79,6 +83,32 @@ export interface SpotData {
   inputs?: (day: number) => number[] | null;
   where?: string; trees?: string; altitude?: string; road?: string; note?: string;
   hot?: Record<string, number>;
+  /** Habitat score for a species on a day, ignoring its season. null = no habitat here. */
+  speciesBase?: (sp: SpeciesLite, day: number) => number | null;
+}
+
+/** Every target species, ranked by habitat conditions at this spot on this day. */
+function speciesHere(s: SpotData, ctx: SpotContext): string {
+  if (!s.speciesBase) return "";
+  const m = ctx.monthOf(ctx.day);
+  const rows = ctx.all.map((sp) => ({ sp, v: s.speciesBase!(sp, ctx.day), on: sp.months.includes(m) }));
+  const good = rows.filter((r) => r.v !== null && r.on).sort((a, b) => (b.v ?? 0) - (a.v ?? 0));
+  const off = rows.filter((r) => r.v !== null && !r.on);
+  const none = rows.filter((r) => r.v === null);
+  const item = (r: (typeof rows)[number]) => `<li><button type="button" class="sp-here" data-pick-species="${r.sp.code}"
+      data-tip="Colour the whole map for ${esc(r.sp.latin)} habitat.">
+      ${r.sp.photos[0] ? `<img src="${esc(r.sp.photos[0].url)}" alt="" loading="lazy" referrerpolicy="no-referrer" />` : ""}
+      <span class="sp-here-name"><i>${esc(r.sp.latin)}</i><br><span class="muted">${esc(r.sp.common)}</span></span>
+      <span class="sp-here-score" style="background:${scoreColour(r.v!)}">${r.v}</span></button>
+      <button type="button" class="link-btn" data-open-card="${r.sp.code}" data-tip="Open the species card: deadly lookalikes first.">Card</button></li>`;
+  const names = (list: typeof rows, withSeason: boolean) =>
+    list.map((r) => `<i>${esc(r.sp.latin)}</i>${withSeason ? ` (${esc(r.sp.season_text)})` : ""}`).join(", ");
+  return `<h3 class="spot-h" data-tip="Each species needs its own trees, altitude and season. This ranks them by how well this spot's conditions suit their habitat. It is not a sighting.">Species habitat here</h3>
+    ${good.length ? `<ul class="sp-here-list">${good.map(item).join("")}</ul>`
+      : `<p class="muted small">No target species is in season with habitat here on this day.</p>`}
+    ${off.length ? `<p class="muted small"><b>Out of season:</b> ${names(off, true)}.</p>` : ""}
+    ${none.length ? `<p class="muted small"><b>No habitat here:</b> ${names(none, false)}.</p>` : ""}
+    <p class="muted small">A high number means good conditions for that species' habitat, not that it is there.</p>`;
 }
 
 function factorText(name: string, inp: number[] | null, f: number, ctx: SpotContext, d: DayInfo): string {
@@ -161,6 +191,9 @@ export function spotHTML(s: SpotData, ctx: SpotContext): string {
     ${clk ? `<p class="clock ${clk.open ? "open" : ""}" data-tip="Counts the days since the last soaking rain (${ctx.meta.clock.soak_mm} mm or more). The fruiting window opens about ${ctx.meta.clock.opens} days after it and closes about ${ctx.meta.clock.closes} days after it."><span aria-hidden="true">⏱</span> <b>Mushroom clock:</b> ${clk.text}</p>` : ""}
     ${showScore ? whyBars(s, ctx) : ""}
     ${forecast(s, ctx)}
+    ${ctx.species ? (s.speciesBase ? `<p><button type="button" class="link-btn" data-pick-species=""
+        data-tip="Go back to the general map and list every species' habitat for this spot.">Compare all species here</button></p>` : "")
+      : speciesHere(s, ctx)}
     ${facts ? `<ul class="facts">${facts}</ul>` : ""}
     <p class="muted small">Growing conditions only. <button class="link-btn" id="spot-close" type="button" data-tip="Close this panel.">Close</button></p>`;
 }
@@ -192,6 +225,8 @@ export function hexSpot(props: Record<string, number>, info: SpotInfo | undefine
     <span class="muted">from the middle of this zone</span>` : undefined;
   return {
     kind: "hex",
+    // Out of season the hexagon stores 0, but the habitat is still there (shown as "out of season").
+    speciesBase: (sp, d) => (props[`${sp.code}${d}`] === undefined ? null : Number(props[`${sp.code}${d}`])),
     score: (d) => (props[prop(d)] === undefined ? null : Number(props[prop(d)])),
     clock: (d) => Number(props[`p${d}`]),
     factors: (d) => (info ? info.f[d].map((x) => x / 100) : null),
@@ -227,12 +262,14 @@ export class CellInfo {
 }
 
 export function cellSpot(props: Record<string, number>, info: CellInfo | null, score: (d: number) => number | null,
-                         lngLat: { lng: number; lat: number }): SpotData {
+                         lngLat: { lng: number; lat: number }, seasonShare: number): SpotData {
   const i = Number(props.i);
   const m = (x: number) => (x < 0 ? "–" : x < 1000 ? `${Math.round(x / 10) * 10} m` : `${(x / 1000).toFixed(1)} km`);
   const rd = info?.road(i);
   return {
     kind: "cell", score,
+    speciesBase: (sp, d) => (sp.trees.includes(Number(props.tree)) && sp.bands.includes(Number(props.band)) && !props.closed
+      ? Math.round(Number(props[`b${d}`]) + seasonShare) : null),
     clock: (d) => Number(props[`p${d}`]),
     factors: (d) => info?.factors(i, d) ?? null,
     inputs: (d) => info?.inputs(i, d) ?? null,

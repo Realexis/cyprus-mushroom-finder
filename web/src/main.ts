@@ -173,7 +173,7 @@ async function main() {
         if (!sp.trees.includes(Number(props.tree)) || !sp.bands.includes(Number(props.band))) return null;
         return panel.inSeason(d) ? Math.round(Number(props[`b${d}`]) + meta.season_share) : 0;
       };
-      return cellSpot(props, cellInfo, score, p.lngLat);
+      return cellSpot(props, cellInfo, score, p.lngLat, meta.season_share);
     }
     return hexSpot(props, spots?.spots[Number(props.h)], (d) => hexProp(d, panel.filter), meta.general_map_trees);
   };
@@ -233,11 +233,20 @@ async function main() {
   const slow = window.setTimeout(() => {
     document.getElementById("loading-text")!.textContent = "Still loading… a slow connection can take a minute.";
   }, 12000);
-  map.once("idle", () => {
+  // Done = our zone data is in (or the map went idle). Works even in a background tab,
+  // where the map draws no frames and "idle" can wait a long time.
+  let loaded = false;
+  const finishLoading = () => {
+    if (loaded) return;
+    loaded = true;
     window.clearTimeout(slow);
     loading.classList.add("done");
     window.setTimeout(() => (loading.hidden = true), 400);
     guide.openIfFirstVisit();
+  };
+  map.once("idle", finishLoading);
+  map.on("sourcedata", (e) => {
+    if (e.sourceId === "hexes" && map.getLayer("hex-fill") && map.isSourceLoaded("hexes")) finishLoading();
   });
   document.addEventListener("open-guide", () => guide.open());
 

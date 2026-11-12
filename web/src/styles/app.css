@@ -409,3 +409,37 @@ dialog.guide-dlg::backdrop { background: rgba(0, 0, 0, 0.55); }
 .guide-ok { width: 100%; margin-top: 6px; min-height: 52px; font-size: var(--fs-2); }
 .loading { width: max-content; max-width: calc(100vw - 32px); }
 @media (max-width: 899px) { .loading { font-size: var(--fs-1); padding: 10px 16px; } }
+
+/* ---------------------------------------------------------------- species habitat in the spot panel */
+.sp-here-list { list-style: none; padding: 0; margin: 4px 0 6px; display: grid; gap: 6px; }
+.sp-here-list li { display: flex; align-items: center; gap: 6px; }
+.sp-here { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; text-align: left; cursor: pointer;
+  min-height: var(--tap); padding: 4px 8px 4px 4px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); font-size: var(--fs-0); }
+.sp-here img { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; flex: none; background: var(--line); }
+.sp-here-name { flex: 1; min-width: 0; line-height: 1.3; }
+.sp-here-name i { font-size: var(--fs-1); }
+.sp-here-score { flex: none; min-width: 42px; text-align: center; font-weight: 700; font-size: var(--fs-2);
+  border-radius: 8px; padding: 2px 6px; color: #10140f; }
+.chip { display: inline-block; margin: 3px 2px 0 0; min-height: 36px; padding: 2px 12px; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--accent); background: var(--surface); color: var(--ink); font-size: var(--fs-0); }
+
+/* ---------------------------------------------------------------- species card: More info */
+.sp-list li { display: flex; gap: 6px; align-items: stretch; }
+.sp-list .sp-pick { flex: 1; min-width: 0; }
+.more-mini { flex: none; border-radius: 14px; border: 1px solid var(--line); background: var(--surface); cursor: pointer;
+  padding: 0 12px; font-size: var(--fs-0); font-weight: 700; color: var(--accent); }
+.more { margin: 12px 0; border: 1px solid var(--line); border-radius: 14px; background: var(--surface-2); }
+.more-btn { cursor: pointer; list-style: none; min-height: var(--tap); display: flex; align-items: center; gap: 8px;
+  padding: 0 14px; font-weight: 700; font-size: var(--fs-1); color: var(--accent); }
+.more-btn::-webkit-details-marker { display: none; }
+.more-btn::before { content: "▸"; transition: transform 0.15s ease; }
+.more[open] .more-btn::before { transform: rotate(90deg); }
+.more-body { padding: 0 14px 12px; font-size: var(--fs-1); }
+.more-body h4 { margin: 12px 0 4px; font-size: var(--fs-1); }
+.more-body p { margin: 4px 0; }
+.rec-chart { display: grid; grid-template-columns: repeat(12, 1fr); gap: 3px; align-items: end; height: 64px; margin: 8px 0 2px; }
+.rec-m { display: grid; justify-items: center; gap: 2px; font-size: 0.75rem; color: var(--ink-soft); }
+.rec-m i { width: 100%; max-width: 22px; background: var(--accent); border-radius: 3px 3px 0 0; display: block; }
+.rec-m.in span { color: var(--ink); font-weight: 700; text-decoration: underline; }
+.more-links { padding-left: 1.2em; margin: 4px 0; }
+.more-links li { margin: 3px 0; }

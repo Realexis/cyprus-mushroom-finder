@@ -19,6 +19,8 @@ from .. import config
 from ..score import species as SP
 
 API = "https://api.inaturalist.org/v1"
+GBIF = "https://api.gbif.org/v1"
+INAT_CYPRUS = "10289,96773"                       # iNaturalist places: Cyprus + Northern Cyprus
 CACHE = config.RAW / "inat"
 OUT = config.ROOT / "web" / "src" / "generated" / "species.json"
 ALLOWED = {"cc0": "CC0", "cc-by": "CC BY", "cc-by-sa": "CC BY-SA", "cc-by-nc": "CC BY-NC"}   # [BRIEF]
@@ -35,6 +37,52 @@ def _get(path, params, cache_name, refresh):
     CACHE.mkdir(parents=True, exist_ok=True)
     f.write_text(r.text)
     return r.json()
+
+
+def _gbif(path, params, cache_name, refresh):
+    f = config.RAW / "gbif" / f"{cache_name}.json"
+    if f.exists() and not refresh:
+        return json.loads(f.read_text())
+    time.sleep(0.3)
+    r = requests.get(f"{GBIF}/{path}", params=params, headers=HEADERS, timeout=30)
+    r.raise_for_status()
+    f.parent.mkdir(parents=True, exist_ok=True)
+    f.write_text(r.text)
+    return r.json()
+
+
+def cyprus_records(names, refresh=False):
+    """Public records in Cyprus: GBIF occurrences (with months) + iNaturalist research-grade.
+
+    Facts only (counts and months of real records). Few records = Cyprus fungi are
+    under-recorded; we never turn this into a season or a place.
+    """
+    out = {"gbif_total": 0, "inat_research": 0, "months": {}, "links": []}
+    for nm in names:
+        slug = nm.lower().replace(" ", "_")
+        m = _gbif("species/match", {"name": nm, "kingdom": "Fungi"}, f"match_{slug}", refresh)
+        key = m.get("usageKey") if m.get("matchType") == "EXACT" else None
+        if key:
+            o = _gbif("occurrence/search", {"country": "CY", "taxonKey": key, "limit": 0, "facet": "month",
+                                            "facetLimit": 12}, f"cy_{key}", refresh)
+            out["gbif_total"] += o["count"]
+            for c in (o.get("facets") or [{}])[0].get("counts", []):
+                out["months"][int(c["name"])] = out["months"].get(int(c["name"]), 0) + c["count"]
+            out["links"] += [
+                {"label": f"GBIF: {nm}", "url": f"https://www.gbif.org/species/{key}"},
+                {"label": f"GBIF records in Cyprus: {nm}",
+                 "url": f"https://www.gbif.org/occurrence/search?country=CY&taxon_key={key}"}]
+        t = taxon(nm, refresh)
+        if t:
+            o = _get("observations", {"place_id": INAT_CYPRUS, "taxon_id": t["id"], "quality_grade": "research",
+                                      "per_page": 0}, f"cy_obs_{t['id']}", refresh)
+            out["inat_research"] += o["total_results"]
+            out["links"] += [
+                {"label": f"iNaturalist: {nm}", "url": f"https://www.inaturalist.org/taxa/{t['id']}"},
+                {"label": f"iNaturalist sightings in Cyprus: {nm}",
+                 "url": f"https://www.inaturalist.org/observations?place_id={INAT_CYPRUS}&taxon_id={t['id']}"}]
+    out["months"] = dict(sorted(out["months"].items()))
+    return out
 
 
 def allowed_photos(taxon: dict, n: int) -> list:
@@ -83,7 +131,8 @@ def build(refresh=False):
         ph, pages = photos_for(s["inat"], 3, refresh)
         out_s.append({k: s[k] for k in ("code", "latin", "common", "local", "local_confirmed", "trees",
                                          "trees_text", "bands", "altitude_text", "months", "notes")}
-                     | {"season_text": SP.months_text(s["months"]), "photos": ph, "inat_pages": pages})
+                     | {"season_text": SP.months_text(s["months"]), "photos": ph, "inat_pages": pages,
+                        "records": cyprus_records(s["inat"], refresh)})
         print(f" - {s['latin']}: {len(ph)} photos")
     out_l = []
     for lk in looks:

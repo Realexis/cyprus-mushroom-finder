@@ -158,6 +158,11 @@ export class Panel {
         <button id="cards-btn" type="button" class="icon-btn" aria-label="Open species cards" data-tip="Photos, season, trees and the deadly lookalikes for each mushroom.">Species cards</button>
       </div>
       <p id="sp-help" class="muted small">A species changes only the trees, altitude and season that count.</p>
+      ${sp ? "" : (() => {
+        const on = SPECIES.filter((x) => x.months.includes(this.monthOf(this.day)));
+        return `<p class="filter-line" data-tip="Species whose season includes this day's month. Tap one to colour the map for its habitat.">
+          <b>In season on this day:</b> ${on.length ? on.map((x) => `<button type="button" class="chip" data-pick-species="${x.code}">${esc(x.common)}</button>`).join(" ") : "none of our target species"}</p>`;
+      })()}
       ${seasonMsg}
       <h2 id="layer-h">Show</h2>
       <div class="seg" role="group" aria-labelledby="layer-h">
@@ -194,6 +199,8 @@ export class Panel {
     this.el.querySelector<HTMLSelectElement>("#species")?.addEventListener("change", (e) =>
       this.setSpecies((e.target as HTMLSelectElement).value || null));
     this.el.querySelector("#cards-btn")?.addEventListener("click", () => this.openSpecies(this.species ?? undefined));
+    this.el.querySelectorAll<HTMLButtonElement>(".filter-line [data-pick-species]").forEach((b) =>
+      b.addEventListener("click", () => this.setSpecies(b.dataset.pickSpecies!)));
     this.el.querySelector<HTMLInputElement>("#priv")?.addEventListener("change", (e) => {
       this.priv = (e.target as HTMLInputElement).checked; this.spot = null; this.render(); this.onChange(this);
     });
@@ -261,7 +268,12 @@ export class Panel {
     if (!s || this.mode !== "conditions") { el.hidden = true; return; }
     const sp = speciesByCode(this.species);
     el.innerHTML = spotHTML(s, { meta: this.meta, day: this.day,
-      species: sp ? { code: sp.code, latin: sp.latin, season_text: sp.season_text } : null, inSeason: this.inSeason });
+      species: sp ? { code: sp.code, latin: sp.latin, season_text: sp.season_text } : null, inSeason: this.inSeason,
+      monthOf: (d) => this.monthOf(d), all: SPECIES });
+    el.querySelectorAll<HTMLButtonElement>("[data-pick-species]").forEach((b) =>
+      b.addEventListener("click", () => this.setSpecies(b.dataset.pickSpecies || null)));
+    el.querySelectorAll<HTMLButtonElement>("[data-open-card]").forEach((b) =>
+      b.addEventListener("click", () => this.openSpecies(b.dataset.openCard!)));
     el.querySelector("#spot-close")?.addEventListener("click", () => {
       this.showSpot(null); document.dispatchEvent(new Event("spot-closed"));
     });
