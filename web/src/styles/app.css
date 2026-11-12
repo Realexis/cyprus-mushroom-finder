@@ -496,3 +496,14 @@ dialog.guide-dlg::backdrop { background: rgba(0, 0, 0, 0.55); }
   .map-legend { left: 8px; bottom: min(var(--sheet-h, 260px), 70%); width: 168px; padding: 6px 10px 7px; }
   .ml-bar { height: 10px; }
 }
+
+/* ================================================================ ux-v2 Fix 3: day buttons lead with the best score */
+.day { min-width: 112px; min-height: 76px; gap: 2px; align-content: start; }
+.day .day-top { display: flex; align-items: baseline; gap: 6px; font-size: var(--fs-1); color: inherit; }
+.day-top b { font-size: var(--fs-1); }
+.day .day-date { font-size: var(--fs-0); color: var(--ink-soft); }
+.day .day-score { display: inline-flex; align-items: center; gap: 6px; font-size: var(--fs-3); font-weight: 700; line-height: 1.1; color: var(--ink) !important; }
+.day-score i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--ink) 35%, transparent); }
+.day .day-conf { display: inline-flex; align-items: center; gap: 5px; font-size: 0.8rem; color: var(--ink-soft); white-space: nowrap; }
+.day[aria-pressed="true"] .day-score, .day[aria-pressed="true"] .day-date, .day[aria-pressed="true"] .day-conf { color: var(--accent-ink) !important; }
+@media (min-width: 900px) { .days .day { min-width: 108px; flex: 1 1 108px; max-width: 118px; } }

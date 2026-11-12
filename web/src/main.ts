@@ -21,6 +21,11 @@ import { words } from "./ui/spot";
 
 const abs = (p: string) => new URL(p, document.baseURI).href;
 
+/** The parts of summary.json the site reads (top zones per day, overall and per species). */
+interface SummaryZone { where: string; lat: number; lon: number; score: number; why?: string; }
+interface Summary { days: { date: string; top_zones: SummaryZone[];
+  species?: Record<string, { in_season: boolean; top_zones: SummaryZone[] }> }[]; }
+
 /** Is this file published? (The dev server answers missing files with the HTML page.) */
 async function hasFile(path: string): Promise<boolean> {
   try {
@@ -111,12 +116,13 @@ async function main() {
   const protocol = new Protocol();
   maplibregl.addProtocol("pmtiles", protocol.tile);
 
-  const [meta, priv, spots, rain, shade] = await Promise.all([
+  const [meta, priv, spots, rain, shade, summary] = await Promise.all([
     fetch(abs("data/meta.json"), { cache: "no-cache" }).then((r) => r.json() as Promise<Meta>),
     hasCells(),
     getJSON<Spots>(abs("data/spots.json")),
     getJSON<GeoJSON.FeatureCollection>(abs("data/rain.geojson")),
     hasFile(pmtiles("tiles/shade50.pmtiles")),
+    getJSON<Summary>(abs("data/summary.json")),
   ]);
 
   if (meta.weather_run < cyprusToday()) {
@@ -224,6 +230,14 @@ async function main() {
     },
     (p) => { if (map.isStyleLoaded()) setReplayFrame(map, p.view); },
     (code) => openSpecies(code));
+  // Best zone per day (and per species) for the day buttons, from summary.json.
+  panel.best = (day, code) => {
+    const d = summary?.days[day];
+    const z = code ? (d?.species?.[code]?.in_season ? d.species[code].top_zones[0] : undefined) : d?.top_zones[0];
+    return z ? { score: z.score, where: z.where } : null;
+  };
+  panel.refresh();
+
   // The colour key on the map (follows the layer, the species season and the zoom).
   const legendEl = document.getElementById("map-legend")!;
   function drawLegend() { renderLegend(legendEl, panel.view, map.getZoom(), shade); }

@@ -2,7 +2,7 @@
 // rain replay, legend, hotspot zoom list and the spot panel.
 import { RAIN1_STOPS, RAIN30_STOPS, RAIN7_STOPS, SCORE_STOPS, SHADE_STOPS, type Filter, type Mode, type View } from "../map/layers";
 import { SPECIES, speciesByCode } from "./species";
-import { esc, fmtDay, spotHTML, type SpotData } from "./spot";
+import { esc, fmtDay, scoreColour, spotHTML, type SpotData } from "./spot";
 
 export interface DayInfo { offset: number; date: string; confidence: "high" | "medium" | "low"; }
 export interface Meta {
@@ -13,7 +13,10 @@ export interface Meta {
 }
 export interface HotZone { hex: string; where: string; lat: number; lon: number; score: number; date: string; }
 
-const CONF_TEXT = { high: "High confidence", medium: "Medium confidence", low: "Low confidence" };
+/** Forecast confidence in plain words (it is about the weather forecast, not about mushrooms). */
+const CONF_WORD = { high: "sure", medium: "likely", low: "unsure" };
+/** The best ~2 km zone of a day (from summary.json), for the general map or a species. */
+export interface Best { score: number; where: string; }
 const CONF_TIP = {
   high: "Forecast for the next 2 days: usually reliable.",
   medium: "Forecast 3-4 days ahead: it may still change.",
@@ -35,6 +38,9 @@ export class Panel {
   playing = false;
   private timer = 0;
   private spot: SpotData | null = null;
+  /** Best zone per day (set by main.ts from summary.json). */
+  best: (day: number, species: string | null) => Best | null = () => null;
+  refresh() { this.render(); }
 
   /** `fine` = the 250 m forest squares are published (the normal case). Without them: ~2 km zones. */
   constructor(private el: HTMLElement, private meta: Meta, fine: boolean,
@@ -129,11 +135,17 @@ export class Panel {
     const days = this.meta.days.map((d) => {
       const label = d.offset === 0 ? "Today" : fmtDay(d.date, { weekday: "short" });
       const num = fmtDay(d.date, { day: "numeric", month: "short" });
+      const b = this.best(d.offset, this.species);
+      const word = CONF_WORD[d.confidence];
+      const long = fmtDay(d.date, { weekday: "long", day: "numeric", month: "long" });
+      const oos = !!this.species && !this.inSeason(d.offset);
+      const scoreTip = b ? `Best zone: ${b.score}/100, ${b.where}.` : oos ? "Out of season for this species." : "No score.";
       return `<button class="day" data-day="${d.offset}" aria-pressed="${d.offset === this.day}"
-          aria-label="${label} ${num}, ${CONF_TEXT[d.confidence]}"
-          data-tip="Show growing conditions for ${fmtDay(d.date, { weekday: "long", day: "numeric", month: "long" })}. ${CONF_TIP[d.confidence]}">
-        <b>${label}</b><span>${num}</span>
-        <span class="conf"><i class="dot ${d.confidence}"></i>${d.confidence}</span></button>`;
+          aria-label="${label} ${num}. ${b ? `Best zone ${b.score} out of 100` : oos ? "Out of season" : "No score"}. Forecast ${word}."
+          data-tip="${long}. ${scoreTip} Forecast ${word}: ${CONF_TIP[d.confidence]}">
+        <span class="day-top"><b>${label}</b><span class="day-date">${num}</span></span>
+        <span class="day-score">${b ? `<i style="background:${scoreColour(b.score)}"></i>${b.score}` : "–"}</span>
+        <span class="day-conf"><i class="dot ${d.confidence}"></i>Forecast: ${word}</span></button>`;
     }).join("");
     const cur = this.meta.days[this.day];
     const sp = speciesByCode(this.species);
@@ -162,8 +174,9 @@ export class Panel {
       <div class="spot" id="spot" hidden></div>
       <h2 id="days-h">Day</h2>
       <div class="days" role="group" aria-labelledby="days-h">${days}</div>
-      <p class="conf-line">${fmtDay(cur.date, { weekday: "long", day: "numeric", month: "long" })} ·
-        <b>${CONF_TEXT[cur.confidence]}</b></p>
+      <p class="conf-line">${fmtDay(cur.date, { weekday: "long", day: "numeric", month: "long" })}
+        ${(() => { const b = this.best(this.day, this.species); return b ? `· best zone <b>${b.score}</b>, ${esc(b.where)}` : ""; })()}
+        · Forecast: <b>${CONF_WORD[cur.confidence]}</b></p>
       <div class="sheet-more">
       <h2 id="sp-h"><label for="species">Conditions for</label></h2>
       <div class="sp-row">
