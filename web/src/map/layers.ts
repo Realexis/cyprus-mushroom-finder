@@ -115,11 +115,14 @@ export function addOverlays(map: MlMap, theme: Theme, urls: LayerUrls, v: View) 
     layout: { visibility: v.mode === "conditions" && !v.priv ? "visible" : "none" },
     paint: { "line-color": theme === "dark" ? "#0c1612" : "#f3f0e7", "line-width": ["interpolate", ["linear"], ["zoom"], 8, 0.3, 12, 1.2], "line-opacity": 0.7 },
   }, firstSymbol);
-  map.addLayer({
-    id: "hex-selected", type: "line", source: "hexes",
-    filter: ["==", ["id"], -1],
-    paint: { "line-color": theme === "dark" ? "#ffffff" : "#1b2620", "line-width": 3 },
-  }, firstSymbol);
+  // The tapped zone: a wide contrasting halo with a bright core, readable at every zoom.
+  const SEL_HALO = theme === "dark" ? "#0c1612" : "#ffffff";
+  const SEL_CORE = theme === "dark" ? "#ffffff" : "#1b2620";
+  const selW = (a: number, b: number) => ["interpolate", ["linear"], ["zoom"], 7, a, 12, b] as unknown as ExpressionSpecification;
+  map.addLayer({ id: "hex-selected-halo", type: "line", source: "hexes", filter: ["==", ["id"], -1],
+    paint: { "line-color": SEL_HALO, "line-width": selW(7, 10), "line-opacity": 0.9 } }, firstSymbol);
+  map.addLayer({ id: "hex-selected", type: "line", source: "hexes", filter: ["==", ["id"], -1],
+    paint: { "line-color": SEL_CORE, "line-width": selW(3, 4.5) } }, firstSymbol);
 
   if (urls.privateCells) {
     map.addSource("cells", { type: "vector", url: `pmtiles://${urls.privateCells}` });
@@ -128,6 +131,10 @@ export function addOverlays(map: MlMap, theme: Theme, urls: LayerUrls, v: View) 
       layout: { visibility: v.mode === "conditions" && v.priv ? "visible" : "none" },
       paint: { "fill-color": cellColor(v), "fill-opacity": 0.72, "fill-antialias": false },
     }, firstSymbol);
+    map.addLayer({ id: "cells-selected-halo", type: "line", source: "cells", "source-layer": "cells",
+      filter: ["==", ["get", "i"], -1], paint: { "line-color": SEL_HALO, "line-width": selW(5, 8) } }, firstSymbol);
+    map.addLayer({ id: "cells-selected", type: "line", source: "cells", "source-layer": "cells",
+      filter: ["==", ["get", "i"], -1], paint: { "line-color": SEL_CORE, "line-width": selW(2, 3.5) } }, firstSymbol);
   }
 
   // 50 m hotspot zoom (private): terrain shade inside the top zones, only when zoomed in.
@@ -212,5 +219,15 @@ export function set3D(map: MlMap, on: boolean, theme: Theme, animate = true) {
   } else {
     map.setTerrain(null);
     if (animate) map.easeTo({ pitch: 0, bearing: 0, duration: 700 });
+  }
+}
+
+/** Outline the tapped hexagon (by feature id) or private square (by cell index). */
+export function setSelection(map: MlMap, hexId: number | null, cellIndex: number | null) {
+  for (const id of ["hex-selected", "hex-selected-halo"]) {
+    if (map.getLayer(id)) map.setFilter(id, ["==", ["id"], hexId ?? -1]);
+  }
+  for (const id of ["cells-selected", "cells-selected-halo"]) {
+    if (map.getLayer(id)) map.setFilter(id, ["==", ["get", "i"], cellIndex ?? -1]);
   }
 }

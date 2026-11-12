@@ -6,7 +6,7 @@ import "./styles/app.css";
 import * as maplibregl from "maplibre-gl";
 import type { MapGeoJSONFeature } from "maplibre-gl";
 import { Protocol } from "pmtiles";
-import { addOverlays, applyView, hexProp, set3D, setReplayFrame, type LayerUrls } from "./map/layers";
+import { addOverlays, applyView, hexProp, set3D, setReplayFrame, setSelection, type LayerUrls } from "./map/layers";
 import { baseStyle, type Theme } from "./map/style";
 import { Panel, type HotZone, type Meta } from "./ui/controls";
 import { mountEmergency } from "./ui/safety";
@@ -14,6 +14,7 @@ import { mountSpecies, speciesByCode } from "./ui/species";
 import { CellInfo, cellSpot, hexSpot, type SpotData, type Spots } from "./ui/spot";
 import { applyTheme, currentTheme, toggleTheme } from "./ui/theme";
 import { hideMapTip as hideTip, mountTips, showAt } from "./ui/tips";
+import { mountGuide } from "./ui/guide";
 import { words } from "./ui/spot";
 
 const abs = (p: string) => new URL(p, document.baseURI).href;
@@ -77,6 +78,7 @@ class TerrainControl implements maplibregl.IControl {
 async function main() {
   applyTheme(currentTheme());
   mountTips();
+  const guide = mountGuide();
   mountEmergency([...document.querySelectorAll<HTMLElement>("[data-emergency]")]);
 
   maplibregl.setWorkerUrl(abs("vendor/maplibre-gl-worker.mjs"));
@@ -207,11 +209,37 @@ async function main() {
     document.querySelector(".maplibregl-ctrl-attrib")?.classList.remove("maplibregl-compact-show");
   });
 
+  // "You tapped here": a small ring marker, plus the zone outline.
+  const pinEl = document.createElement("div");
+  pinEl.className = "pick-pin";
+  pinEl.setAttribute("aria-hidden", "true");
+  const pin = new maplibregl.Marker({ element: pinEl });
+  const applySelection = () => {
+    const f = lastPick?.f;
+    setSelection(map, f?.layer.id === "hex-fill" ? (f.id as number) : null,
+      f?.layer.id === "cells-fill" ? Number((f.properties as Record<string, number>).i) : null);
+    if (lastPick) pin.setLngLat(lastPick.lngLat).addTo(map); else pin.remove();
+  };
+
   const onStyle = () => {
     addOverlays(map, theme, urls, panel.view);
     if (terrainCtl.on) set3D(map, true, theme, false);
+    applySelection();
   };
   map.once("load", onStyle);
+
+  // Loading message: hide once the map has drawn its layers for the first time.
+  const loading = document.getElementById("loading")!;
+  const slow = window.setTimeout(() => {
+    document.getElementById("loading-text")!.textContent = "Still loading… a slow connection can take a minute.";
+  }, 12000);
+  map.once("idle", () => {
+    window.clearTimeout(slow);
+    loading.classList.add("done");
+    window.setTimeout(() => (loading.hidden = true), 400);
+    guide.openIfFirstVisit();
+  });
+  document.addEventListener("open-guide", () => guide.open());
 
   document.addEventListener("toggle-theme", () => {
     theme = toggleTheme();
@@ -223,10 +251,8 @@ async function main() {
     const layersToHit = ["hot-fill", "cells-fill", "hex-fill"].filter((id) => map.getLayer(id) &&
       map.getLayoutProperty(id, "visibility") !== "none");
     const f: MapGeoJSONFeature | undefined = map.queryRenderedFeatures(e.point, { layers: layersToHit })[0];
-    if (map.getLayer("hex-selected")) {
-      map.setFilter("hex-selected", ["==", ["id"], f && f.layer.id === "hex-fill" ? (f.id as number) : -1]);
-    }
     lastPick = f ? { f, lngLat: e.lngLat } : null;
+    applySelection();
     panel.showSpot(lastPick ? buildSpot(lastPick) : null);
     // Keep the tapped spot in view, above the panel on phones / beside it on desktop.
     if (f) {
@@ -238,7 +264,7 @@ async function main() {
   map.on("click", pick);
   document.addEventListener("spot-closed", () => {
     lastPick = null;
-    if (map.getLayer("hex-selected")) map.setFilter("hex-selected", ["==", ["id"], -1]);
+    applySelection();
   });
   for (const id of ["hex-fill", "cells-fill", "hot-fill"]) {
     map.on("mouseenter", id, () => (map.getCanvas().style.cursor = "pointer"));
@@ -270,4 +296,9 @@ async function main() {
   map.on("movestart", () => hideTip());
 }
 
-main();
+main().catch((e) => {
+  console.error(e);
+  const t = document.getElementById("loading-text");
+  if (t) t.textContent = "The map could not load. Check your internet connection, then reload the page.";
+  document.getElementById("loading")?.classList.add("failed");
+});

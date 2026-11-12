@@ -177,6 +177,7 @@ export class Panel {
         Private view: full 250 m detail <span class="tag warn">this Mac only</span></label>` : ""}
       ${this.priv && this.hotZones.length ? this.hotHTML() : ""}
       <div class="links"><a href="about.html" data-tip="Where the data comes from, how the score works, and the picking law.">About the data</a>
+        <button id="guide-btn" type="button" data-tip="Show the three-step guide again.">How to use</button>
         <button id="theme-btn" type="button" data-tip="Switch between light and dark colours. Dark is easier on the eyes at night.">Light / dark</button></div>
       </div>`;
 
@@ -211,6 +212,7 @@ export class Panel {
       b.addEventListener("click", () => this.flyTo(this.hotZones[Number(b.dataset.zone)])));
     this.el.querySelector("#grip")?.addEventListener("click", () => this.el.classList.toggle("collapsed"));
     this.el.querySelector("#theme-btn")?.addEventListener("click", () => document.dispatchEvent(new Event("toggle-theme")));
+    this.el.querySelector("#guide-btn")?.addEventListener("click", () => document.dispatchEvent(new Event("open-guide")));
     if (this.mode === "replay") this.updateReplay();
     this.renderSpot();
   }

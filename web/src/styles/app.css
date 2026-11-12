@@ -365,3 +365,47 @@ dialog.species-dlg::backdrop { background: rgba(0, 0, 0, 0.6); }
 [data-tip] { -webkit-touch-callout: none; }
 .map-note, .safety, .legend-row, .why-row, .facts li, .clock, .spot-score, .fc-day { cursor: help; }
 @media (prefers-reduced-motion: reduce) { .tip { transition: none; } }
+
+/* ---------------------------------------------------------------- tapped spot marker */
+.pick-pin { width: 22px; height: 22px; border-radius: 50%; pointer-events: none;
+  border: 3px solid var(--ink); background: color-mix(in srgb, var(--accent) 70%, transparent);
+  box-shadow: 0 0 0 3px var(--bg), var(--shadow); }
+.pick-pin::after { content: ""; position: absolute; inset: -9px; border-radius: 50%; border: 2px solid var(--accent);
+  animation: pin-pulse 1.6s ease-out 2; opacity: 0; }
+@keyframes pin-pulse { from { transform: scale(0.5); opacity: 1; } to { transform: scale(1.6); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .pick-pin::after { animation: none; } }
+
+/* ---------------------------------------------------------------- loading message */
+.loading {
+  position: absolute; z-index: 5; left: 50%; top: 40%; transform: translate(-50%, -50%);
+  display: flex; align-items: center; gap: 12px; max-width: calc(100% - 32px);
+  background: var(--surface); border: 1px solid var(--line); border-radius: 999px;
+  padding: 12px 20px; font-size: var(--fs-2); font-weight: 700; box-shadow: var(--shadow);
+  transition: opacity 0.35s ease;
+}
+.loading.done { opacity: 0; }
+.loading.failed { border: 2px solid var(--sos-bg); border-radius: 16px; }
+.loading.failed .spinner { display: none; }
+.loading[hidden] { display: none; }
+.spinner { width: 22px; height: 22px; flex: none; border-radius: 50%;
+  border: 3px solid var(--line); border-top-color: var(--accent); animation: spin 0.9s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (min-width: 900px) { .loading { left: calc(50% + 200px); } }
+@media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 2.5s; } }
+
+/* ---------------------------------------------------------------- first-visit guide */
+dialog.guide-dlg {
+  width: min(480px, calc(100vw - 24px)); border: 0; border-radius: 18px; padding: 0;
+  background: var(--surface); color: var(--ink); box-shadow: var(--shadow);
+}
+dialog.guide-dlg::backdrop { background: rgba(0, 0, 0, 0.55); }
+.guide-body { padding: 20px 20px 18px; }
+.guide-body h2 { margin: 0 0 12px; font-size: var(--fs-4); line-height: 1.2; }
+.steps { list-style: none; padding: 0; margin: 0 0 12px; display: grid; gap: 12px; }
+.steps li { display: flex; gap: 12px; align-items: flex-start; font-size: var(--fs-2); line-height: 1.45; }
+.step-n { flex: none; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--accent); color: var(--accent-ink); font-weight: 700; font-size: var(--fs-2); }
+.guide-tip { margin: 8px 0; font-size: var(--fs-1); }
+.guide-ok { width: 100%; margin-top: 6px; min-height: 52px; font-size: var(--fs-2); }
+.loading { width: max-content; max-width: calc(100vw - 32px); }
+@media (max-width: 899px) { .loading { font-size: var(--fs-1); padding: 10px 16px; } }
