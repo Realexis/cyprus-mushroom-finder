@@ -36,7 +36,7 @@ export function seasonRing(months: number[], current: number, size = 96): string
       class="${m === current ? "ring-now" : ""}">${MONTH_LETTER[m - 1]}</text>`;
   };
   const am = ((current - 0.5) / 12) * 2 * Math.PI - Math.PI / 2;
-  return `<svg class="ring" width="${size + 28}" height="${size + 28}" viewBox="-14 -14 ${size + 28} ${size + 28}" role="img"
+  return `<svg data-tip="The year as a ring, starting with January at the top. Filled months = the season. The dot and bold letter = the month you are looking at." class="ring" width="${size + 28}" height="${size + 28}" viewBox="-14 -14 ${size + 28} ${size + 28}" role="img"
     aria-label="Season: ${months.map((m) => MONTH_LETTER[m - 1]).length} months, marked on a year ring">
     ${Array.from({ length: 12 }, (_, i) => arc(i + 1)).join("")}
     ${Array.from({ length: 12 }, (_, i) => lab(i + 1)).join("")}
@@ -47,7 +47,7 @@ export function seasonRing(months: number[], current: number, size = 96): string
 const photoHTML = (p: Photo, alt: string, cls = "") => `
   <figure class="ph ${cls}">
     <img src="${esc(p.url)}" alt="${esc(alt)}" loading="lazy" decoding="async" referrerpolicy="no-referrer" />
-    <figcaption><a href="${esc(p.page)}" target="_blank" rel="noopener">${esc(p.attribution)}</a></figcaption>
+    <figcaption><a href="${esc(p.page)}" target="_blank" rel="noopener" data-tip="Photo author and licence. Opens the photo on iNaturalist.">${esc(p.attribution)}</a></figcaption>
   </figure>`;
 
 function lookalikesHTML(sp: Species): string {
@@ -55,7 +55,7 @@ function lookalikesHTML(sp: Species): string {
     <li class="look ${l.severity}">
       ${l.photos[0] ? photoHTML(l.photos[0], `Photo of ${l.latin}`, "small") : ""}
       <div>
-        <span class="sev ${l.severity}">${l.severity === "deadly" ? "DEADLY" : "TOXIC"}</span>
+        <span class="sev ${l.severity}" data-tip="${l.severity === "deadly" ? "Deadly: can kill. Poisoning? Call 112 at once, do not wait for symptoms." : "Toxic: poisonous. Poisoning? Call 112 or the Poison Centre 1401."}">${l.severity === "deadly" ? "DEADLY" : "TOXIC"}</span>
         <b><i>${esc(l.latin)}</i></b>${l.common ? ` · ${esc(l.common)}` : ""}
         ${l.note ? `<p>${esc(l.note)}</p>` : ""}
       </div>
@@ -72,7 +72,7 @@ function lookalikesHTML(sp: Species): string {
 
 function cardHTML(sp: Species, month: number): string {
   const local = sp.local_confirmed ? `<b>${esc(sp.local)}</b>`
-    : `<b>${esc(sp.local)}</b> <span class="tag warn">to confirm with the Cyprus Mycological Association</span>`;
+    : `<b>${esc(sp.local)}</b> <span class="tag warn" data-tip="We have not checked this spelling yet. We will ask the Cyprus Mycological Association.">to confirm with the Cyprus Mycological Association</span>`;
   return `
     <article class="sp-card" aria-labelledby="sp-h-${sp.code}">
       <div class="sp-safety">${WARN_ICON}<span>${SAFETY_LINE}</span></div>
@@ -92,14 +92,14 @@ function cardHTML(sp: Species, month: number): string {
         ${sp.notes.length ? `<ul class="sp-notes">${sp.notes.map((n) => `<li>${esc(n)}</li>`).join("")}</ul>` : ""}
         <p class="muted small">Photos: iNaturalist (${sp.inat_pages.map((p) => `<a href="${esc(p.url)}" target="_blank" rel="noopener"><i>${esc(p.name)}</i></a>`).join(", ")}).
           Each photo shows its author and licence.</p>
-        <button class="primary-btn" type="button" data-show="${sp.code}">Show good conditions for this habitat on the map</button>
+        <button class="primary-btn" type="button" data-show="${sp.code}" data-tip="Close this card and colour the map for this mushroom's trees, altitude and season.">Show good conditions for this habitat on the map</button>
       </section>
     </article>`;
 }
 
 function listHTML(month: number): string {
   return `<ul class="sp-list">${SPECIES.map((s) => `
-    <li><button type="button" class="sp-pick" data-open="${s.code}">
+    <li><button type="button" class="sp-pick" data-open="${s.code}" data-tip="Open the card: deadly lookalikes first, then photos, season, trees and altitude.">
       ${s.photos[0] ? `<img src="${esc(s.photos[0].url)}" alt="" loading="lazy" referrerpolicy="no-referrer" />` : ""}
       <span><b><i>${esc(s.latin)}</i></b><br><span class="muted">${esc(s.common)} · ${esc(s.season_text)}
         ${s.months.includes(month) ? `<span class="tag">in season</span>` : ""}</span></span>
@@ -117,9 +117,9 @@ export function mountSpecies(month: () => number, onShow: (code: string) => void
     const sp = code ? SPECIES.find((s) => s.code === code) : undefined;
     dlg.innerHTML = `
       <div class="dlg-head">
-        ${sp ? `<button type="button" class="icon-btn" data-back aria-label="Back to all species">←</button>` : ""}
+        ${sp ? `<button type="button" class="icon-btn" data-back aria-label="Back to all species" data-tip="Back to all species.">←</button>` : ""}
         <h2>${sp ? "Species card" : "Species cards"}</h2>
-        <button type="button" class="icon-btn" data-close aria-label="Close">✕</button>
+        <button type="button" class="icon-btn" data-close aria-label="Close" data-tip="Close the species cards and go back to the map.">✕</button>
       </div>
       <div class="dlg-body">
         ${sp ? cardHTML(sp, month()) : `<div class="sp-safety">${WARN_ICON}<span>${SAFETY_LINE}</span></div>

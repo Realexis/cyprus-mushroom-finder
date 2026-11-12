@@ -13,6 +13,8 @@ import { mountEmergency } from "./ui/safety";
 import { mountSpecies, speciesByCode } from "./ui/species";
 import { CellInfo, cellSpot, hexSpot, type SpotData, type Spots } from "./ui/spot";
 import { applyTheme, currentTheme, toggleTheme } from "./ui/theme";
+import { hideMapTip as hideTip, mountTips, showAt } from "./ui/tips";
+import { words } from "./ui/spot";
 
 const abs = (p: string) => new URL(p, document.baseURI).href;
 
@@ -65,13 +67,16 @@ class TerrainControl implements maplibregl.IControl {
     this.btn.textContent = this.on ? "2D" : "3D";
     this.btn.setAttribute("aria-pressed", String(this.on));
     this.btn.setAttribute("aria-label", this.on ? "Back to the flat 2D map" : "Show the map in 3D");
-    this.btn.title = this.btn.getAttribute("aria-label")!;
+    this.btn.dataset.tip = this.on
+      ? "Back to the flat map."
+      : "Tilt the map to see the mountains in 3D. To turn or tilt: drag with the right mouse button, or with two fingers.";
   }
   onRemove() { this.btn.parentElement?.remove(); }
 }
 
 async function main() {
   applyTheme(currentTheme());
+  mountTips();
   mountEmergency([...document.querySelectorAll<HTMLElement>("[data-emergency]")]);
 
   maplibregl.setWorkerUrl(abs("vendor/maplibre-gl-worker.mjs"));
@@ -88,6 +93,7 @@ async function main() {
   if (meta.weather_run < cyprusToday()) {
     const d = document.getElementById("delayed")!;
     d.textContent = `Data delayed · last update ${meta.weather_run}`;
+    d.dataset.tip = "Today's weather update has not arrived yet. The map shows the last good data. It usually updates at 6 am Cyprus time (7 am in summer).";
     d.hidden = false;
   }
 
@@ -136,6 +142,17 @@ async function main() {
   const terrainCtl = new TerrainControl((on) => set3D(map, on, theme));
   map.addControl(terrainCtl, "top-right");
   map.addControl(new maplibregl.GeolocateControl({ positionOptions: { enableHighAccuracy: true } }), "top-right");
+  // Our own tips on MapLibre's buttons (and no second, native browser tooltip).
+  const ctlTips: Record<string, string> = {
+    ".maplibregl-ctrl-zoom-in": "Zoom in. You can also scroll or pinch.",
+    ".maplibregl-ctrl-zoom-out": "Zoom out.",
+    ".maplibregl-ctrl-compass": "Turn the map back to north and flat. The needle shows where north is.",
+    ".maplibregl-ctrl-geolocate": "Show where you are on the map (needs location permission). Your position stays on your phone.",
+  };
+  for (const [sel, tip] of Object.entries(ctlTips)) {
+    const b = document.querySelector<HTMLElement>(sel);
+    if (b) { b.removeAttribute("title"); b.dataset.tip = tip; }
+  }
 
   const sheet = document.getElementById("sheet")!;
   const phone = matchMedia("(max-width: 899px)");
@@ -225,8 +242,32 @@ async function main() {
   });
   for (const id of ["hex-fill", "cells-fill", "hot-fill"]) {
     map.on("mouseenter", id, () => (map.getCanvas().style.cursor = "pointer"));
-    map.on("mouseleave", id, () => (map.getCanvas().style.cursor = ""));
+    map.on("mouseleave", id, () => { map.getCanvas().style.cursor = ""; hideTip(); });
   }
+
+  // Hovering the map (mouse only): a small tip with the score, so you can scan before clicking.
+  map.on("mousemove", (e) => {
+    if (panel.mode !== "conditions") return;
+    const ids = ["hot-fill", "cells-fill", "hex-fill"].filter((id) => map.getLayer(id) &&
+      map.getLayoutProperty(id, "visibility") !== "none");
+    const f = map.queryRenderedFeatures(e.point, { layers: ids })[0];
+    if (!f) { hideTip(); return; }
+    const r = map.getCanvas().getBoundingClientRect();
+    const p = f.properties as Record<string, number>;
+    let text: string;
+    if (f.layer.id === "hot-fill") text = `Shade ${p.sh}/100 · ${p.el} m. Click for details.`;
+    else {
+      const sp = speciesByCode(panel.species);
+      if (sp && !panel.inSeason(panel.day)) text = `Out of season for ${sp.latin} (${sp.season_text}). Click for details.`;
+      else {
+        const v = buildSpot({ f, lngLat: e.lngLat }).score(panel.day);
+        text = v === null ? "Not scored here. Click for details." : `${v}/100 · ${words(v)}. Click for details.`;
+      }
+    }
+    showAt(e.originalEvent.clientX || r.left + e.point.x, (e.originalEvent.clientY || r.top + e.point.y) - 6, text);
+  });
+  map.on("mouseout", () => hideTip());
+  map.on("movestart", () => hideTip());
 }
 
 main();

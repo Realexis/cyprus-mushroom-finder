@@ -21,6 +21,15 @@ const FACTOR_LABEL: Record<string, string> = {
   season_altitude: "Season for the altitude", shade: "Shade",
 };
 const CONF_TEXT = { high: "High confidence", medium: "Medium confidence", low: "Low confidence" };
+// Plain-language help for each factor (same numbers as config/scoring.yaml and the About page).
+const FACTOR_TIP: Record<string, string> = {
+  rain_total: "All rain in the last 30 days. No points below 20 mm, full points from 80 mm.",
+  rain_pulse: "The biggest 3-day rain between 7 and 20 days ago. No points below 10 mm, full points from 25 mm.",
+  temperature: "Average temperature of the last 7 days, corrected for height. Best 8-18 °C. No points at 3 °C or 24 °C. Frost days take points off.",
+  soil_moisture: "How wet the top soil is now, compared with this place's normal. Wetter than most days = more points.",
+  season_altitude: "Is it the right month for this height? High Troodos starts in September, middle heights in October, low hills in November.",
+  shade: "North and east-facing slopes, valley bottoms and little autumn sun keep the ground moist longer.",
+};
 
 export const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]!));
 
@@ -99,12 +108,15 @@ function whyBars(s: SpotData, ctx: SpotContext): string {
     let f = fac[i];
     if (n === "season_altitude" && ctx.species) f = ctx.inSeason(ctx.day) ? 1 : 0;
     const pct = Math.round(Math.max(0, Math.min(1, f)) * 100);
-    return `<li class="why-row">
+    const tip = n === "season_altitude" && ctx.species
+      ? `Is it ${ctx.species.latin} season? Its season is ${ctx.species.season_text}. In season = full points.`
+      : FACTOR_TIP[n];
+    return `<li class="why-row" data-tip="${esc(tip)} This counts for ${Math.round(ctx.meta.weights[n] * 100)}% of the score.">
       <div class="why-top"><span>${FACTOR_LABEL[n]}</span><span class="muted">counts ${Math.round(ctx.meta.weights[n] * 100)}%</span></div>
       <div class="why-bar" role="img" aria-label="${FACTOR_LABEL[n]}: ${pct} out of 100"><i style="width:${pct}%;background:${scoreColour(pct)}"></i></div>
       <div class="why-val">${esc(factorText(n, inp, f, ctx, d))}</div></li>`;
   }).join("");
-  return `<details class="why" open><summary><b>Why this score</b></summary><ul>${rows}</ul></details>`;
+  return `<details class="why" open><summary data-tip="The six things that make the score. A long bar = that thing is good right now. Tap to hide or show."><b>Why this score</b></summary><ul>${rows}</ul></details>`;
 }
 
 function forecast(s: SpotData, ctx: SpotContext): string {
@@ -113,12 +125,13 @@ function forecast(s: SpotData, ctx: SpotContext): string {
     const v = off ? null : s.score(d.offset);
     const label = d.offset === 0 ? "Today" : fmtDay(d.date, { weekday: "short" });
     const h = v === null ? 0 : Math.max(4, v * 0.56);
-    return `<div class="fc-day${d.offset === ctx.day ? " sel" : ""}" title="${label} ${fmtDay(d.date, { day: "numeric", month: "short" })}: ${v ?? "–"} · ${CONF_TEXT[d.confidence]}">
+    const tipText = `${fmtDay(d.date, { weekday: "long", day: "numeric", month: "long" })}: ${off ? "out of season" : v === null ? "no score" : `score ${v}`}. ${CONF_TEXT[d.confidence]}.`;
+    return `<div class="fc-day${d.offset === ctx.day ? " sel" : ""}" data-tip="${tipText}">
       <span class="fc-num">${v ?? "–"}</span>
       <i style="height:${h}px;background:${v === null ? "transparent" : scoreColour(v)}"></i>
       <span class="fc-lab">${label}</span><span class="dot ${d.confidence}" aria-hidden="true"></span></div>`;
   }).join("");
-  return `<h3 class="spot-h">Next 8 days</h3><div class="fc" aria-label="Score for the next 8 days">${bars}</div>
+  return `<h3 class="spot-h" data-tip="The score for today and the next 7 days. Later days use the weather forecast, so they are less certain.">Next 8 days</h3><div class="fc" aria-label="Score for the next 8 days">${bars}</div>
     <p class="muted small">Dots: forecast confidence (full = high, half = medium, empty = low).</p>`;
 }
 
@@ -137,34 +150,34 @@ export function spotHTML(s: SpotData, ctx: SpotContext): string {
   const showScore = v !== null && !(sp && !ctx.inSeason(ctx.day));
   const clk = s.clock ? clockSentence(s.clock(ctx.day), ctx.meta.clock) : null;
   const facts = [
-    s.trees ? `<li><span aria-hidden="true">🌲</span> <b>Trees:</b> ${s.trees}</li>` : "",
-    s.altitude ? `<li><span aria-hidden="true">⛰</span> <b>Altitude:</b> ${s.altitude}</li>` : "",
-    s.road ? `<li><span aria-hidden="true">🚙</span> <b>Nearest:</b> ${s.road}</li>` : "",
+    s.trees ? `<li data-tip="The likely trees, worked out from satellite forest maps, height and rock type. Not a tree survey."><span aria-hidden="true">🌲</span> <b>Trees:</b> ${s.trees}</li>` : "",
+    s.altitude ? `<li data-tip="Height above sea level. Higher forest is cooler and its season starts earlier."><span aria-hidden="true">⛰</span> <b>Altitude:</b> ${s.altitude}</li>` : "",
+    s.road ? `<li data-tip="Straight-line distance to the nearest forest track and drivable road, from OpenStreetMap. Not a driving route."><span aria-hidden="true">🚙</span> <b>Nearest:</b> ${s.road}</li>` : "",
   ].join("");
   return `
-    <div class="spot-head"><span>${head}</span>${showScore ? `<span class="spot-score">${v}<small>/100</small></span>` : ""}</div>
+    <div class="spot-head"><span>${head}</span>${showScore ? `<span class="spot-score" data-tip="0 to 100: how good the growing conditions are here. It does not mean a mushroom is there.">${v}<small>/100</small></span>` : ""}</div>
     ${s.where ? `<p class="muted">${esc(s.where)}</p>` : ""}
     ${s.note ? `<p class="muted small">${s.note}</p>` : ""}
-    ${clk ? `<p class="clock ${clk.open ? "open" : ""}"><span aria-hidden="true">⏱</span> <b>Mushroom clock:</b> ${clk.text}</p>` : ""}
+    ${clk ? `<p class="clock ${clk.open ? "open" : ""}" data-tip="Counts the days since the last soaking rain (${ctx.meta.clock.soak_mm} mm or more). The fruiting window opens about ${ctx.meta.clock.opens} days after it and closes about ${ctx.meta.clock.closes} days after it."><span aria-hidden="true">⏱</span> <b>Mushroom clock:</b> ${clk.text}</p>` : ""}
     ${showScore ? whyBars(s, ctx) : ""}
     ${forecast(s, ctx)}
     ${facts ? `<ul class="facts">${facts}</ul>` : ""}
-    <p class="muted small">Growing conditions only. <button class="link-btn" id="spot-close" type="button">Close</button></p>`;
+    <p class="muted small">Growing conditions only. <button class="link-btn" id="spot-close" type="button" data-tip="Close this panel.">Close</button></p>`;
 }
 
 function hotHTML(s: SpotData): string {
   const h = s.hot!;
-  const part = (label: string, v: number) => `<li class="why-row"><div class="why-top"><span>${label}</span><span class="muted">${v}/100</span></div>
+  const part = (label: string, v: number, tip: string) => `<li class="why-row" data-tip="${tip}"><div class="why-top"><span>${label}</span><span class="muted">${v}/100</span></div>
     <div class="why-bar"><i style="width:${v}%;background:#2f6f78"></i></div></li>`;
   return `
     <div class="spot-head"><span><b>50 m terrain square</b><span class="tag warn" style="margin-left:6px">private</span></span>
-      <span class="spot-score">${h.sh}<small>/100 shade</small></span></div>
+      <span class="spot-score" data-tip="Shade score 0 to 100: the average of the three parts below. Shade keeps the ground moist.">${h.sh}<small>/100 shade</small></span></div>
     <p class="muted">${h.con ? "Conifer forest" : "Broadleaf forest"} · ${h.el} m</p>
     <ul class="why-list">
-      ${part("Faces north-east (cooler)", h.fa)}${part("Valley bottom", h.va)}${part("Little autumn sun", h.ls)}
+      ${part("Faces north-east (cooler)", h.fa, "Slopes facing north or east get less sun, so they stay cooler and wetter.")}${part("Valley bottom", h.va, "Valley bottoms collect water and stay damp longer than ridges.")}${part("Little autumn sun", h.ls, "How much autumn sun this square misses, including shadows from nearby ridges.")}
     </ul>
     <p class="muted small">Terrain only. Rain and temperature are the same for the whole zone
-      (the weather model is about 9 km). <button class="link-btn" id="spot-close" type="button">Close</button></p>`;
+      (the weather model is about 9 km). <button class="link-btn" id="spot-close" type="button" data-tip="Close this panel.">Close</button></p>`;
 }
 
 // ---------------------------------------------------------------- builders
