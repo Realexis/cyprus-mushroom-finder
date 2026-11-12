@@ -16,6 +16,7 @@ import { CellInfo, cellSpot, hexSpot, type SpotData, type Spots } from "./ui/spo
 import { applyTheme, currentTheme, toggleTheme } from "./ui/theme";
 import { hideMapTip as hideTip, mountTips, showAt } from "./ui/tips";
 import { mountGuide } from "./ui/guide";
+import { renderLegend } from "./ui/legend";
 import { words } from "./ui/spot";
 
 const abs = (p: string) => new URL(p, document.baseURI).href;
@@ -218,10 +219,17 @@ async function main() {
     (p) => {
       if (!map.isStyleLoaded()) return;
       applyView(map, p.view);
+      drawLegend();
       if (lastPick && p.mode === "conditions") p.showSpot(buildSpot(lastPick), false);
     },
     (p) => { if (map.isStyleLoaded()) setReplayFrame(map, p.view); },
     (code) => openSpecies(code));
+  // The colour key on the map (follows the layer, the species season and the zoom).
+  const legendEl = document.getElementById("map-legend")!;
+  function drawLegend() { renderLegend(legendEl, panel.view, map.getZoom(), shade); }
+  drawLegend();
+  map.on("zoom", drawLegend);
+
   const openSpecies = mountSpecies(() => panel.monthOf(panel.day), (code) => panel.setSpecies(code));
 
   // Keep map buttons above the bottom sheet on phones.

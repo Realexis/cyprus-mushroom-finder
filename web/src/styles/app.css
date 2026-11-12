@@ -477,3 +477,22 @@ dialog.guide-dlg::backdrop { background: rgba(0, 0, 0, 0.55); }
   .safety-short-text { font-size: min(0.875rem, 3.6vw); letter-spacing: 0; }
   .safety-more { width: 20px; }
 }
+
+/* ================================================================ ux-v2 Fix 2: colour key on the map */
+.map-legend {
+  position: absolute; z-index: 2; width: 220px; padding: 8px 12px 9px;
+  left: calc(16px + 390px + 16px); bottom: 28px;       /* desktop: just right of the side panel */
+  background: color-mix(in srgb, var(--surface) 94%, transparent); border: 1px solid var(--line);
+  border-radius: var(--radius-s); box-shadow: var(--shadow); font-size: var(--fs-0); line-height: 1.35; cursor: help;
+}
+.map-legend:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.ml-title { font-weight: 700; color: var(--ink); margin-bottom: 5px; }
+.ml-bar { height: 12px; border-radius: 6px; border: 1px solid color-mix(in srgb, var(--ink) 25%, transparent); }
+.ml-scale { display: flex; justify-content: space-between; gap: 6px; margin-top: 4px; color: var(--ink); }
+.ml-scale span:nth-child(2) { color: var(--ink-soft); }
+.ml-note { margin-top: 4px; color: var(--ink-soft); }
+@media (max-width: 899px) {
+  /* phones: bottom-left, just above the bottom sheet (over the sea south-west of Paphos) */
+  .map-legend { left: 8px; bottom: min(var(--sheet-h, 260px), 70%); width: 168px; padding: 6px 10px 7px; }
+  .ml-bar { height: 10px; }
+}
