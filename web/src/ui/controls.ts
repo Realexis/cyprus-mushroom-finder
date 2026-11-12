@@ -38,9 +38,9 @@ export class Panel {
 
   /** `fine` = the 250 m forest squares are published (the normal case). Without them: ~2 km zones. */
   constructor(private el: HTMLElement, private meta: Meta, fine: boolean,
-              private islandRain: number[], private hotZones: HotZone[],
+              private islandRain: number[], private hasHot: boolean,
               private onChange: (p: Panel) => void, private onFrame: (p: Panel) => void,
-              private openSpecies: (code?: string) => void, private flyTo: (z: HotZone) => void) {
+              private openSpecies: (code?: string) => void) {
     this.priv = fine;
     this.render();
   }
@@ -194,7 +194,6 @@ export class Panel {
       ${rainNote}
       ${this.mode === "replay" ? this.replayHTML() : ""}
       ${this.legend()}
-      ${this.priv && this.hotZones.length ? this.hotHTML() : ""}
       <div class="links"><a href="about.html" data-tip="Where the data comes from, how the score works, and the picking law.">About the data</a>
         <button id="guide-btn" type="button" data-tip="Show the three-step guide again.">How to use</button>
         <button id="theme-btn" type="button" data-tip="Switch between light and dark colours. Dark is easier on the eyes at night.">Light / dark</button></div>
@@ -226,31 +225,11 @@ export class Panel {
       this.replayIndex = Math.max(0, Math.min(REPLAY_DAYS - 1, Math.floor(((e.clientX - r.left) / r.width) * REPLAY_DAYS)));
       this.updateReplay(); this.onFrame(this);
     });
-    this.el.querySelectorAll<HTMLButtonElement>("[data-zone]").forEach((b) =>
-      b.addEventListener("click", () => this.flyTo(this.hotZones[Number(b.dataset.zone)])));
     this.el.querySelector("#grip")?.addEventListener("click", () => this.el.classList.toggle("collapsed"));
     this.el.querySelector("#theme-btn")?.addEventListener("click", () => document.dispatchEvent(new Event("toggle-theme")));
     this.el.querySelector("#guide-btn")?.addEventListener("click", () => document.dispatchEvent(new Event("open-guide")));
     if (this.mode === "replay") this.updateReplay();
     this.renderSpot();
-  }
-
-  private hotHTML() {
-    const item = (z: HotZone, i: number) => `<li><button type="button" class="zone-btn" data-zone="${i}"
-      data-tip="Fly to this zone and show its shade at 50 m. Best day: ${fmtDay(z.date, { weekday: "long", day: "numeric", month: "long" })}, score ${z.score}.">
-      <span><b>${esc(z.where)}</b><br><span class="muted">best ${fmtDay(z.date, { weekday: "short", day: "numeric" })}</span></span>
-      <span class="zone-score">${z.score}</span></button></li>`;
-    const top = this.hotZones.slice(0, 5).map(item).join("");
-    const rest = this.hotZones.slice(5).map((z, k) => item(z, k + 5)).join("");
-    return `<div class="hot">
-      <h2>Hotspot zoom · 50 m terrain</h2>
-      <p class="muted small">The top zones of the next 8 days. Zoom in to see shade at 50 m: cool slopes,
-        valley bottoms and little autumn sun. Terrain only, no finer weather.</p>
-      <ul class="zones">${top}</ul>
-      ${rest ? `<details><summary>${this.hotZones.length - 5} more zones</summary><ul class="zones">${rest}</ul></details>` : ""}
-      <div class="legend-bar" style="background:${gradient(SHADE_STOPS)}" data-tip="Pale = sunny and exposed. Dark blue = deep shade: north-east slopes, valley bottoms, little autumn sun."></div>
-      <div class="legend-scale"><span>sunny</span><span>deep shade</span></div>
-    </div>`;
   }
 
   private legend() {
@@ -263,6 +242,10 @@ export class Panel {
         ${sp ? `<div class="legend-row" data-tip="Grey = this mushroom's habitat, but the month is outside its season, so there is no score."><span class="swatch oos"></span> Out of season (habitat only)</div>` : ""}
         <div class="legend-row" data-tip="Each coloured square is 250 m of forest. Its score uses the weather for its area (about 9 km wide), corrected for its height, plus its own shade, trees and altitude.">${this.priv ? "Each square = 250 m of forest" : "Each hexagon ≈ 2 km of forest"}</div>
         ${sp ? "" : `<div class="legend-row muted">"Other broadleaf" forest is not scored here (no partner tree). It counts for morels.</div>`}
+        ${this.priv && this.hasHot ? `<div class="legend-zoom" data-tip="The dashed outlines are the best zones of the next 8 days. Zoom in on one and its forest turns into 50 m squares showing shade: cool north-east slopes, valley bottoms and little autumn sun. Terrain only, no finer weather.">
+          <div class="legend-row"><span class="swatch dashed"></span> <span><b>Top zones</b>: zoom in for 50 m shade</span></div>
+          <div class="legend-bar" style="background:${gradient(SHADE_STOPS)}"></div>
+          <div class="legend-scale"><span>sunny</span><span>deep shade</span></div></div>` : ""}
       </div>`;
     }
     const stops = this.mode === "replay" ? RAIN1_STOPS : this.mode === "rain7" ? RAIN7_STOPS : RAIN30_STOPS;

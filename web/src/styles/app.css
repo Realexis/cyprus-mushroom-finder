@@ -444,3 +444,5 @@ dialog.guide-dlg::backdrop { background: rgba(0, 0, 0, 0.55); }
 .more-links { padding-left: 1.2em; margin: 4px 0; }
 .more-links li { margin: 3px 0; }
 .oos-note { display: block; margin-top: 6px; font-size: var(--fs-0); color: var(--ink-soft); }
+.legend-zoom { margin-top: 10px; }
+.swatch.dashed { height: 14px; border: 2.5px dashed var(--accent); background: transparent; }

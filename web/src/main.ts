@@ -190,19 +190,14 @@ async function main() {
     return hexSpot(props, spots?.spots[Number(props.h)], (d) => hexProp(d, panel.filter), meta.general_map_trees);
   };
 
-  const panel: Panel = new Panel(sheet, meta, priv, islandRain(rain, 30), hotZones,
+  const panel: Panel = new Panel(sheet, meta, priv, islandRain(rain, 30), hotZones.length > 0,
     (p) => {
       if (!map.isStyleLoaded()) return;
       applyView(map, p.view);
       if (lastPick && p.mode === "conditions") p.showSpot(buildSpot(lastPick), false);
     },
     (p) => { if (map.isStyleLoaded()) setReplayFrame(map, p.view); },
-    (code) => openSpecies(code),
-    (z) => {
-      const pad = phone.matches ? { bottom: sheet.offsetHeight, top: 0, left: 0, right: 0 }
-        : { left: sheet.offsetWidth + 32, top: 0, bottom: 0, right: 0 };
-      map.flyTo({ center: [z.lon, z.lat], zoom: 13.2, padding: pad, duration: 1600 });
-    });
+    (code) => openSpecies(code));
   const openSpecies = mountSpecies(() => panel.monthOf(panel.day), (code) => panel.setSpecies(code));
 
   // Keep map buttons above the bottom sheet on phones.

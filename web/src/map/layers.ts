@@ -149,8 +149,11 @@ export function addOverlays(map: MlMap, theme: Theme, urls: LayerUrls, v: View) 
         "fill-opacity": ["interpolate", ["linear"], ["zoom"], 11.5, 0, 12.3, 0.85], "fill-antialias": false },
     }, firstSymbol);
     map.addLayer({
-      id: "hot-zone", type: "line", source: "hotzones", minzoom: 9.5, layout: { visibility: on },
-      paint: { "line-color": theme === "dark" ? "#f6dfa6" : "#8a5d00", "line-width": 2.5, "line-dasharray": [2, 1.2] },
+      // Top zones: a thin solid ring from far away (so you can see where to zoom), dashed up close.
+      id: "hot-zone", type: "line", source: "hotzones", layout: { visibility: on },
+      paint: { "line-color": theme === "dark" ? "#f6dfa6" : "#8a5d00",
+        "line-width": ["interpolate", ["linear"], ["zoom"], 7, 1.2, 10, 2, 12, 2.5],
+        "line-dasharray": ["step", ["zoom"], ["literal", [1, 0]], 9.5, ["literal", [2, 1.2]]] as unknown as ExpressionSpecification },
     }, firstSymbol);
     map.addLayer({
       id: "hot-label", type: "symbol", source: "hotzones", minzoom: 9, layout: { visibility: on,
