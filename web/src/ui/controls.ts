@@ -23,6 +23,11 @@ const CONF_TIP = {
   low: "Forecast 5 or more days ahead: only a rough guide. Check again closer to the day.",
 };
 const REPLAY_DAYS = 30;
+/** Top row of the zone panel: always a clear way back (stays visible while the panel scrolls). */
+const SPOT_BAR = `<div class="spot-bar">
+  <button type="button" class="spot-back" data-spot-back data-tip="Close this panel and go back to the days.">
+    <span aria-hidden="true">←</span> Back to days</button>
+  <button type="button" class="spot-x" data-spot-close aria-label="Close this panel" data-tip="Close this panel.">✕</button></div>`;
 
 function gradient(stops: [number, string][]) {
   const max = stops[stops.length - 1][0];
@@ -48,6 +53,10 @@ export class Panel {
               private onChange: (p: Panel) => void, private onFrame: (p: Panel) => void,
               private openSpecies: (code?: string) => void) {
     this.priv = fine;
+    // Escape closes the zone panel (unless a dialog is open: it closes itself first).
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && this.spot && !document.querySelector("dialog[open]")) this.closeSpot(true);
+    });
     this.render();
   }
 
@@ -73,6 +82,16 @@ export class Panel {
     this.species = code;
     if (this.mode !== "conditions") { this.stop(); this.mode = "conditions"; }
     this.render(); this.onChange(this);
+  }
+
+  /** Close the zone panel; `toDays` also brings the day buttons back into view and focus. */
+  closeSpot(toDays = false) {
+    this.showSpot(null);
+    document.dispatchEvent(new Event("spot-closed"));
+    if (toDays) {
+      this.el.scrollTo({ top: 0 });
+      this.el.querySelector<HTMLButtonElement>('.day[aria-pressed="true"]')?.focus({ preventScroll: true });
+    }
   }
 
   showSpot(s: SpotData | null, scroll = true) {
@@ -275,16 +294,25 @@ export class Panel {
     const s = this.spot;
     if (!s || this.mode !== "conditions") { el.hidden = true; return; }
     const sp = speciesByCode(this.species);
-    el.innerHTML = spotHTML(s, { meta: this.meta, day: this.day,
+    el.innerHTML = SPOT_BAR + spotHTML(s, { meta: this.meta, day: this.day,
       species: sp ? { code: sp.code, latin: sp.latin, season_text: sp.season_text } : null, inSeason: this.inSeason,
       monthOf: (d) => this.monthOf(d), all: SPECIES });
     el.querySelectorAll<HTMLButtonElement>("[data-pick-species]").forEach((b) =>
       b.addEventListener("click", () => this.setSpecies(b.dataset.pickSpecies || null)));
     el.querySelectorAll<HTMLButtonElement>("[data-open-card]").forEach((b) =>
       b.addEventListener("click", () => this.openSpecies(b.dataset.openCard!)));
-    el.querySelector("#spot-close")?.addEventListener("click", () => {
-      this.showSpot(null); document.dispatchEvent(new Event("spot-closed"));
-    });
+    el.querySelector("#spot-close")?.addEventListener("click", () => this.closeSpot(true));
+    el.querySelector("[data-spot-close]")?.addEventListener("click", () => this.closeSpot(true));
+    el.querySelector("[data-spot-back]")?.addEventListener("click", () => this.closeSpot(true));
+    // Phones: swipe down (from the top of the panel) to close it.
+    if (!el.dataset.swipe) {
+      el.dataset.swipe = "1";
+      let y0: number | null = null;
+      el.addEventListener("touchstart", (e) => { y0 = this.el.scrollTop <= 0 ? e.touches[0].clientY : null; }, { passive: true });
+      el.addEventListener("touchmove", (e) => {
+        if (y0 !== null && e.touches[0].clientY - y0 > 80) { y0 = null; this.closeSpot(true); }
+      }, { passive: true });
+    }
     el.hidden = false;
   }
 }

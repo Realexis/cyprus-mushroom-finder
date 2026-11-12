@@ -507,3 +507,14 @@ dialog.guide-dlg::backdrop { background: rgba(0, 0, 0, 0.55); }
 .day .day-conf { display: inline-flex; align-items: center; gap: 5px; font-size: 0.8rem; color: var(--ink-soft); white-space: nowrap; }
 .day[aria-pressed="true"] .day-score, .day[aria-pressed="true"] .day-date, .day[aria-pressed="true"] .day-conf { color: var(--accent-ink) !important; }
 @media (min-width: 900px) { .days .day { min-width: 108px; flex: 1 1 108px; max-width: 118px; } }
+
+/* ================================================================ ux-v2 Fix 4: a clear way back from the zone panel */
+.spot-bar { position: sticky; top: -12px; z-index: 2; display: flex; justify-content: space-between; align-items: center; gap: 8px;
+  margin: -12px -14px 8px; padding: 6px 8px 6px 6px; background: var(--surface-2); border-bottom: 1px solid var(--line);
+  border-radius: var(--radius) var(--radius) 0 0; }
+.spot-back, .spot-x { min-height: 44px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface);
+  color: var(--ink); cursor: pointer; font-size: var(--fs-1); font-weight: 700; }
+.spot-back { padding: 0 14px; display: inline-flex; align-items: center; gap: 6px; }
+.spot-x { min-width: 44px; font-size: 1.15rem; line-height: 1; }
+.spot-back:hover, .spot-x:hover { border-color: var(--accent); }
+@media (max-width: 899px) { .spot-bar { top: -10px; } }
