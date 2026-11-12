@@ -5,20 +5,35 @@ A map of Cyprus showing where **growing conditions** are right for wild mushroom
 > **Conditions only. Never eat a wild mushroom based on this map, an app or an AI.**
 > Emergency: **112** · Cyprus Poison Centre: **1401**
 
-## Run the pipeline
+**Live site:** https://realexis.github.io/cyprus-mushroom-finder/
+**For Claude:** https://realexis.github.io/cyprus-mushroom-finder/data/summary.json
 
-Needs: Homebrew `gdal`, `uv`.
+## How it updates
+
+GitHub Actions runs `.github/workflows/daily.yml` every day at **04:00 UTC** (06:00 Cyprus winter time):
+fetch weather → score today + 7 days → export public data → deploy.
+Run it by hand from the repo's **Actions** tab → *Daily conditions update* → *Run workflow*.
+
+Fixed inputs live in the `static-v1` release. The habitat layer is **encrypted**
+(private 250 m detail); the key is the `STATIC_KEY` repo secret.
+
+## Run it on your Mac
+
+Needs Homebrew `gdal`, `uv`, `tippecanoe`, `pmtiles`.
 
 ```bash
 cd pipeline
-uv run python -m shroomy.habitat.fetch     # download + cache the fixed data
-uv run python -m shroomy.habitat.build     # build the 250 m habitat layer
-uv run python -m shroomy.preview.render    # draw preview PNGs into previews/
-uv run pytest                              # tests
+uv run python -m shroomy.daily            # weather + scores + public AND private (250 m) data
+uv run pytest                             # tests
+cd ../web && npm run dev                  # site with the private view at http://localhost:5173
 ```
+
+One-off builds (already done): `shroomy.habitat.fetch`, `shroomy.habitat.build`,
+`shroomy.weather.fetch --clim`, `shroomy.export.terrain`.
 
 ## Where things are
 - `config/` — every weight, threshold, source and credit
 - `pipeline/` — Python data pipeline
+- `web/` — the website (Vite + TypeScript + MapLibre)
 - `docs/TODO-facts.md` — facts still to confirm
 - `PLAN.md` — the phase plan

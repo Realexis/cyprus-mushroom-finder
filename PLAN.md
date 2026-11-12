@@ -1,6 +1,6 @@
 # Cyprus Mushroom Finder — Phase 0 Plan
 
-**Status:** Phase 3 done. Live: https://realexis.github.io/cyprus-mushroom-finder/ · Code: https://github.com/Realexis/cyprus-mushroom-finder. Waiting for "next phase".
+**Status:** Phase 4 done (daily robot at 04:00 UTC). Live: https://realexis.github.io/cyprus-mushroom-finder/ · Code: https://github.com/Realexis/cyprus-mushroom-finder. Waiting for "next phase".
 **Rule zero:** the site shows **growing conditions only**. Never edibility.
 
 ---
@@ -139,7 +139,7 @@ These go in `docs/TODO-facts.md`. Scoring runs with clearly marked draft values 
 1. Habitat layer + static preview map ✓ (see `previews/`)
 2. Weather + v1 score for today + first heatmap ✓
 3. Website v1 + deploy ✓
-4. Daily automation + 7-day forecast + confidence + mushroom clock
+4. Daily automation + 7-day forecast + confidence + mushroom clock ✓
 5. Spot panel, 3D, rain replay, species filter + cards
 6. Private finds log, public/private views, village memory
 7. Saturday planner, Friday briefing, learning pipeline, polish

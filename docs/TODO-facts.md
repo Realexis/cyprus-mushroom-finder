@@ -22,6 +22,9 @@ These values are **not in the brief**. The code runs with a **[DRAFT]** placehol
 | S3 | **Season x altitude table** as numbers | drafted from the brief's words |
 | S4 | Mushroom clock shift for high/cool cells | 0 days |
 | S5 | Russula delica "warm spells" rule | none yet |
+| S6 | Soaking event must end on a wet day (≥ 1 mm) | 1 mm (standard wet-day definition) |
+| S7 | **Should "Other broadleaf" count as habitat in the general map?** Brief: "no partner tree, no mushroom" | counted for now |
+| S8 | Soil "normal" uses only ONE season (Oct 2025-Jan 2026) | add 2 more seasons, one per day |
 
 ## Data and legal
 | # | What | Status |
