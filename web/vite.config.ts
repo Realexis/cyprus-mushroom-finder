@@ -1,6 +1,6 @@
 import { defineConfig, type Plugin } from "vite";
 import { resolve } from "node:path";
-import { createReadStream, existsSync, readdirSync, renameSync, statSync } from "node:fs";
+import { createReadStream, existsSync, statSync } from "node:fs";
 
 // PRIVATE data (future finds log, village notes) lives in ../data/web-private and is served ONLY by the
 // local dev server. It is never copied into the built site.
@@ -30,25 +30,9 @@ function privateData(): Plugin {
   };
 }
 
-// Published build: rename *.pmtiles -> *.pmtiles.zip (see src/map/files.ts for why).
-function zipPmtilesNames(): Plugin {
-  return {
-    name: "pmtiles-zip-names",
-    apply: "build",
-    closeBundle() {
-      const walk = (d: string) => readdirSync(d, { withFileTypes: true }).forEach((e) => {
-        const p = resolve(d, e.name);
-        if (e.isDirectory()) walk(p);
-        else if (p.endsWith(".pmtiles")) renameSync(p, `${p}.zip`);
-      });
-      walk(resolve(__dirname, "dist"));
-    },
-  };
-}
-
 export default defineConfig({
   base: "./",
-  plugins: [privateData(), zipPmtilesNames()],
+  plugins: [privateData()],
   build: {
     rollupOptions: {
       input: { main: resolve(__dirname, "index.html"), about: resolve(__dirname, "about.html") },
