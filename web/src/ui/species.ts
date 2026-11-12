@@ -144,11 +144,13 @@ function cardHTML(sp: Species, month: number, more = false): string {
 }
 
 function listHTML(month: number): string {
-  return `<ul class="sp-list">${SPECIES.map((s) => `
+  // In-season species first.
+  const ordered = [...SPECIES].sort((a, b) => Number(b.months.includes(month)) - Number(a.months.includes(month)));
+  return `<ul class="sp-list">${ordered.map((s) => `
     <li><button type="button" class="sp-pick" data-open="${s.code}" data-tip="Open the card: deadly lookalikes first, then photos, season, trees and altitude.">
       ${s.photos[0] ? `<img src="${esc(s.photos[0].url)}" alt="" loading="lazy" referrerpolicy="no-referrer" />` : ""}
       <span><b><i>${esc(s.latin)}</i></b><br><span class="muted">${esc(s.common)} · ${esc(s.season_text)}
-        ${s.months.includes(month) ? `<span class="tag">in season</span>` : ""}</span></span>
+        ${s.months.includes(month) ? `<span class="tag">in season</span>` : `<span class="tag" data-tip="Not this month. On the map its habitat shows grey, with no score.">out of season</span>`}</span></span>
     </button>
     <button type="button" class="more-mini" data-open-more="${s.code}"
       data-tip="Open the card at its More info part: Cyprus records and links.">More info</button></li>`).join("")}</ul>`;

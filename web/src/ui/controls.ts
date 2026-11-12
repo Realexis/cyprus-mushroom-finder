@@ -137,15 +137,23 @@ export class Panel {
     const sp = speciesByCode(this.species);
     const rainNote = this.mode === "rain7" || this.mode === "rain30"
       ? `<p class="conf-line">Rain shown is the <b>${this.mode === "rain7" ? "last 7" : "last 30"} days</b>, up to today.</p>` : "";
-    const options = [`<option value="">All forest (general map)</option>`,
-      ...SPECIES.map((s) => {
-        const on = s.months.includes(this.monthOf(this.day));
-        return `<option value="${s.code}" ${s.code === this.species ? "selected" : ""}>${esc(s.latin)} · ${esc(s.common)}${on ? "" : ` · out of season (${esc(s.season_text)})`}</option>`;
-      })].join("");
+    // In-season species first; out-of-season ones after, in a group that says why they are grey.
+    const month = this.monthOf(this.day);
+    const opt = (s: (typeof SPECIES)[number], off: boolean) =>
+      `<option value="${s.code}" ${s.code === this.species ? "selected" : ""}>${esc(s.common)} · ${esc(s.latin)}${off ? ` · ${esc(s.season_text)}` : ""}</option>`;
+    const inSeasonList = SPECIES.filter((s) => s.months.includes(month));
+    const offList = SPECIES.filter((s) => !s.months.includes(month));
+    const monthName = fmtDay(cur.date, { month: "long" });
+    const options = [`<option value="" ${this.species ? "" : "selected"}>All forest (general map)</option>`,
+      inSeasonList.length ? `<optgroup label="In season in ${monthName}: coloured by score">${inSeasonList.map((s) => opt(s, false)).join("")}</optgroup>` : "",
+      offList.length ? `<optgroup label="Out of season in ${monthName}: grey, no score">${offList.map((s) => opt(s, true)).join("")}</optgroup>` : "",
+    ].join("");
     const seasonMsg = sp ? (this.inSeason(this.day)
       ? `<p class="filter-line">Good conditions for <i>${esc(sp.latin)}</i> habitat · <span class="tag">in season ${esc(sp.season_text)}</span></p>`
-      : `<p class="filter-line warn-line"><b>Out of season.</b> <i>${esc(sp.latin)}</i> season is ${esc(sp.season_text)}.
-          Grey = its habitat, with no score.</p>`) : "";
+      : `<p class="filter-line warn-line"><b>Why is the map grey?</b> <i>${esc(sp.latin)}</i> (${esc(sp.common)}) fruits in
+          <b>${esc(sp.season_text)}</b>, and this day is in ${fmtDay(cur.date, { month: "long" })}. Grey shows where its habitat is
+          (its trees and altitude), with no score. Its season starts again in
+          <b>${new Date(2000, sp.months[0] - 1, 1).toLocaleDateString("en-GB", { month: "long" })}</b>. For now, pick an in-season species.</p>`) : "";
 
     this.el.innerHTML = `
       <button class="grip-btn" id="grip" type="button" aria-label="Show more or less" data-tip="Tap to show more or fewer controls."><div class="grip"></div></button>
@@ -163,8 +171,11 @@ export class Panel {
       <p id="sp-help" class="muted small">A species changes only the trees, altitude and season that count.</p>
       ${sp ? "" : (() => {
         const on = SPECIES.filter((x) => x.months.includes(this.monthOf(this.day)));
+        const off = SPECIES.filter((x) => !x.months.includes(this.monthOf(this.day)));
         return `<p class="filter-line" data-tip="Species whose season includes this day's month. Tap one to colour the map for its habitat.">
-          <b>In season on this day:</b> ${on.length ? on.map((x) => `<button type="button" class="chip" data-pick-species="${x.code}">${esc(x.common)}</button>`).join(" ") : "none of our target species"}</p>`;
+          <b>In season on this day:</b> ${on.length ? on.map((x) => `<button type="button" class="chip" data-pick-species="${x.code}">${esc(x.common)}</button>`).join(" ") : "none of our target species"}
+          ${off.length ? `<span class="oos-note"><b>Out of season:</b> ${off.map((x) => `${esc(x.common)} (${esc(x.season_text)})`).join(", ")}.
+            If you pick one, its habitat shows <b>grey</b> with no score, because it is the wrong month.</span>` : ""}</p>`;
       })()}
       ${seasonMsg}
       <h2 id="layer-h">Show</h2>
