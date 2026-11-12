@@ -91,6 +91,7 @@ def build(zones: list, days: list, meta: dict, specs: list) -> dict:
             top.append({
                 "rank": rank,
                 "where": z["where"],
+                "spot": z.get("spot"),             # index into spots.json (the site opens this zone)
                 "lat": round(z["lat"], 4), "lon": round(z["lon"], 4),
                 "score": int(round(z["score"][k])),
                 "why": reasons(inp, fac),
@@ -109,7 +110,7 @@ def build(zones: list, days: list, meta: dict, specs: list) -> dict:
                 continue
             have = [z for z in zones if s["code"] in z["species"]]
             sp_out[s["code"]] = {"label": label, "in_season": True, "season": SP.months_text(s["months"]),
-                                 "top_zones": [{"where": z["where"], "lat": round(z["lat"], 4),
+                                 "top_zones": [{"where": z["where"], "spot": z.get("spot"), "lat": round(z["lat"], 4),
                                                 "lon": round(z["lon"], 4),
                                                 "score": int(round(z["species"][s["code"]][k]))}
                                                for z in pick(have, lambda z: z["species"][s["code"]][k], 3)]}

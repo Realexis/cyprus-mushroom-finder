@@ -196,6 +196,7 @@ def build(run, private=True):            # `private` is kept for old callers; ev
             "factors": fm, "inputs": im, "clock": clk_pt[ip],
             "trees": np.bincount(tree[m], minlength=6)[1:] / len(m), "alt": alt,
             "where": spots[-1]["where"],
+            "spot": len(spots) - 1,                           # index into spots.json (zone details)
         })
     _write_geojson(PUBLIC / "hexes.geojson", feats)
     (PUBLIC / "spots.json").write_text(json.dumps({"factors": FACTORS, "inputs": INPUTS, "spots": spots},
