@@ -6,6 +6,7 @@ import "./styles/app.css";
 import * as maplibregl from "maplibre-gl";
 import type { MapGeoJSONFeature } from "maplibre-gl";
 import { Protocol } from "pmtiles";
+import { pmtiles } from "./map/files";
 import { addOverlays, setDay, setMode, type LayerUrls } from "./map/layers";
 import { baseStyle, type Theme } from "./map/style";
 import { Panel, type Meta } from "./ui/controls";
@@ -45,11 +46,11 @@ async function main() {
   }
 
   const urls: LayerUrls = {
-    terrain: abs("tiles/terrain.pmtiles"), hexes: abs("data/hexes.geojson"),
+    terrain: abs(pmtiles("tiles/terrain.pmtiles")), hexes: abs("data/hexes.geojson"),
     rain: abs("data/rain.geojson"), reserves: abs("data/reserves.geojson"),
     privateCells: priv ? abs("private/cells.pmtiles") : undefined,
   };
-  const basemap = abs("tiles/basemap.pmtiles");
+  const basemap = abs(pmtiles("tiles/basemap.pmtiles"));
   let theme: Theme = currentTheme();
 
   const map = new maplibregl.Map({

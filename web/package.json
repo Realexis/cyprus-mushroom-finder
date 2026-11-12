@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "check:words": "node scripts/check-words.mjs",
     "predev": "node scripts/copy-worker.mjs",
-    "prebuild": "node scripts/copy-worker.mjs"
+    "prebuild": "node scripts/copy-worker.mjs",
+    "postbuild": "node scripts/zip-pmtiles-names.mjs"
   },
   "dependencies": {
     "@fontsource/atkinson-hyperlegible": "5.2.8",
