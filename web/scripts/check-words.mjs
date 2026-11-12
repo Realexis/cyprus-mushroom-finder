@@ -4,7 +4,7 @@
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join, extname } from "node:path";
 
-const ROOTS = ["src", "index.html", "about.html", "public/data"];
+const ROOTS = ["src", "index.html", "about.html", "simple.html", "public/data"];
 const BANNED = [/\bedible\b/i, /safe to eat/i, /good to eat/i, /\bsafe\b(?!-area)/i, /find [a-z ]+ here/i];
 const EXT = new Set([".ts", ".html", ".css", ".json", ".geojson", ".mjs"]);
 

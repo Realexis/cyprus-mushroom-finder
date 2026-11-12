@@ -1,4 +1,4 @@
-"""50 m "hotspot zoom" for the top zones (PRIVATE, this Mac only).
+"""50 m "hotspot zoom" for the top zones (public since 2026-11-12, user decision).
 
 Inside each top ~2 km zone of the coming 8 days, we re-run the SAME shade recipe
 as the 250 m habitat layer (config/scoring.yaml -> habitat.shade), but at 50 m:
@@ -8,7 +8,9 @@ read from the 10 m Copernicus forest map.
 Terrain only. There is NO finer weather: ECMWF is ~9 km, so rain and temperature
 stay the same over the whole zone.
 
-Output: data/web-private/hotspots.geojson (50 m squares) + hotspot_zones.json
+Output: web/public/data/hotspots.pmtiles (50 m squares) + hotspot_zones.json
+Needs the 25 m DEM and the 10 m forest map (on your Mac). Where they are missing
+(the daily robot), it skips and the site simply hides the hotspot zoom.
 Run:    uv run python -m shroomy.export.hotspots   (also runs inside export.web)
 """
 import json
@@ -28,7 +30,7 @@ from .. import config
 from ..grid import block_mean, habitat_grid
 from ..habitat import terrain
 
-OUT = config.DATA / "web-private"
+OUT = config.ROOT / "web" / "public" / "data"
 RES = 50
 
 
@@ -68,6 +70,12 @@ def zone_hexes(summ):
 
 
 def build(summ, g=None):
+    need = [config.PROCESSED / "dem_25m.tif", config.RAW / "forest_type" / "forest_type.vrt"]
+    if not all(p.exists() for p in need):
+        for f in ("hotspots.pmtiles", "hotspot_zones.json"):
+            (OUT / f).unlink(missing_ok=True)          # never leave stale hotspots behind
+        print(" - hotspot zoom skipped (terrain inputs not here)")
+        return
     g = g or habitat_grid()
     S = config.load("scoring")["habitat"]
     s = S["shade"]
@@ -120,10 +128,13 @@ def build(summ, g=None):
             z["ring"] = [[round(lo, 5), round(la, 5)] for la, lo in h3.cell_to_boundary(z["hex"])]
             z["ring"].append(z["ring"][0])
     OUT.mkdir(parents=True, exist_ok=True)
-    (OUT / "hotspots.geojson").write_text(json.dumps({"type": "FeatureCollection", "features": feats},
-                                                     separators=(",", ":")))
+    gj = OUT / "hotspots.geojson"
+    gj.write_text(json.dumps({"type": "FeatureCollection", "features": feats}, separators=(",", ":")))
+    from .web import write_pmtiles
+    write_pmtiles(gj, OUT / "hotspots.pmtiles", "hotspots", 10, 14)
+    gj.unlink()
     (OUT / "hotspot_zones.json").write_text(json.dumps({"res_m": RES, "zones": zones}, ensure_ascii=False))
-    print(f" - hotspot zoom: {len(zones)} top zones, {len(feats)} forest squares of 50 m (this Mac only)")
+    print(f" - hotspot zoom: {len(zones)} top zones, {len(feats)} forest squares of 50 m")
 
 
 if __name__ == "__main__":

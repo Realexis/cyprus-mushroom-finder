@@ -66,7 +66,8 @@ shroomy/
 
 ### Private vs public (important)
 
-- A static site is **readable by anyone**. So the public site will **only ever hold the ~2 km hexagons**.
+- A static site is **readable by anyone**. ~~So the public site will only ever hold the ~2 km hexagons.~~
+  **Changed 2026-11-12 (user decision):** the public site shows the 250 m squares and 50 m hotspot zoom (conditions only).
 - The **250 m private tiles** and **all finds** go to Supabase behind login (Phase 6).
 - Until Phase 6, you see the private 250 m view **on your Mac only**.
 

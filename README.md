@@ -35,7 +35,8 @@ One-off builds (already done): `shroomy.habitat.fetch`, `shroomy.habitat.build`,
 
 Species cards: `uv run python -m shroomy.export.species` rebuilds `web/src/generated/species.json`
 from `config/species.yaml` + `config/lookalikes.yaml` + iNaturalist photos (licence-checked, cached).
-Private 50 m hotspot zoom: built by `shroomy.export.web` on your Mac (never in the public site).
+Public data includes the 250 m forest squares (`cells.pmtiles` + details) and, when the 25 m terrain and
+forest map are present, the 50 m hotspot zoom. The daily robot makes the squares with GDAL (no tippecanoe needed).
 
 ## Where things are
 - `config/` — every weight, threshold, source and credit

@@ -19,9 +19,10 @@ import { words } from "./ui/spot";
 
 const abs = (p: string) => new URL(p, document.baseURI).href;
 
-async function hasPrivateData(): Promise<boolean> {
+/** Are the 250 m forest squares published? (If not, the map falls back to ~2 km zones.) */
+async function hasCells(): Promise<boolean> {
   try {
-    const r = await fetch(abs("private/cells.pmtiles"), { method: "HEAD" });
+    const r = await fetch(abs("data/cells.pmtiles"), { method: "HEAD" });
     return r.ok && (r.headers.get("content-type") ?? "").indexOf("html") < 0;
   } catch { return false; }
 }
@@ -87,7 +88,7 @@ async function main() {
 
   const [meta, priv, spots, rain] = await Promise.all([
     fetch(abs("data/meta.json"), { cache: "no-cache" }).then((r) => r.json() as Promise<Meta>),
-    hasPrivateData(),
+    hasCells(),
     getJSON<Spots>(abs("data/spots.json")),
     getJSON<GeoJSON.FeatureCollection>(abs("data/rain.geojson")),
   ]);
@@ -99,16 +100,17 @@ async function main() {
     d.hidden = false;
   }
 
-  // Private extras (dev server on this Mac only): 250 m details + 50 m hotspot zoom.
+  // 250 m square details (~8 MB) load only when a square is first tapped. 50 m hotspot zoom list.
   let cellInfo: CellInfo | null = null;
+  let cellInfoLoading: Promise<void> | null = null;
+  const ensureCellInfo = () => cellInfoLoading ??= (async () => {
+    const im = await getJSON<{ factors: string[]; inputs: string[]; days: number }>(abs("data/cells_info.json"));
+    if (im) cellInfo = await CellInfo.load(abs("data/cells_info.bin"), im).catch(() => null);
+  })();
   let hotZones: HotZone[] = [];
   let hotZonesGeo: GeoJSON.FeatureCollection | undefined;
   if (priv) {
-    const [im, hz] = await Promise.all([
-      getJSON<{ factors: string[]; inputs: string[]; days: number }>(abs("private/cells_info.json")),
-      getJSON<{ zones: (HotZone & { ring: number[][] })[] }>(abs("private/hotspot_zones.json")),
-    ]);
-    if (im) CellInfo.load(abs("private/cells_info.bin"), im).then((c) => (cellInfo = c)).catch(() => {});
+    const hz = await getJSON<{ zones: (HotZone & { ring: number[][] })[] }>(abs("data/hotspot_zones.json"));
     if (hz) {
       hotZones = hz.zones;
       hotZonesGeo = { type: "FeatureCollection", features: hz.zones.map((z) => ({ type: "Feature",
@@ -119,8 +121,8 @@ async function main() {
   const urls: LayerUrls = {
     terrain: abs("tiles/terrain.pmtiles"), hexes: abs("data/hexes.geojson"),
     rain: abs("data/rain.geojson"), reserves: abs("data/reserves.geojson"),
-    privateCells: priv ? abs("private/cells.pmtiles") : undefined,
-    hotspots: priv && hotZonesGeo ? abs("private/hotspots.geojson") : undefined,
+    cells: priv ? abs("data/cells.pmtiles") : undefined,
+    hotspots: priv && hotZonesGeo ? abs("data/hotspots.pmtiles") : undefined,
     hotspotZones: hotZonesGeo,
   };
   const basemap = abs("tiles/basemap.pmtiles");
@@ -173,7 +175,14 @@ async function main() {
         if (!sp.trees.includes(Number(props.tree)) || !sp.bands.includes(Number(props.band))) return null;
         return panel.inSeason(d) ? Math.round(Number(props[`b${d}`]) + meta.season_share) : 0;
       };
-      return cellSpot(props, cellInfo, score, p.lngLat, meta.season_share);
+      const s = cellSpot(props, cellInfo, score, p.lngLat, meta.season_share);
+      const zone = props.h === undefined ? undefined : spots?.spots[Number(props.h)];
+      s.where = zone ? `${zone.where} · 250 m forest square` : "250 m forest square";
+      s.note = cellInfo ? undefined : "Loading the details for this square…";
+      if (!cellInfo) void ensureCellInfo().then(() => {
+        if (lastPick?.f.layer.id === "cells-fill") panel.showSpot(buildSpot(lastPick), false);
+      });
+      return s;
     }
     return hexSpot(props, spots?.spots[Number(props.h)], (d) => hexProp(d, panel.filter), meta.general_map_trees);
   };

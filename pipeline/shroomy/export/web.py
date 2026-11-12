@@ -1,17 +1,20 @@
-"""Export map data for the website.
+"""Export map data for the website (all public, deployed daily):
 
-PUBLIC  -> web/public/data/   (deployed daily: hexagons, spot details, rain squares,
-                               reserves, meta, summary.json)
-PRIVATE -> data/web-private/  (your Mac only: full 250 m cells, cell details,
-                               50 m hotspot terrain. NEVER deployed.)
+web/public/data/  hexagons + zone details (spots.json), 250 m forest squares (cells.pmtiles)
+                  + their details (cells_info.bin, cells_road.bin), 50 m hotspot terrain for the
+                  top zones (hotspots.pmtiles, when the terrain inputs exist), rain squares,
+                  reserves, meta, summary.json.
 
-Run:  uv run python -m shroomy.export.web            # public + private (on your Mac)
-      uv run python -m shroomy.export.web --public   # public only (what the daily robot runs)
+User decision 2026-11-12: the public site shows the 250 m squares (conditions only), like the
+former private view. It overrides the brief's "~2 km hexagons only" rule. Finds (Phase 6) stay private.
+
+Run:  uv run python -m shroomy.export.web          (--public is accepted and ignored, for the daily robot)
 """
 import json
 import shutil
 import subprocess
 import sys
+from pathlib import Path
 from datetime import date, datetime, timezone
 
 import h3
@@ -29,7 +32,6 @@ from ..score.today import latest_run, load_habitat, score_day
 from . import roads, summary
 
 PUBLIC = config.ROOT / "web" / "public" / "data"
-PRIVATE = config.DATA / "web-private"
 STATIC = config.DATA / "static"
 N_DAYS = 8
 INPUTS = ["rain_30d_mm", "pulse_mm", "t7_mean_c", "soil_percentile", "frost_days"]
@@ -64,6 +66,22 @@ def _write_geojson(path, features, ndigits=5):
                                separators=(",", ":")))
 
 
+def write_pmtiles(geojson: Path, out: Path, layer: str, minzoom: int, maxzoom: int):
+    """GeoJSON -> vector PMTiles. tippecanoe when installed (your Mac), else GDAL's PMTiles
+    driver bundled with pyogrio (the daily robot has no tippecanoe)."""
+    if shutil.which("tippecanoe"):
+        subprocess.run(["tippecanoe", "-q", "-f", "-o", str(out), "-l", layer, f"-Z{minzoom}", f"-z{maxzoom}",
+                        "--no-feature-limit", "--no-tile-size-limit", "--simplify-only-low-zooms",
+                        "--detect-shared-borders", str(geojson)], check=True)
+        return
+    import pyogrio
+    out.unlink(missing_ok=True)
+    df = pyogrio.read_dataframe(geojson)
+    pyogrio.write_dataframe(df, out, driver="PMTiles", layer=layer,
+                            dataset_options={"MINZOOM": str(minzoom), "MAXZOOM": str(maxzoom),
+                                             "MAX_SIZE": "2000000", "MAX_FEATURES": "500000"})
+
+
 def _nanmean(a, axis=0):
     with np.errstate(invalid="ignore"):
         import warnings
@@ -87,7 +105,7 @@ def species_scores(base, months, specs, share):
             for s in specs}
 
 
-def build(run, private=True):
+def build(run, private=True):            # `private` is kept for old callers; everything is public now
     w = np.load(run)
     today = date.fromisoformat(str(w["today"]))
     dates = [str(d) for d in w["dates"]]
@@ -136,6 +154,7 @@ def build(run, private=True):
     places = summary.load_places()
 
     feats, zones, spots = [], [], []
+    zone_of = np.full(hab["habitat_filter"].shape, -1, "int32")      # 250 m cell -> its zone (spots index)
     for hx, m in zip(uh, groups):
         mg = m[gen[m]]
         has_gen = len(mg) >= min_cells
@@ -147,6 +166,7 @@ def build(run, private=True):
         ring = [[lo, la] for la, lo in h3.cell_to_boundary(hx)]
         ring.append(ring[0])
         props = {"h": len(spots), **{f"p{i}": int(clk_pt[ip, i]) for i in range(N_DAYS)}}
+        zone_of[rows[m], cols[m]] = len(spots)
         gen_score = _nanmean(score[mg]) if has_gen else None
         if has_gen:
             props.update({f"s{i}": int(round(v)) for i, v in enumerate(gen_score)})
@@ -225,15 +245,14 @@ def build(run, private=True):
     (PUBLIC / "summary.json").write_text(json.dumps(summ, indent=1, ensure_ascii=False))
     print(f" - summary.json: top {len(summ['days'][0]['top_zones'])} zones per day + species")
 
-    if private:
-        export_private(days, hab, g, to_ll, clk_pt, pt_tree, rd, W, months, specs)
-        from . import hotspots
-        hotspots.build(summ, g)
+    export_cells(days, hab, g, to_ll, clk_pt, pt_tree, rd, W, zone_of)
+    from . import hotspots
+    hotspots.build(summ, g)
 
 
-def export_private(days, hab, g, to_ll, clk_pt, pt_tree, rd, W, months, specs):
-    """Full 250 m cells -> PMTiles + a details file, for the private view on this Mac only."""
-    PRIVATE.mkdir(parents=True, exist_ok=True)
+def export_cells(days, hab, g, to_ll, clk_pt, pt_tree, rd, W, zone_of):
+    """Every 250 m forest square -> PMTiles + details files (public)."""
+    OUT = PUBLIC
     S = config.load("scoring")["score"]
     rows, cols = np.nonzero(hab["forest_type"] > 0)
     x = g.west + (cols + 0.5) * g.res
@@ -258,10 +277,16 @@ def export_private(days, hab, g, to_ll, clk_pt, pt_tree, rd, W, months, specs):
         dt, dr, _ = rd.distances(x, y)
         info[:, -2] = np.clip(np.nan_to_num(dt, nan=-1), -1, 32000)
         info[:, -1] = np.clip(np.nan_to_num(dr, nan=-1), -1, 32000)
-    (PRIVATE / "cells_info.bin").write_bytes(info.astype("<i2").tobytes())
-    (PRIVATE / "cells_info.json").write_text(json.dumps({
+    (OUT / "cells_info.bin").write_bytes(info.astype("<i2").tobytes())
+    # "Drive there" pin per square: its centre, float32 [lat, lon]; NaN = in/touching a reserve (no pin).
+    # (File name kept from the first version, which stored the nearest road point.)
+    clo, cla = to_ll.transform(x, y)
+    pins = roads.square_pins(cla, clo, hab["reserve_id"][rows, cols])
+    (OUT / "cells_road.bin").write_bytes(pins.astype("<f4").tobytes())
+    (OUT / "cells_info.json").write_text(json.dumps({
         "cells": len(rows), "days": N_DAYS, "factors": FACTORS, "inputs": INPUTS,
-        "layout": "int16 little-endian; per cell: days x (factors x100, inputs x10), then track_m, road_m; -1 = none"}))
+        "layout": "int16 little-endian; per cell: days x (factors x100, inputs x10), then track_m, road_m; -1 = none",
+        "road_layout": "cells_road.bin: float32 little-endian; per cell: lat, lon of the square's centre (Drive there pin); NaN = in/touching a nature reserve"}))
 
     feats = []
     for n, (r, c) in enumerate(zip(rows, cols)):
@@ -274,16 +299,16 @@ def export_private(days, hab, g, to_ll, clk_pt, pt_tree, rd, W, months, specs):
         props.update({"i": n, "tree": int(tree[n]), "band": int(band[n]), "g": int(gen[n]),
                       "elev": int(round(float(np.nan_to_num(hab["elevation_m"][r, c])))),
                       "closed": int(not open_[n])})
+        if zone_of[r, c] >= 0:
+            props["h"] = int(zone_of[r, c])                       # its ~2 km zone in spots.json
         feats.append({"type": "Feature", "properties": props,
                       "geometry": {"type": "Polygon", "coordinates": [list(zip(xs, ys))]}})
-    gj = PRIVATE / "cells.geojson"
+    gj = OUT / "cells.geojson"
     _write_geojson(gj, feats)
-    subprocess.run(["tippecanoe", "-q", "-f", "-o", str(PRIVATE / "cells.pmtiles"), "-l", "cells",
-                    "-Z6", "-z13", "--no-feature-limit", "--no-tile-size-limit",
-                    "--simplify-only-low-zooms", "--detect-shared-borders", str(gj)], check=True)
+    write_pmtiles(gj, OUT / "cells.pmtiles", "cells", 6, 13)
     gj.unlink()
-    print(f" - {len(feats)} private 250 m cells + details (this Mac only)")
+    print(f" - {len(feats)} public 250 m forest squares + details")
 
 
 if __name__ == "__main__":
-    build(latest_run(), private="--public" not in sys.argv)
+    build(latest_run())

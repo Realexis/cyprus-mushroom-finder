@@ -268,7 +268,7 @@ dialog.emergency::backdrop { background: rgba(0, 0, 0, 0.6); }
   background: var(--accent); color: var(--accent-ink); font-weight: 700; font-size: var(--fs-1);
 }
 
-/* ---------------------------------------------------------------- hotspot zoom (private) */
+/* ---------------------------------------------------------------- hotspot zoom (50 m terrain) */
 .hot { margin: 10px 0; padding: 10px 12px; border-radius: var(--radius-s); border: 1px dashed var(--accent); }
 .hot h2 { margin-top: 0; }
 .zones { list-style: none; padding: 0; margin: 6px 0; display: grid; gap: 6px; }

@@ -73,7 +73,7 @@ function hatch(theme: Theme): ImageData {
 
 export interface LayerUrls {
   terrain: string; hexes: string; rain: string; reserves: string;
-  privateCells?: string; hotspots?: string; hotspotZones?: GeoJSON.FeatureCollection;
+  cells?: string; hotspots?: string; hotspotZones?: GeoJSON.FeatureCollection;
 }
 
 export function addOverlays(map: MlMap, theme: Theme, urls: LayerUrls, v: View) {
@@ -124,8 +124,9 @@ export function addOverlays(map: MlMap, theme: Theme, urls: LayerUrls, v: View) 
   map.addLayer({ id: "hex-selected", type: "line", source: "hexes", filter: ["==", ["id"], -1],
     paint: { "line-color": SEL_CORE, "line-width": selW(3, 4.5) } }, firstSymbol);
 
-  if (urls.privateCells) {
-    map.addSource("cells", { type: "vector", url: `pmtiles://${urls.privateCells}` });
+  if (urls.cells) {
+    map.addSource("cells", { type: "vector", url: `pmtiles://${urls.cells}`,
+      attribution: "Copernicus Land Monitoring Service · EEA" });
     map.addLayer({
       id: "cells-fill", type: "fill", source: "cells", "source-layer": "cells", filter: cellFilter(v),
       layout: { visibility: v.mode === "conditions" && v.priv ? "visible" : "none" },
@@ -137,18 +138,18 @@ export function addOverlays(map: MlMap, theme: Theme, urls: LayerUrls, v: View) 
       filter: ["==", ["get", "i"], -1], paint: { "line-color": SEL_CORE, "line-width": selW(2, 3.5) } }, firstSymbol);
   }
 
-  // 50 m hotspot zoom (private): terrain shade inside the top zones, only when zoomed in.
+  // 50 m hotspot zoom: terrain shade inside the top zones, only when zoomed in.
   if (urls.hotspots && urls.hotspotZones) {
-    map.addSource("hotspots", { type: "geojson", data: urls.hotspots });
+    map.addSource("hotspots", { type: "vector", url: `pmtiles://${urls.hotspots}` });
     map.addSource("hotzones", { type: "geojson", data: urls.hotspotZones });
     const on = v.mode === "conditions" && v.priv ? "visible" : "none";
     map.addLayer({
-      id: "hot-fill", type: "fill", source: "hotspots", minzoom: 11.5, layout: { visibility: on },
+      id: "hot-fill", type: "fill", source: "hotspots", "source-layer": "hotspots", minzoom: 11.5, layout: { visibility: on },
       paint: { "fill-color": ramp(["get", "sh"], SHADE_STOPS),
         "fill-opacity": ["interpolate", ["linear"], ["zoom"], 11.5, 0, 12.3, 0.85], "fill-antialias": false },
     }, firstSymbol);
     map.addLayer({
-      id: "hot-zone", type: "line", source: "hotzones", layout: { visibility: on },
+      id: "hot-zone", type: "line", source: "hotzones", minzoom: 9.5, layout: { visibility: on },
       paint: { "line-color": theme === "dark" ? "#f6dfa6" : "#8a5d00", "line-width": 2.5, "line-dasharray": [2, 1.2] },
     }, firstSymbol);
     map.addLayer({
@@ -174,7 +175,7 @@ export function addOverlays(map: MlMap, theme: Theme, urls: LayerUrls, v: View) 
   });
 }
 
-/** Apply day, layer mode, private view and species filter to the existing layers. */
+/** Apply day, layer mode, square/zone view and species filter to the existing layers. */
 export function applyView(map: MlMap, v: View) {
   const vis = (on: boolean) => (on ? "visible" : "none");
   const cond = v.mode === "conditions";

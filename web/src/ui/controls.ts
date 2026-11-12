@@ -36,10 +36,12 @@ export class Panel {
   private timer = 0;
   private spot: SpotData | null = null;
 
-  constructor(private el: HTMLElement, private meta: Meta, private hasPrivate: boolean,
+  /** `fine` = the 250 m forest squares are published (the normal case). Without them: ~2 km zones. */
+  constructor(private el: HTMLElement, private meta: Meta, fine: boolean,
               private islandRain: number[], private hotZones: HotZone[],
               private onChange: (p: Panel) => void, private onFrame: (p: Panel) => void,
               private openSpecies: (code?: string) => void, private flyTo: (z: HotZone) => void) {
+    this.priv = fine;
     this.render();
   }
 
@@ -192,8 +194,6 @@ export class Panel {
       ${rainNote}
       ${this.mode === "replay" ? this.replayHTML() : ""}
       ${this.legend()}
-      ${this.hasPrivate ? `<label class="private-toggle" data-tip="Show the full 250 m squares and the 50 m hotspot zoom. Works only on this Mac. Never on the public site."><input type="checkbox" id="priv" ${this.priv ? "checked" : ""}>
-        Private view: full 250 m detail <span class="tag warn">this Mac only</span></label>` : ""}
       ${this.priv && this.hotZones.length ? this.hotHTML() : ""}
       <div class="links"><a href="about.html" data-tip="Where the data comes from, how the score works, and the picking law.">About the data</a>
         <button id="guide-btn" type="button" data-tip="Show the three-step guide again.">How to use</button>
@@ -215,9 +215,6 @@ export class Panel {
     this.el.querySelector("#cards-btn")?.addEventListener("click", () => this.openSpecies(this.species ?? undefined));
     this.el.querySelectorAll<HTMLButtonElement>(".filter-line [data-pick-species]").forEach((b) =>
       b.addEventListener("click", () => this.setSpecies(b.dataset.pickSpecies!)));
-    this.el.querySelector<HTMLInputElement>("#priv")?.addEventListener("change", (e) => {
-      this.priv = (e.target as HTMLInputElement).checked; this.spot = null; this.render(); this.onChange(this);
-    });
     this.el.querySelector("#play")?.addEventListener("click", () => (this.playing ? this.stop() : this.play()));
     this.el.querySelector<HTMLInputElement>("#replay-slider")?.addEventListener("input", (e) => {
       this.stop(); this.replayIndex = Number((e.target as HTMLInputElement).value);
@@ -246,7 +243,7 @@ export class Panel {
     const top = this.hotZones.slice(0, 5).map(item).join("");
     const rest = this.hotZones.slice(5).map((z, k) => item(z, k + 5)).join("");
     return `<div class="hot">
-      <h2>Hotspot zoom · 50 m terrain <span class="tag warn">private</span></h2>
+      <h2>Hotspot zoom · 50 m terrain</h2>
       <p class="muted small">The top zones of the next 8 days. Zoom in to see shade at 50 m: cool slopes,
         valley bottoms and little autumn sun. Terrain only, no finer weather.</p>
       <ul class="zones">${top}</ul>
@@ -264,7 +261,7 @@ export class Panel {
         <div class="legend-scale"><span>0 · poor</span><span>50</span><span>100 · very good</span></div>
         <div class="legend-row" data-tip="Nature reserves are closed to picking. They always score 0."><span class="swatch closed"></span> Nature reserve: <b>CLOSED</b>, score 0</div>
         ${sp ? `<div class="legend-row" data-tip="Grey = this mushroom's habitat, but the month is outside its season, so there is no score."><span class="swatch oos"></span> Out of season (habitat only)</div>` : ""}
-        <div class="legend-row">${this.priv ? "Each square = 250 m (private)" : "Each hexagon ≈ 2 km. Exact spots are never shown publicly."}</div>
+        <div class="legend-row" data-tip="Each coloured square is 250 m of forest. Its score uses the weather for its area (about 9 km wide), corrected for its height, plus its own shade, trees and altitude.">${this.priv ? "Each square = 250 m of forest" : "Each hexagon ≈ 2 km of forest"}</div>
         ${sp ? "" : `<div class="legend-row muted">"Other broadleaf" forest is not scored here (no partner tree). It counts for morels.</div>`}
       </div>`;
     }

@@ -134,7 +134,8 @@ score:
     wet_day_mm: 1.0                    # a soaking event must END on a wet day (WMO wet-day = 1 mm)
 
 # ---------------------------------------------------------------------
-# PUBLIC VIEW (the deployed website). Exact 250 m cells are NEVER published.
+# PUBLIC VIEW. Since 2026-11-12 (user decision) the site also publishes the 250 m squares
+# (conditions only); these ~2 km zones remain for summary.json, zone names and the fallback.
 # ---------------------------------------------------------------------
 public_view:
   h3_resolution: 7                   # H3 res 7 hexagons, ~2.4 km across [BRIEF: "~2 km hexagons"]

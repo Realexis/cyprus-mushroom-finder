@@ -1,12 +1,14 @@
-// The spot panel: everything about one tapped zone (public hexagon), 250 m square
-// (private) or 50 m hotspot square (private). Growing conditions only.
+// The spot panel: everything about one tapped 250 m forest square, ~2 km zone (fallback)
+// or 50 m hotspot square. Growing conditions only.
 import { SCORE_STOPS } from "../map/layers";
 import type { DayInfo, Meta } from "./controls";
+import "../styles/maps-link.css";
 
 export interface SpotInfo {
   where: string; alt: [number, number]; trees: Record<string, number>;
   f: number[][]; in: number[][];                       // [day][factor] x100, [day][input]
-  road: { track_km: number; road_km: number; road: string } | null;
+  /** at = road access point outside nature reserves: [lat, lon, km from the zone middle]. */
+  road: { track_km: number; road_km: number; road: string; at?: [number, number, number] } | null;
 }
 export interface Spots { factors: string[]; inputs: string[]; spots: SpotInfo[]; }
 
@@ -83,6 +85,9 @@ export interface SpotData {
   inputs?: (day: number) => number[] | null;
   where?: string; trees?: string; altitude?: string; road?: string; note?: string;
   hot?: Record<string, number>;
+  /** Pin for "Drive there" / "Share location". road = nearest road point outside nature reserves
+   *  (2 km zones); centre = the middle of a 250 m square (none for squares in or by a reserve). */
+  access?: { lat: number; lon: number; km?: number; from?: string; kind: "road" | "centre" };
   /** Habitat score for a species on a day, ignoring its season. null = no habitat here. */
   speciesBase?: (sp: SpeciesLite, day: number) => number | null;
 }
@@ -165,6 +170,74 @@ function forecast(s: SpotData, ctx: SpotContext): string {
     <p class="muted small">Dots: forecast confidence (full = high, half = medium, empty = low).</p>`;
 }
 
+// ---------------------------------------------------------------- Google Maps links
+// Free Google Maps URLs (no API key, no cost). They open the Google Maps app on phones.
+const ll = (lat: number, lon: number) => `${lat.toFixed(5)},${lon.toFixed(5)}`;
+export const mapsDirectionsUrl = (lat: number, lon: number) =>
+  `https://www.google.com/maps/dir/?api=1&destination=${ll(lat, lon)}&travelmode=driving`;
+export const mapsPinUrl = (lat: number, lon: number) =>
+  `https://www.google.com/maps/search/?api=1&query=${ll(lat, lon)}`;
+
+function mapsLinks(s: SpotData): string {
+  const a = s.access;
+  if (!a) return "";
+  const centre = a.kind === "centre";
+  const dist = a.km === undefined ? "" : a.km < 0.1 ? ", right by it" : `, about ${a.km} km in a straight line from ${a.from}`;
+  const what = centre ? "the middle of this 250 m square" : "the nearest road point by this spot";
+  const text = `${centre ? "250 m square" : "Road access point"}${!centre && s.where ? ` · ${s.where.split(" · ")[0]}` : ""} (Cyprus Mushroom Finder, growing conditions only)`;
+  const note = centre
+    ? `Directions go to the middle of this 250 m square. It may be away from roads and tracks.`
+    : `Directions go to the nearest road${dist}, never into a mapped nature reserve.`;
+  return `<div class="maps-link">
+    <div class="maps-btns">
+      <a class="maps-btn primary" href="${mapsDirectionsUrl(a.lat, a.lon)}" target="_blank" rel="noopener"
+        data-tip="Opens Google Maps with driving directions to ${what}. Free, no sign-in."><span aria-hidden="true">🚗</span> Drive there</a>
+      <button type="button" class="maps-btn" data-share-url="${mapsPinUrl(a.lat, a.lon)}" data-share-text="${esc(text)}"
+        data-tip="Send a Google Maps pin of ${what} to a friend. On a computer it copies the link."><span aria-hidden="true">📍</span> <span class="maps-btn-label">Share location</span></button>
+    </div>
+    <p class="muted small maps-note">${note}
+      Forest tracks may be rough. <b>No rakes</b>: pick by hand or knife.</p>
+  </div>`;
+}
+
+async function shareLink(btn: HTMLElement) {
+  const url = btn.dataset.shareUrl!;
+  const label = btn.querySelector<HTMLElement>(".maps-btn-label");
+  const say = (t: string) => {
+    if (!label) return;
+    label.textContent = t;
+    window.setTimeout(() => (label.textContent = "Share location"), 2500);
+  };
+  // Phones: the system share sheet (WhatsApp, Messages…). Computers: copy the link.
+  if (navigator.share && matchMedia("(pointer: coarse)").matches) {
+    try { await navigator.share({ title: "Location", text: btn.dataset.shareText ?? "", url }); return; }
+    catch (e) { if ((e as DOMException).name === "AbortError") return; }
+  }
+  try { await navigator.clipboard.writeText(url); say("Link copied ✓"); return; }
+  catch { /* clipboard blocked: show the link so it can be copied by hand */ }
+  const box = btn.closest(".maps-link");
+  let input = box?.querySelector<HTMLInputElement>(".maps-copy");
+  if (box && !input) {
+    input = document.createElement("input");
+    input.className = "maps-copy";
+    input.readOnly = true;
+    input.setAttribute("aria-label", "Google Maps link");
+    box.querySelector(".maps-btns")?.after(input);
+  }
+  if (!input) return;
+  input.value = url;
+  input.focus();
+  input.select();
+  say(document.execCommand?.("copy") ? "Link copied ✓" : "Copy the link below");
+}
+
+document.addEventListener("click", (e) => {
+  const b = (e.target as Element | null)?.closest?.<HTMLElement>("[data-share-url]");
+  if (!b) return;
+  e.preventDefault();
+  void shareLink(b);
+});
+
 export function spotHTML(s: SpotData, ctx: SpotContext): string {
   if (s.kind === "hot" && s.hot) return hotHTML(s);
   const v = s.score(ctx.day);
@@ -188,6 +261,7 @@ export function spotHTML(s: SpotData, ctx: SpotContext): string {
     <div class="spot-head"><span>${head}</span>${showScore ? `<span class="spot-score" data-tip="0 to 100: how good the growing conditions are here. It does not mean a mushroom is there.">${v}<small>/100</small></span>` : ""}</div>
     ${s.where ? `<p class="muted">${esc(s.where)}</p>` : ""}
     ${s.note ? `<p class="muted small">${s.note}</p>` : ""}
+    ${mapsLinks(s)}
     ${clk ? `<p class="clock ${clk.open ? "open" : ""}" data-tip="Counts the days since the last soaking rain (${ctx.meta.clock.soak_mm} mm or more). The fruiting window opens about ${ctx.meta.clock.opens} days after it and closes about ${ctx.meta.clock.closes} days after it."><span aria-hidden="true">⏱</span> <b>Mushroom clock:</b> ${clk.text}</p>` : ""}
     ${showScore ? whyBars(s, ctx) : ""}
     ${forecast(s, ctx)}
@@ -203,7 +277,7 @@ function hotHTML(s: SpotData): string {
   const part = (label: string, v: number, tip: string) => `<li class="why-row" data-tip="${tip}"><div class="why-top"><span>${label}</span><span class="muted">${v}/100</span></div>
     <div class="why-bar"><i style="width:${v}%;background:#2f6f78"></i></div></li>`;
   return `
-    <div class="spot-head"><span><b>50 m terrain square</b><span class="tag warn" style="margin-left:6px">private</span></span>
+    <div class="spot-head"><span><b>50 m terrain square</b></span>
       <span class="spot-score" data-tip="Shade score 0 to 100: the average of the three parts below. Shade keeps the ground moist.">${h.sh}<small>/100 shade</small></span></div>
     <p class="muted">${h.con ? "Conifer forest" : "Broadleaf forest"} · ${h.el} m</p>
     <ul class="why-list">
@@ -233,17 +307,29 @@ export function hexSpot(props: Record<string, number>, info: SpotInfo | undefine
     inputs: (d) => (info ? info.in[d] : null),
     where: info ? `${info.where} · zone of about 2 km` : "Zone of about 2 km",
     trees, road,
+    access: info?.road?.at ? { lat: info.road.at[0], lon: info.road.at[1], km: info.road.at[2], from: "the middle of this zone", kind: "road" } : undefined,
     altitude: info ? `${info.alt[0].toLocaleString("en-GB")}–${info.alt[1].toLocaleString("en-GB")} m` : undefined,
-    note: "Averages over the forest in this ~2 km hexagon. Exact spots are never shown publicly.",
+    note: "Averages over the forest in this ~2 km zone.",
   };
 }
 
 /** Private 250 m cell details (cells_info.bin from the pipeline). */
 export class CellInfo {
-  private constructor(private a: Int16Array, private nf: number, private ni: number, private days: number) {}
+  private constructor(private a: Int16Array, private nf: number, private ni: number, private days: number,
+                      private ra: Float32Array | null) {}
   static async load(url: string, meta: { factors: string[]; inputs: string[]; days: number }): Promise<CellInfo> {
     const buf = await fetch(url).then((r) => r.arrayBuffer());
-    return new CellInfo(new Int16Array(buf), meta.factors.length, meta.inputs.length, meta.days);
+    // Drive-there pins (cells_road.bin, next to cells_info.bin): each square's centre. Optional.
+    const ra = await fetch(url.replace("cells_info.bin", "cells_road.bin"))
+      .then((r) => (r.ok ? r.arrayBuffer() : null)).catch(() => null);
+    return new CellInfo(new Int16Array(buf), meta.factors.length, meta.inputs.length, meta.days,
+      ra ? new Float32Array(ra) : null);
+  }
+  /** The square's centre for "Drive there", or null (in or by a nature reserve). */
+  access(i: number): { lat: number; lon: number } | null {
+    if (!this.ra || 2 * i + 1 >= this.ra.length) return null;
+    const lat = this.ra[2 * i], lon = this.ra[2 * i + 1];
+    return Number.isFinite(lat) && Number.isFinite(lon) ? { lat, lon } : null;
   }
   private get stride() { return this.days * (this.nf + this.ni) + 2; }
   factors(i: number, d: number): number[] | null {
@@ -266,6 +352,7 @@ export function cellSpot(props: Record<string, number>, info: CellInfo | null, s
   const i = Number(props.i);
   const m = (x: number) => (x < 0 ? "–" : x < 1000 ? `${Math.round(x / 10) * 10} m` : `${(x / 1000).toFixed(1)} km`);
   const rd = info?.road(i);
+  const acc = info?.access(i);
   return {
     kind: "cell", score,
     speciesBase: (sp, d) => (sp.trees.includes(Number(props.tree)) && sp.bands.includes(Number(props.band)) && !props.closed
@@ -277,6 +364,7 @@ export function cellSpot(props: Record<string, number>, info: CellInfo | null, s
     trees: TREES[Number(props.tree)] ?? "Forest",
     altitude: `${Number(props.elev).toLocaleString("en-GB")} m · ${BANDS[Number(props.band)] ?? ""} band`,
     road: rd ? `forest track ${m(rd[0])} · road ${m(rd[1])}` : undefined,
-    note: `<span class="tag warn">private · this Mac only</span>`,
+    access: acc ? { ...acc, kind: "centre" } : undefined,
+    note: undefined,
   };
 }
