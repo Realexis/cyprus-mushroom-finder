@@ -51,19 +51,34 @@ function islandRain(rain: GeoJSON.FeatureCollection | null, n: number): number[]
   return sum.map((v) => (feats.length ? v / feats.length : 0));
 }
 
-/** The "3D" map button. */
+// 3D view (kept next to its control; imports are hoisted).
+import "./styles/map-3d.css";
+import { HEIGHTS, setTerrainHeight, terrainHeight } from "./map/layers";
+
+/** The "3D" map button, and (in 3D) the "mountain height" button under it. */
 class TerrainControl implements maplibregl.IControl {
   private btn!: HTMLButtonElement;
+  private heightBtn!: HTMLButtonElement;
+  private map?: maplibregl.Map;
   on = false;
   constructor(private toggle: (on: boolean) => void) {}
-  onAdd() {
+  onAdd(map: maplibregl.Map) {
+    this.map = map;
     const div = document.createElement("div");
     div.className = "maplibregl-ctrl maplibregl-ctrl-group";
     this.btn = document.createElement("button");
     this.btn.type = "button";
     this.btn.className = "ctrl-3d";
     this.btn.addEventListener("click", () => { this.on = !this.on; this.update(); this.toggle(this.on); });
-    div.append(this.btn);
+    this.heightBtn = document.createElement("button");
+    this.heightBtn.type = "button";
+    this.heightBtn.className = "ctrl-height";
+    this.heightBtn.addEventListener("click", () => {
+      const i = HEIGHTS.indexOf(terrainHeight() as (typeof HEIGHTS)[number]);
+      setTerrainHeight(this.map!, HEIGHTS[(i + 1) % HEIGHTS.length]);
+      this.update();
+    });
+    div.append(this.btn, this.heightBtn);
     this.update();
     return div;
   }
@@ -73,7 +88,12 @@ class TerrainControl implements maplibregl.IControl {
     this.btn.setAttribute("aria-label", this.on ? "Back to the flat 2D map" : "Show the map in 3D");
     this.btn.dataset.tip = this.on
       ? "Back to the flat map."
-      : "Tilt the map to see the mountains in 3D. To turn or tilt: drag with the right mouse button, or with two fingers.";
+      : "Tilt the map to see the mountains in 3D. Heights are stretched to show the shape of the mountains. To turn or tilt: drag with the right mouse button, or with two fingers.";
+    const h = terrainHeight();
+    this.heightBtn.hidden = !this.on;
+    this.heightBtn.innerHTML = `<svg viewBox="0 0 16 10" aria-hidden="true"><path d="M0 10 5.5 2l2.5 3.5L10.5 0 16 10z"/></svg><span>${h}×</span>`;
+    this.heightBtn.setAttribute("aria-label", `Mountain height: ${h} times taller than real. Change height`);
+    this.heightBtn.dataset.tip = `Mountain height: ${h}× taller than real. Heights are stretched to show the shape of the mountains. Tap to change (${HEIGHTS.join("×, ")}×).`;
   }
   onRemove() { this.btn.parentElement?.remove(); }
 }

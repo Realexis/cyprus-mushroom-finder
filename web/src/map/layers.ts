@@ -207,24 +207,66 @@ export function setReplayFrame(map: MlMap, v: View) {
 }
 
 // ---------------------------------------------------------------- 3D terrain
-export const EXAGGERATION = 1.5;     // [BRIEF] "exaggeration ~1.5"
+// Heights are stretched on purpose, so the shape of the mountains is easy to see
+// (Cyprus only reaches ~1,950 m, which looks flat at true scale). Not accurate.
+export const HEIGHTS = [3, 6, 10] as const;
+export const EXAGGERATION = 10;      // the user's pick: "10× (extreme)"
+let height: number = EXAGGERATION;
+export const terrainHeight = () => height;
+
+/** Change the mountain height while 3D is on (no camera move). */
+export function setTerrainHeight(map: MlMap, h: number) {
+  height = h;
+  if (map.getTerrain()) map.setTerrain({ source: "terrain3d", exaggeration: h });
+}
+
+// The score colours that sit on the ground; in 3D the ridge shading goes on top of them.
+const GROUND_FILLS = ["rain-fill", "hex-fill", "cells-fill", "hot-fill"];
 
 export function set3D(map: MlMap, on: boolean, theme: Theme, animate = true) {
+  const dark = theme === "dark";
+  const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
   // In 3D, let the mountain shading show through the colours a little more.
   if (map.getLayer("hex-fill")) map.setPaintProperty("hex-fill", "fill-opacity", on ? 0.62 : 0.78);
   if (map.getLayer("cells-fill")) map.setPaintProperty("cells-fill", "fill-opacity", on ? 0.6 : 0.72);
+  if (map.getLayer("hillshade")) {
+    const ids = map.getStyle().layers.map((l) => l.id);
+    if (on) {
+      // Shade on top of the colours, lit from the left so the slopes facing you stay bright.
+      const top = Math.max(...GROUND_FILLS.map((id) => ids.indexOf(id)));
+      const above = ids.slice(top + 1).find((id) => id !== "hillshade");   // the layer just above the top fill
+      if (top >= 0 && above) map.moveLayer("hillshade", above);
+      map.setPaintProperty("hillshade", "hillshade-method", "combined");
+      map.setPaintProperty("hillshade", "hillshade-exaggeration", 0.9);
+      map.setPaintProperty("hillshade", "hillshade-illumination-direction", 250);
+      map.setPaintProperty("hillshade", "hillshade-illumination-altitude", 35);
+      map.setPaintProperty("hillshade", "hillshade-shadow-color", dark ? "rgba(0,0,0,0.7)" : "rgba(40,30,15,0.55)");
+      map.setPaintProperty("hillshade", "hillshade-highlight-color", dark ? "rgba(255,240,210,0.35)" : "rgba(255,255,255,0.5)");
+      map.setPaintProperty("hillshade", "hillshade-accent-color", "rgba(0,0,0,0)");
+    } else {
+      // Back to the flat-map shading (same values as addOverlays).
+      if (ids.includes("rain-fill")) map.moveLayer("hillshade", "rain-fill");
+      for (const p of ["hillshade-method", "hillshade-illumination-direction", "hillshade-illumination-altitude"] as const) {
+        map.setPaintProperty("hillshade", p, undefined);
+      }
+      map.setPaintProperty("hillshade", "hillshade-exaggeration", dark ? 0.55 : 0.45);
+      map.setPaintProperty("hillshade", "hillshade-shadow-color", dark ? "#050a08" : "#5b5340");
+      map.setPaintProperty("hillshade", "hillshade-highlight-color", dark ? "#3a4a41" : "#ffffff");
+      map.setPaintProperty("hillshade", "hillshade-accent-color", dark ? "#0c1612" : "#8a8270");
+    }
+  }
   if (on) {
-    map.setTerrain({ source: "terrain3d", exaggeration: EXAGGERATION });
+    map.setTerrain({ source: "terrain3d", exaggeration: height });
     map.setSky({
-      "sky-color": theme === "dark" ? "#0f1d1a" : "#cfe0e6",
-      "horizon-color": theme === "dark" ? "#24362f" : "#f3f0e7",
-      "fog-color": theme === "dark" ? "#0c1612" : "#ece7da",
+      "sky-color": dark ? "#0f1d1a" : "#cfe0e6",
+      "horizon-color": dark ? "#24362f" : "#f3f0e7",
+      "fog-color": dark ? "#0c1612" : "#ece7da",
       "sky-horizon-blend": 0.6, "horizon-fog-blend": 0.6, "fog-ground-blend": 0.4,
     });
-    if (animate) map.easeTo({ pitch: 62, bearing: map.getBearing() || -18, duration: 900 });
+    if (animate) map.easeTo({ pitch: 65, bearing: map.getBearing() || -12, duration: still ? 0 : 900 });
   } else {
     map.setTerrain(null);
-    if (animate) map.easeTo({ pitch: 0, bearing: 0, duration: 700 });
+    if (animate) map.easeTo({ pitch: 0, bearing: 0, duration: still ? 0 : 700 });
   }
 }
 
