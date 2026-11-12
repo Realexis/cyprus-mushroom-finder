@@ -1,0 +1,177 @@
+/* PROTOTYPE: the extremely simple page. Mobile first. Big type, left-aligned, short lines. */
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font); font-size: var(--fs-2); line-height: 1.45; letter-spacing: var(--track);
+  text-align: left; -webkit-font-smoothing: antialiased;
+}
+button { font: inherit; color: inherit; letter-spacing: inherit; cursor: pointer; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: 6px; }
+a { color: var(--accent); }
+p { margin: 0; }
+
+.s-app { display: flex; flex-direction: column; height: 100dvh; }
+
+/* ---------------------------------------------------------------- safety strip (every screen) */
+.s-top {
+  display: flex; align-items: center; gap: 10px; flex: none;
+  padding: 8px 12px; padding-top: max(8px, env(safe-area-inset-top));
+  background: var(--safety-bg); color: var(--safety-ink); border-bottom: 1px solid var(--line);
+}
+.s-warn { flex: none; }
+.s-safety { flex: 1; font-size: var(--fs-1); line-height: 1.3; }
+.s-sos {
+  flex: none; display: inline-flex; align-items: center; gap: 6px;
+  min-height: var(--tap); padding: 0 14px; border: 0; border-radius: 12px;
+  background: var(--sos-bg); color: var(--sos-ink); font-weight: 700; font-size: var(--fs-1);
+}
+
+/* ---------------------------------------------------------------- stage */
+.s-stage { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.s-mapwrap { position: relative; flex: 1; min-height: 0; }
+#map { position: absolute; inset: 0; }
+
+.s-card { background: var(--surface); color: var(--ink); }
+
+/* The answer: 3 best areas. */
+.s-answer { flex: none; padding: 12px 16px 10px; border-bottom: 1px solid var(--line); }
+.s-title { margin: 0; font-size: var(--fs-3); line-height: 1.2; }
+.s-when { color: var(--accent); }
+.s-sub { margin-top: 4px; font-size: var(--fs-1); color: var(--ink-soft); }
+.s-sub b { color: var(--ink); }
+.s-late { margin-top: 6px; font-size: var(--fs-1); font-weight: 700; color: var(--safety-ink);
+  background: var(--safety-bg); border-radius: 8px; padding: 4px 10px; }
+.s-list { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 6px; }
+.s-row {
+  width: 100%; min-height: 52px; display: flex; align-items: center; gap: 12px;
+  padding: 6px 8px 6px 6px; border-radius: 12px; border: 2px solid transparent;
+  background: var(--surface-2); text-align: left;
+}
+.s-row.on { border-color: var(--ink); }
+.s-rank {
+  flex: none; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--ink); color: var(--surface); font-weight: 700;
+}
+.s-name { flex: 1; min-width: 0; font-weight: 700; line-height: 1.2; }
+.s-badge {
+  flex: none; min-width: 48px; padding: 4px 8px; border-radius: 10px; text-align: center;
+  font-weight: 700; font-size: var(--fs-2);
+}
+.s-badge.big { min-width: 64px; font-size: var(--fs-4); padding: 4px 10px; line-height: 1.15; }
+
+/* Numbered pins on the map, matching the list. */
+.s-pin {
+  width: 36px; height: 36px; border-radius: 50%; border: 3px solid #fff; padding: 0;
+  background: #1b2620; color: #fff; font-weight: 700; font-size: 1.05rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
+}
+
+/* The tapped zone: one sentence and a score. */
+.s-zone {
+  position: absolute; left: 12px; right: 12px; bottom: 12px; z-index: 3;
+  padding: 14px 52px 14px 16px; border-radius: var(--radius); box-shadow: var(--shadow);
+  display: grid; gap: 6px;
+}
+.s-zone[hidden] { display: none; }
+.s-where { font-size: var(--fs-1); color: var(--ink-soft); }
+.s-zrow { display: flex; align-items: center; gap: 12px; justify-content: space-between; }
+.s-zhead { font-size: var(--fs-3); line-height: 1.2; }
+.s-say { font-size: var(--fs-2); }
+.s-small { font-size: var(--fs-0); color: var(--ink-soft); }
+.s-close {
+  position: absolute; top: 8px; right: 8px; width: 40px; height: 40px; border-radius: 10px;
+  border: 1px solid var(--line); background: var(--surface-2); font-size: 1.1rem;
+}
+
+.s-loading {
+  position: absolute; inset: 0; display: grid; place-items: center; z-index: 4;
+  background: var(--bg); color: var(--ink); font-weight: 700; padding: 16px;
+}
+
+/* ---------------------------------------------------------------- footer */
+.s-foot {
+  flex: none; display: flex; align-items: center; gap: 12px;
+  padding: 8px 12px; padding-bottom: max(8px, env(safe-area-inset-bottom));
+  background: var(--surface); border-top: 1px solid var(--line);
+}
+.s-rakes { flex: 1; font-size: var(--fs-1); line-height: 1.3; }
+.s-more-btn {
+  flex: none; min-height: var(--tap); min-width: 96px; padding: 0 18px; border-radius: 12px;
+  border: 0; background: var(--accent); color: var(--accent-ink); font-weight: 700;
+}
+
+/* Only "Show where I am" (in More) uses the location button, so hide it on the map. */
+.maplibregl-ctrl-top-right { display: none; }
+.maplibregl-user-location-dot { z-index: 2; }
+
+/* ---------------------------------------------------------------- dialogs */
+dialog { border: 0; padding: 0; background: var(--surface); color: var(--ink); box-shadow: var(--shadow); }
+dialog::backdrop { background: rgba(0, 0, 0, 0.6); }
+
+/* Emergency box (from ui/safety.ts). */
+dialog.emergency { width: min(560px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); overflow: auto; border-radius: 18px; }
+.em-head { background: var(--sos-bg); color: var(--sos-ink); padding: 16px 20px; }
+.em-head h2 { margin: 0; font-size: var(--fs-4); line-height: 1.2; }
+.em-body { padding: 16px 20px 20px; }
+.call {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  min-height: 64px; padding: 10px 16px; border-radius: 14px; text-decoration: none;
+  background: var(--sos-bg); color: var(--sos-ink); font-weight: 700; font-size: var(--fs-3); margin-bottom: 10px;
+}
+.call.secondary { background: var(--surface-2); color: var(--ink); border: 2px solid var(--sos-bg); }
+.call small { font-size: var(--fs-1); font-weight: 400; display: block; }
+.em-body ul { padding-left: 1.2em; margin: 12px 0; }
+.em-body li { margin: 6px 0; }
+.em-close { width: 100%; min-height: var(--tap); border-radius: 12px; border: 1px solid var(--line);
+  background: var(--surface-2); font-weight: 700; margin-top: 8px; }
+
+/* More box: a bottom sheet on phones, a side box on desktop. */
+dialog.s-more {
+  width: 100vw; max-width: 100vw; max-height: 88dvh; margin: auto 0 0; border-radius: 18px 18px 0 0; overflow: auto;
+}
+.s-more-in { padding: 8px 16px 20px; padding-bottom: max(20px, env(safe-area-inset-bottom)); position: relative; }
+.s-more-head { position: sticky; top: 0; background: var(--surface); padding: 8px 0; z-index: 1; }
+.s-more-head h2 { margin: 0; font-size: var(--fs-4); }
+.s-more-head .s-close { top: 6px; right: 0; }
+.s-more h3 { margin: 18px 0 8px; font-size: var(--fs-2); }
+.s-more p { margin: 0 0 8px; }
+.s-days { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.s-day {
+  min-height: 64px; padding: 6px 4px; border-radius: 12px; border: 2px solid var(--line);
+  background: var(--surface-2); display: flex; flex-direction: column; align-items: flex-start; padding-left: 10px;
+  line-height: 1.2; text-align: left;
+}
+.s-day span { font-size: var(--fs-1); }
+.s-day small { font-size: 0.8rem; color: var(--ink-soft); }
+.s-day.on { border-color: var(--ink); background: var(--surface); }
+.s-wide {
+  width: 100%; min-height: var(--tap); margin-top: 12px; border-radius: 12px; border: 1px solid var(--line);
+  background: var(--surface-2); font-weight: 700; text-align: left; padding: 0 16px;
+}
+.s-key { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+.s-key li { display: flex; align-items: center; gap: 10px; }
+.s-key i { flex: none; width: 36px; height: 22px; border-radius: 6px; }
+.s-key i.hatch {
+  background: repeating-linear-gradient(135deg, var(--closed) 0 3px, transparent 3px 7px), rgba(140, 146, 143, 0.3);
+  border: 1px solid var(--closed);
+}
+.s-key span { color: var(--ink-soft); }
+.s-links { margin-top: 16px !important; }
+
+/* ---------------------------------------------------------------- desktop */
+@media (min-width: 900px) {
+  .s-top { padding: 10px 20px; }
+  .s-safety { font-size: var(--fs-2); }
+  .s-stage { position: relative; display: block; }
+  .s-mapwrap { position: absolute; inset: 0; }
+  .s-answer {
+    position: absolute; top: 16px; left: 16px; width: 400px; z-index: 3;
+    border: 0; border-radius: var(--radius); box-shadow: var(--shadow); padding: 16px 18px 14px;
+  }
+  .s-title { font-size: var(--fs-4); }
+  .s-zone { left: 16px; right: auto; bottom: 16px; width: 400px; }
+  .s-foot { padding: 10px 20px; }
+  .s-rakes { font-size: var(--fs-2); }
+  dialog.s-more { width: 440px; max-height: calc(100dvh - 32px); margin: auto; border-radius: 18px; }
+}

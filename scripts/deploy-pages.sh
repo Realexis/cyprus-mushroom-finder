@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 # Build the PUBLIC site and publish it to the gh-pages branch (GitHub Pages).
 # The branch is replaced each time (one commit, no history bloat).
-# Private 250 m data is never part of web/dist.
+# Since 2026-11-12 the 250 m squares are public (user decision). Anything named
+# "private" (future finds log, village notes) must never be part of web/dist.
 set -euo pipefail
 cd "$(dirname "$0")/../web"
 npm run build
 # Last safety net: refuse to publish anything private.
-if find dist -iname "*cells*" -o -iname "*private*" | grep -q .; then
+if find dist -iname "*private*" -o -iname "*finds*" | grep -q .; then
   echo "✗ private files found in dist — refusing to deploy"; exit 1
 fi
 REMOTE=${DEPLOY_REMOTE:-$(git -C .. remote get-url origin)}

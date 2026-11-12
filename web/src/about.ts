@@ -2,6 +2,7 @@ import "@fontsource/atkinson-hyperlegible/400.css";
 import "@fontsource/atkinson-hyperlegible/700.css";
 import "./styles/app.css";
 import { mountEmergency } from "./ui/safety";
+import { LOOKALIKES, SPECIES } from "./ui/species";
 import { applyTheme, currentTheme } from "./ui/theme";
 
 interface Credit { name: string; credit: string; licence: string; status: string; use: string; }
@@ -24,3 +25,9 @@ fetch(new URL("data/meta.json", document.baseURI), { cache: "no-cache" })
       </div>`).join("") + `
       <div class="card"><h3>Protomaps basemap</h3><p>Map tiles from the Protomaps build of OpenStreetMap. © OpenStreetMap contributors (ODbL).</p></div>`;
   });
+
+// Every photo credit, grouped by species (species first, then lookalikes).
+const photoList = [...SPECIES.map((s) => ({ name: s.latin, photos: s.photos })),
+  ...LOOKALIKES.map((l) => ({ name: l.latin, photos: l.photos }))];
+document.getElementById("photo-credits")!.innerHTML = photoList.map((g) => g.photos.map((p) => `
+  <li><i>${esc(p.taxon ?? g.name)}</i>: <a href="${esc(p.page)}" target="_blank" rel="noopener">${esc(p.attribution)}</a></li>`).join("")).join("");

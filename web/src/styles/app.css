@@ -219,3 +219,334 @@ dialog.emergency::backdrop { background: rgba(0, 0, 0, 0.6); }
 }
 .clock { margin-top: 8px !important; padding: 8px 10px; border-radius: 10px; background: var(--surface); border: 1px solid var(--line); }
 .clock.open { border-color: var(--accent); }
+
+/* ================================================================ Phase 5 */
+.small { font-size: var(--fs-0) !important; }
+.muted { color: var(--ink-soft); }
+.seg { grid-template-columns: repeat(2, 1fr); }
+
+/* ---------------------------------------------------------------- species filter */
+.sp-row { display: flex; gap: 8px; align-items: stretch; }
+.sp-row select {
+  flex: 1; min-width: 0; min-height: var(--tap); border-radius: 12px; border: 1px solid var(--line);
+  background: var(--surface-2); color: var(--ink); font: inherit; font-size: var(--fs-1); padding: 0 10px;
+}
+.sp-row .icon-btn { font-size: var(--fs-1); white-space: nowrap; }
+.filter-line { margin: 4px 0 8px; font-size: var(--fs-1); padding: 8px 10px; border-radius: 10px;
+  background: var(--surface-2); border: 1px solid var(--line); }
+.warn-line { border-color: var(--accent); }
+.swatch.oos { background: #8c928f; opacity: 0.8; }
+.sheet h2 label { cursor: pointer; }
+
+/* ---------------------------------------------------------------- spot panel */
+.spot-head small { font-size: 1rem; }
+.spot-h { font-size: var(--fs-1); margin: 12px 0 4px; color: var(--ink-soft); }
+.why { margin-top: 10px; }
+.why summary { cursor: pointer; font-size: var(--fs-1); min-height: 32px; }
+.why ul, .why-list { list-style: none; padding: 0; margin: 6px 0 0; display: grid; gap: 8px; }
+.why-top { display: flex; justify-content: space-between; gap: 8px; font-size: var(--fs-0); }
+.why-bar { height: 8px; border-radius: 4px; background: var(--surface); border: 1px solid var(--line); overflow: hidden; }
+.why-bar i { display: block; height: 100%; border-radius: 4px; }
+.why-val { font-size: var(--fs-0); color: var(--ink-soft); }
+.fc { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; align-items: end; }
+.fc-day { display: grid; justify-items: center; gap: 2px; font-size: 0.78rem; color: var(--ink-soft); padding: 2px 0; border-radius: 6px; }
+.fc-day i { width: 100%; max-width: 28px; border-radius: 4px 4px 0 0; display: block; }
+.fc-day.sel { background: var(--surface); outline: 2px solid var(--ink); color: var(--ink); }
+.fc-num { font-weight: 700; color: var(--ink); }
+.fc-day .dot { width: 7px; height: 7px; }
+.facts { list-style: none; padding: 0; margin: 10px 0 0; display: grid; gap: 4px; font-size: var(--fs-1); }
+
+/* ---------------------------------------------------------------- rain replay */
+.replay { margin: 4px 0 10px; padding: 10px 12px; border-radius: var(--radius-s); background: var(--surface-2); border: 1px solid var(--line); }
+.replay-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: var(--fs-1); }
+.tl { display: flex; gap: 2px; align-items: flex-end; height: 42px; margin-top: 8px; cursor: pointer; }
+.tl i { flex: 1; background: #4f97d1; border-radius: 2px 2px 0 0; opacity: 0.55; }
+.tl i.now { opacity: 1; outline: 2px solid var(--ink); }
+.replay input[type="range"] { width: 100%; margin: 6px 0 0; accent-color: var(--accent); min-height: 32px; }
+.primary-btn {
+  min-height: var(--tap); padding: 0 16px; border-radius: 12px; border: 0; cursor: pointer;
+  background: var(--accent); color: var(--accent-ink); font-weight: 700; font-size: var(--fs-1);
+}
+
+/* ---------------------------------------------------------------- hotspot zoom (50 m terrain) */
+.hot { margin: 10px 0; padding: 10px 12px; border-radius: var(--radius-s); border: 1px dashed var(--accent); }
+.hot h2 { margin-top: 0; }
+.zones { list-style: none; padding: 0; margin: 6px 0; display: grid; gap: 6px; }
+.zone-btn { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 8px; text-align: left;
+  min-height: var(--tap); padding: 6px 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface-2); cursor: pointer; font-size: var(--fs-1); }
+.zone-score { font-weight: 700; font-size: var(--fs-3); }
+.hot details summary { cursor: pointer; font-size: var(--fs-1); min-height: 36px; }
+
+/* ---------------------------------------------------------------- 3D button */
+.ctrl-3d { font-weight: 700 !important; font-size: 15px !important; color: var(--ink) !important; background: var(--surface) !important; }
+.ctrl-3d[aria-pressed="true"] { background: var(--accent) !important; color: var(--accent-ink) !important; }
+
+/* ---------------------------------------------------------------- species dialog */
+dialog.species-dlg {
+  width: min(760px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); padding: 0; border: 0; border-radius: 18px;
+  background: var(--surface); color: var(--ink); box-shadow: var(--shadow); overflow: hidden;
+}
+dialog.species-dlg[open] { display: flex; flex-direction: column; }
+dialog.species-dlg::backdrop { background: rgba(0, 0, 0, 0.6); }
+.dlg-head { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+.dlg-head h2 { flex: 1; margin: 0; font-size: var(--fs-3); }
+.dlg-body { overflow-y: auto; padding: 14px 16px 20px; }
+.sp-safety { display: flex; gap: 10px; align-items: flex-start; background: var(--safety-bg); color: var(--safety-ink);
+  padding: 10px 12px; border-radius: 12px; font-weight: 700; font-size: var(--fs-1); margin-bottom: 12px; }
+.sp-safety svg { flex: none; margin-top: 2px; }
+.sp-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.sp-pick { width: 100%; display: flex; gap: 12px; align-items: center; text-align: left; padding: 8px; border-radius: 14px;
+  border: 1px solid var(--line); background: var(--surface-2); cursor: pointer; font-size: var(--fs-1); }
+.sp-pick img { width: 72px; height: 72px; object-fit: cover; border-radius: 10px; flex: none; background: var(--line); }
+
+.lookalikes { border: 3px solid var(--sos-bg); border-radius: 14px; padding: 12px 14px; margin-bottom: 16px; }
+.lookalikes h3 { display: flex; gap: 8px; align-items: center; margin: 0 0 6px; color: var(--sos-bg); font-size: var(--fs-2); }
+.lookalikes > p { margin: 0 0 10px; font-size: var(--fs-1); }
+.lookalikes ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.look { display: flex; gap: 10px; align-items: flex-start; font-size: var(--fs-1); }
+.look p { margin: 2px 0 0; font-size: var(--fs-0); }
+.sev { display: inline-block; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; padding: 1px 8px; border-radius: 999px; margin-right: 6px; }
+.sev.deadly { background: var(--sos-bg); color: var(--sos-ink); }
+.sev.toxic { border: 2px solid var(--sos-bg); color: var(--sos-bg); }
+
+.sp-main h3 { margin: 0; font-size: var(--fs-4); line-height: 1.2; }
+.sp-common { margin: 4px 0 10px; font-size: var(--fs-1); }
+.ph-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; }
+.ph { margin: 0; }
+.ph img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 10px; display: block; background: var(--line); }
+.ph figcaption { font-size: 0.75rem; line-height: 1.35; margin-top: 3px; color: var(--ink-soft); }
+.ph figcaption a { color: inherit; }
+.ph.small { width: 88px; flex: none; }
+.ph.small img { width: 88px; height: 66px; aspect-ratio: auto; }
+.ph.small figcaption { font-size: 0.65rem; }
+.sp-facts { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; margin: 12px 0; }
+.sp-facts dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: var(--fs-1); }
+.sp-facts dt { font-weight: 700; }
+.sp-facts dd { margin: 0; }
+.sp-notes { font-size: var(--fs-1); padding-left: 1.2em; }
+.ring path.ring-on { stroke: var(--accent); }
+.ring path.ring-off { stroke: var(--line); }
+.ring text { font-size: 10px; fill: var(--ink-soft); text-anchor: middle; dominant-baseline: central; font-family: var(--font); }
+.ring text.ring-now { fill: var(--ink); font-weight: 700; }
+.ring .ring-dot { fill: var(--ink); }
+@media (max-width: 899px) {
+  dialog.species-dlg { width: 100vw; max-width: 100vw; max-height: 100dvh; height: 100dvh; border-radius: 0; margin: 0; }
+  .ph-row { grid-template-columns: repeat(2, 1fr); }
+}
+/* lookalikes as compact tiles: photo on top, warning badge, name, note */
+.lookalikes ul { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+.look { flex-direction: column; gap: 6px; }
+.look .ph.small { width: 100%; }
+.look .ph.small img { width: 100%; height: auto; aspect-ratio: 4 / 3; }
+.look.deadly .ph img { outline: 3px solid var(--sos-bg); outline-offset: -3px; }
+.ring text { font-size: 12px; }
+@media (max-width: 899px) {
+  /* When the sheet is tall (spot open), let it cover the credit button instead of
+     pushing it up onto the zoom / 3D buttons. */
+  .maplibregl-ctrl-bottom-right, .maplibregl-ctrl-bottom-left { bottom: min(var(--sheet-h, 260px), 34vh); z-index: 3; }
+}
+.photo-credits { font-size: var(--fs-0); padding-left: 1.2em; }
+.photo-credits li { margin: 2px 0; }
+
+/* ---------------------------------------------------------------- tooltips */
+.tip {
+  position: fixed; z-index: 1000; max-width: min(300px, calc(100vw - 16px));
+  background: var(--ink); color: var(--bg); border-radius: 10px; padding: 8px 12px;
+  font-size: var(--fs-1); line-height: 1.45; font-weight: 400; text-align: left;
+  box-shadow: var(--shadow); pointer-events: none; opacity: 0; transition: opacity 0.12s ease;
+}
+.tip.on { opacity: 1; }
+.tip[hidden] { display: none; }
+.tip::after {
+  content: ""; position: absolute; left: var(--arrow-x, 50%); bottom: -6px; transform: translateX(-50%);
+  border: 6px solid transparent; border-bottom: 0; border-top-color: var(--ink);
+}
+.tip.below::after { bottom: auto; top: -6px; border: 6px solid transparent; border-top: 0; border-bottom-color: var(--ink); }
+[data-tip] { -webkit-touch-callout: none; }
+.map-note, .safety, .legend-row, .why-row, .facts li, .clock, .spot-score, .fc-day { cursor: help; }
+@media (prefers-reduced-motion: reduce) { .tip { transition: none; } }
+
+/* ---------------------------------------------------------------- tapped spot marker */
+.pick-pin { width: 22px; height: 22px; border-radius: 50%; pointer-events: none;
+  border: 3px solid var(--ink); background: color-mix(in srgb, var(--accent) 70%, transparent);
+  box-shadow: 0 0 0 3px var(--bg), var(--shadow); }
+.pick-pin::after { content: ""; position: absolute; inset: -9px; border-radius: 50%; border: 2px solid var(--accent);
+  animation: pin-pulse 1.6s ease-out 2; opacity: 0; }
+@keyframes pin-pulse { from { transform: scale(0.5); opacity: 1; } to { transform: scale(1.6); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .pick-pin::after { animation: none; } }
+
+/* ---------------------------------------------------------------- loading message */
+.loading {
+  position: absolute; z-index: 5; left: 50%; top: 40%; transform: translate(-50%, -50%);
+  display: flex; align-items: center; gap: 12px; max-width: calc(100% - 32px);
+  background: var(--surface); border: 1px solid var(--line); border-radius: 999px;
+  padding: 12px 20px; font-size: var(--fs-2); font-weight: 700; box-shadow: var(--shadow);
+  transition: opacity 0.35s ease;
+}
+.loading.done { opacity: 0; }
+.loading.failed { border: 2px solid var(--sos-bg); border-radius: 16px; }
+.loading.failed .spinner { display: none; }
+.loading[hidden] { display: none; }
+.spinner { width: 22px; height: 22px; flex: none; border-radius: 50%;
+  border: 3px solid var(--line); border-top-color: var(--accent); animation: spin 0.9s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (min-width: 900px) { .loading { left: calc(50% + 200px); } }
+@media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 2.5s; } }
+
+/* ---------------------------------------------------------------- first-visit guide */
+dialog.guide-dlg {
+  width: min(480px, calc(100vw - 24px)); border: 0; border-radius: 18px; padding: 0;
+  background: var(--surface); color: var(--ink); box-shadow: var(--shadow);
+}
+dialog.guide-dlg::backdrop { background: rgba(0, 0, 0, 0.55); }
+.guide-body { padding: 20px 20px 18px; }
+.guide-body h2 { margin: 0 0 12px; font-size: var(--fs-4); line-height: 1.2; }
+.steps { list-style: none; padding: 0; margin: 0 0 12px; display: grid; gap: 12px; }
+.steps li { display: flex; gap: 12px; align-items: flex-start; font-size: var(--fs-2); line-height: 1.45; }
+.step-n { flex: none; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--accent); color: var(--accent-ink); font-weight: 700; font-size: var(--fs-2); }
+.guide-tip { margin: 8px 0; font-size: var(--fs-1); }
+.guide-ok { width: 100%; margin-top: 6px; min-height: 52px; font-size: var(--fs-2); }
+.loading { width: max-content; max-width: calc(100vw - 32px); }
+@media (max-width: 899px) { .loading { font-size: var(--fs-1); padding: 10px 16px; } }
+
+/* ---------------------------------------------------------------- species habitat in the spot panel */
+.sp-here-list { list-style: none; padding: 0; margin: 4px 0 6px; display: grid; gap: 6px; }
+.sp-here-list li { display: flex; align-items: center; gap: 6px; }
+.sp-here { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; text-align: left; cursor: pointer;
+  min-height: var(--tap); padding: 4px 8px 4px 4px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); font-size: var(--fs-0); }
+.sp-here img { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; flex: none; background: var(--line); }
+.sp-here-name { flex: 1; min-width: 0; line-height: 1.3; }
+.sp-here-name i { font-size: var(--fs-1); }
+.sp-here-score { flex: none; min-width: 42px; text-align: center; font-weight: 700; font-size: var(--fs-2);
+  border-radius: 8px; padding: 2px 6px; color: #10140f; }
+.chip { display: inline-block; margin: 3px 2px 0 0; min-height: 36px; padding: 2px 12px; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--accent); background: var(--surface); color: var(--ink); font-size: var(--fs-0); }
+
+/* ---------------------------------------------------------------- species card: More info */
+.sp-list li { display: flex; gap: 6px; align-items: stretch; }
+.sp-list .sp-pick { flex: 1; min-width: 0; }
+.more-mini { flex: none; border-radius: 14px; border: 1px solid var(--line); background: var(--surface); cursor: pointer;
+  padding: 0 12px; font-size: var(--fs-0); font-weight: 700; color: var(--accent); }
+.more { margin: 12px 0; border: 1px solid var(--line); border-radius: 14px; background: var(--surface-2); }
+.more-btn { cursor: pointer; list-style: none; min-height: var(--tap); display: flex; align-items: center; gap: 8px;
+  padding: 0 14px; font-weight: 700; font-size: var(--fs-1); color: var(--accent); }
+.more-btn::-webkit-details-marker { display: none; }
+.more-btn::before { content: "▸"; transition: transform 0.15s ease; }
+.more[open] .more-btn::before { transform: rotate(90deg); }
+.more-body { padding: 0 14px 12px; font-size: var(--fs-1); }
+.more-body h4 { margin: 12px 0 4px; font-size: var(--fs-1); }
+.more-body p { margin: 4px 0; }
+.rec-chart { display: grid; grid-template-columns: repeat(12, 1fr); gap: 3px; align-items: end; height: 64px; margin: 8px 0 2px; }
+.rec-m { display: grid; justify-items: center; gap: 2px; font-size: 0.75rem; color: var(--ink-soft); }
+.rec-m i { width: 100%; max-width: 22px; background: var(--accent); border-radius: 3px 3px 0 0; display: block; }
+.rec-m.in span { color: var(--ink); font-weight: 700; text-decoration: underline; }
+.more-links { padding-left: 1.2em; margin: 4px 0; }
+.more-links li { margin: 3px 0; }
+.oos-note { display: block; margin-top: 6px; font-size: var(--fs-0); color: var(--ink-soft); }
+.legend-zoom { margin-top: 10px; }
+.swatch.dashed { height: 14px; border: 2.5px dashed var(--accent); background: transparent; }
+
+/* ================================================================ ux-v2 Fix 1: mobile map space */
+.safety-short { display: none; }
+.no-rakes { margin: 10px 0 0 !important; padding: 8px 10px; border-radius: 10px; font-size: var(--fs-1);
+  background: var(--surface); border: 1px solid var(--line); cursor: help; }
+@media (min-width: 900px) { .no-rakes { display: none; } }     /* desktop keeps the note on the map */
+@media (max-width: 899px) {
+  .brand-cy { display: none; }                                   /* "Mushroom Finder" fits on one line */
+  .map-note { display: none; }                                   /* moved into the zone panel */
+  .safety { padding: 0 8px 0 12px; align-items: center; }
+  .safety > svg { margin-top: 0; }
+  .safety-full { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .safety-short { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex: 1; min-width: 0;
+    min-height: 44px; padding: 0; border: 0; background: none; color: inherit; font: inherit; font-weight: 700;
+    text-align: left; cursor: pointer; }
+  .safety-short-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .safety-more { flex: none; width: 28px; text-align: center; transition: transform 0.15s ease; }
+  .safety.open { align-items: flex-start; padding-top: 8px; padding-bottom: 8px; }
+  .safety.open .safety-full { position: static; width: auto; height: auto; clip: auto; white-space: normal; flex: 1; }
+  .safety.open .safety-short { flex: none; min-height: 28px; }
+  .safety.open .safety-short-text { display: none; }
+  .safety.open .safety-more { transform: rotate(180deg); }
+}
+@media (max-width: 899px) {
+  /* Fit the whole one-line message: 13.5 px bold at 375 px wide, scaling with the screen. */
+  .safety { padding: 0 6px 0 10px; gap: 8px; }
+  .safety > svg { width: 18px; height: 18px; }
+  .safety-short { gap: 4px; }
+  .safety-short-text { font-size: min(0.875rem, 3.6vw); letter-spacing: 0; }
+  .safety-more { width: 20px; }
+}
+
+/* ================================================================ ux-v2 Fix 2: colour key on the map */
+.map-legend {
+  position: absolute; z-index: 2; width: 220px; padding: 8px 12px 9px;
+  left: calc(16px + 390px + 16px); bottom: 28px;       /* desktop: just right of the side panel */
+  background: color-mix(in srgb, var(--surface) 94%, transparent); border: 1px solid var(--line);
+  border-radius: var(--radius-s); box-shadow: var(--shadow); font-size: var(--fs-0); line-height: 1.35; cursor: help;
+}
+.map-legend:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.ml-title { font-weight: 700; color: var(--ink); margin-bottom: 5px; }
+.ml-bar { height: 12px; border-radius: 6px; border: 1px solid color-mix(in srgb, var(--ink) 25%, transparent); }
+.ml-scale { display: flex; justify-content: space-between; gap: 6px; margin-top: 4px; color: var(--ink); }
+.ml-scale span:nth-child(2) { color: var(--ink-soft); }
+.ml-note { margin-top: 4px; color: var(--ink-soft); }
+@media (max-width: 899px) {
+  /* phones: bottom-left, just above the bottom sheet (over the sea south-west of Paphos) */
+  .map-legend { left: 8px; bottom: min(var(--sheet-h, 260px), 70%); width: 168px; padding: 6px 10px 7px; }
+  .ml-bar { height: 10px; }
+}
+
+/* ================================================================ ux-v2 Fix 3: day buttons lead with the best score */
+.day { min-width: 112px; min-height: 76px; gap: 2px; align-content: start; }
+.day .day-top { display: flex; align-items: baseline; gap: 6px; font-size: var(--fs-1); color: inherit; }
+.day-top b { font-size: var(--fs-1); }
+.day .day-date { font-size: var(--fs-0); color: var(--ink-soft); }
+.day .day-score { display: inline-flex; align-items: center; gap: 6px; font-size: var(--fs-3); font-weight: 700; line-height: 1.1; color: var(--ink) !important; }
+.day-score i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--ink) 35%, transparent); }
+.day .day-conf { display: inline-flex; align-items: center; gap: 5px; font-size: 0.8rem; color: var(--ink-soft); white-space: nowrap; }
+.day[aria-pressed="true"] .day-score, .day[aria-pressed="true"] .day-date, .day[aria-pressed="true"] .day-conf { color: var(--accent-ink) !important; }
+@media (min-width: 900px) { .days .day { min-width: 108px; flex: 1 1 108px; max-width: 118px; } }
+
+/* ================================================================ ux-v2 Fix 4: a clear way back from the zone panel */
+.spot-bar { position: sticky; top: -12px; z-index: 2; display: flex; justify-content: space-between; align-items: center; gap: 8px;
+  margin: -12px -14px 8px; padding: 6px 8px 6px 6px; background: var(--surface-2); border-bottom: 1px solid var(--line);
+  border-radius: var(--radius) var(--radius) 0 0; }
+.spot-back, .spot-x { min-height: 44px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface);
+  color: var(--ink); cursor: pointer; font-size: var(--fs-1); font-weight: 700; }
+.spot-back { padding: 0 14px; display: inline-flex; align-items: center; gap: 6px; }
+.spot-x { min-width: 44px; font-size: 1.15rem; line-height: 1; }
+.spot-back:hover, .spot-x:hover { border-color: var(--accent); }
+@media (max-width: 899px) { .spot-bar { top: -10px; } }
+
+/* ================================================================ ux-v2 Fix 5: Best 3 spots this day */
+.best3 { margin: 4px 0 10px; }
+.best3 h2 { margin: 6px 0 6px; }
+.best3 ol { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+.best-btn { width: 100%; display: flex; align-items: center; gap: 10px; text-align: left; cursor: pointer;
+  min-height: 48px; padding: 5px 10px 5px 6px; border-radius: 12px; border: 1px solid var(--line);
+  background: var(--surface-2); color: var(--ink); font-size: var(--fs-1); }
+.best-btn:hover { border-color: var(--accent); }
+.best-rank { flex: none; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--accent); color: var(--accent-ink); font-weight: 700; font-size: var(--fs-0); }
+.best-main { flex: 1; min-width: 0; display: grid; line-height: 1.3; }
+.best-main b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.best-why { font-size: var(--fs-0); color: var(--ink-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.best-score { flex: none; display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: var(--fs-2); }
+.best-score i { width: 12px; height: 12px; border-radius: 3px; box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--ink) 35%, transparent); }
+@media (max-width: 899px) { .best-btn { min-height: 44px; padding: 3px 8px 3px 5px; } .best-rank { width: 24px; height: 24px; } }
+@media (max-width: 899px) {
+  /* The day buttons already show score + forecast: drop the repeated date line on phones. */
+  .sheet > .conf-line { display: none; }
+  .best3 h2 { margin-top: 2px; }
+  /* Colour key: top-left over the sea, so it never covers forest above the taller panel. */
+  .map-legend { top: 8px; bottom: auto; }
+}
+
+/* ================================================================ ux-v2 polish */
+.filter-line > p { margin: 0; }
+details.oos { margin-top: 6px; font-size: var(--fs-0); }
+details.oos summary { cursor: pointer; min-height: 32px; display: flex; align-items: center; color: var(--ink-soft); font-weight: 700; }
+details.oos summary:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: 6px; }
+details.oos ul { margin: 2px 0 4px; padding-left: 1.2em; }
+details.oos p { margin: 2px 0; }

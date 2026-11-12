@@ -2,7 +2,7 @@ import { defineConfig, type Plugin } from "vite";
 import { resolve } from "node:path";
 import { createReadStream, existsSync, statSync } from "node:fs";
 
-// PRIVATE 250 m data lives in ../data/web-private and is served ONLY by the
+// PRIVATE data (future finds log, village notes) lives in ../data/web-private and is served ONLY by the
 // local dev server. It is never copied into the built site.
 function privateData(): Plugin {
   const dir = resolve(__dirname, "../data/web-private");

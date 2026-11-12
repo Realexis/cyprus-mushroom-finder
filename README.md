@@ -7,6 +7,8 @@ A map of Cyprus showing where **growing conditions** are right for wild mushroom
 
 **Live site:** https://realexis.github.io/cyprus-mushroom-finder/
 **For Claude:** https://realexis.github.io/cyprus-mushroom-finder/data/summary.json
+**Preview of the `dev` branch (test version, data frozen, no daily update):** https://realexis.github.io/cyprus-mushroom-finder-preview/
+Update it with `DEPLOY_REMOTE=https://github.com/Realexis/cyprus-mushroom-finder-preview.git ./scripts/deploy-pages.sh`.
 
 ## How it updates
 
@@ -30,6 +32,12 @@ cd ../web && npm run dev                  # site with the private view at http:/
 
 One-off builds (already done): `shroomy.habitat.fetch`, `shroomy.habitat.build`,
 `shroomy.weather.fetch --clim`, `shroomy.export.terrain`.
+
+Species cards: `uv run python -m shroomy.export.species` rebuilds `web/src/generated/species.json`
+from `config/species.yaml` + `config/lookalikes.yaml` + iNaturalist photos (licence-checked, cached).
+Public data includes the 250 m forest squares (`cells.pmtiles` + details), made daily (the robot uses GDAL,
+no tippecanoe needed). The 50 m shade is a fixed island-wide file built once:
+`uv run python -m shroomy.export.shade50` → `web/public/tiles/shade50.pmtiles` (goes in the `static-v1` release).
 
 ## Where things are
 - `config/` — every weight, threshold, source and credit

@@ -1,0 +1,784 @@
+{
+ "_about": "Built by pipeline/shroomy/export/species.py from config/species.yaml + config/lookalikes.yaml. Photos: iNaturalist, licence and attribution per photo.",
+ "species": [
+  {
+   "code": "lde",
+   "latin": "Lactarius deliciosus",
+   "common": "red pine mushroom",
+   "local": "kokkinomanitaro",
+   "local_confirmed": true,
+   "trees": [
+    1,
+    2,
+    3
+   ],
+   "trees_text": "Pine (Calabrian and black pine); also golden oak and kermes oak",
+   "bands": [
+    1,
+    2,
+    3
+   ],
+   "altitude_text": "All pine altitudes",
+   "months": [
+    10,
+    11,
+    12,
+    1
+   ],
+   "notes": [
+    "Kermes oak is not on our tree map yet, so those areas are not counted."
+   ],
+   "season_text": "Oct-Jan",
+   "photos": [
+    {
+     "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/235753421/medium.jpeg",
+     "licence": "CC BY-NC",
+     "attribution": "(c) timendez, some rights reserved (CC BY-NC), uploaded by timendez",
+     "page": "https://www.inaturalist.org/photos/235753421",
+     "taxon": "Lactarius deliciosus"
+    },
+    {
+     "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/56589440/medium.jpeg",
+     "licence": "CC BY-NC",
+     "attribution": "(c) troi_olivares, some rights reserved (CC BY-NC), uploaded by troi_olivares",
+     "page": "https://www.inaturalist.org/photos/56589440",
+     "taxon": "Lactarius deliciosus"
+    },
+    {
+     "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/5575021/medium.jpg",
+     "licence": "CC BY-NC",
+     "attribution": "(c) Christian Schwarz, some rights reserved (CC BY-NC), uploaded by Christian Schwarz",
+     "page": "https://www.inaturalist.org/photos/5575021",
+     "taxon": "Lactarius deliciosus"
+    }
+   ],
+   "inat_pages": [
+    {
+     "name": "Lactarius deliciosus",
+     "url": "https://www.inaturalist.org/taxa/155197"
+    }
+   ],
+   "records": {
+    "gbif_total": 5,
+    "inat_research": 1,
+    "months": {
+     "2": 1,
+     "4": 1,
+     "11": 1,
+     "12": 1
+    },
+    "links": [
+     {
+      "label": "GBIF: Lactarius deliciosus",
+      "url": "https://www.gbif.org/species/5248629"
+     },
+     {
+      "label": "GBIF records in Cyprus: Lactarius deliciosus",
+      "url": "https://www.gbif.org/occurrence/search?country=CY&taxon_key=5248629"
+     },
+     {
+      "label": "iNaturalist: Lactarius deliciosus",
+      "url": "https://www.inaturalist.org/taxa/155197"
+     },
+     {
+      "label": "iNaturalist sightings in Cyprus: Lactarius deliciosus",
+      "url": "https://www.inaturalist.org/observations?place_id=10289,96773&taxon_id=155197"
+     }
+    ]
+   }
+  },
+  {
+   "code": "lsa",
+   "latin": "Lactarius sanguifluus",
+   "common": "bloody milk cap",
+   "local": "gematas",
+   "local_confirmed": false,
+   "trees": [
+    2
+   ],
+   "trees_text": "Troodos black pine",
+   "bands": [
+    3
+   ],
+   "altitude_text": "Above 1,200 m",
+   "months": [
+    9,
+    10
+   ],
+   "notes": [],
+   "season_text": "Sep-Oct",
+   "photos": [
+    {
+     "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/598783046/medium.jpg",
+     "licence": "CC BY",
+     "attribution": "(c) Lucian Clanet, some rights reserved (CC BY), uploaded by Lucian Clanet",
+     "page": "https://www.inaturalist.org/photos/598783046",
+     "taxon": "Lactarius sanguifluus"
+    },
+    {
+     "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/102634379/medium.jpeg",
+     "licence": "CC BY-NC",
+     "attribution": "(c) Massimo Tabone, some rights reserved (CC BY-NC), uploaded by Massimo Tabone",
+     "page": "https://www.inaturalist.org/photos/102634379",
+     "taxon": "Lactarius sanguifluus"
+    },
+    {
+     "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/57555785/medium.jpeg",
+     "licence": "CC BY-NC",
+     "attribution": "(c) zaca, some rights reserved (CC BY-NC), uploaded by zaca",
+     "page": "https://www.inaturalist.org/photos/57555785",
+     "taxon": "Lactarius sanguifluus"
+    }
+   ],
+   "inat_pages": [
+    {
+     "name": "Lactarius sanguifluus",
+     "url": "https://www.inaturalist.org/taxa/332501"
+    }
+   ],
+   "records": {
+    "gbif_total": 0,
+    "inat_research": 0,
+    "months": {},
+    "links": [
+     {
+      "label": "GBIF: Lactarius sanguifluus",
+      "url": "https://www.gbif.org/species/5248648"
+     },
+     {
+      "label": "GBIF records in Cyprus: Lactarius sanguifluus",
+      "url": "https://www.gbif.org/occurrence/search?country=CY&taxon_key=5248648"
+     },
+     {
+      "label": "iNaturalist: Lactarius sanguifluus",
+      "url": "https://www.inaturalist.org/taxa/332501"
+     },
+     {
+      "label": "iNaturalist sightings in Cyprus: Lactarius sanguifluus",
+      "url": "https://www.inaturalist.org/observations?place_id=10289,96773&taxon_id=332501"
+     }
+    ]
+   }
+  },
+  {
+   "code": "rde",
+   "latin": "Russula delica",
+   "common": "milk-white brittlegill",
+   "local": "aspromanitaro",
+   "local_confirmed": false,
+   "trees": [
+    1,
+    2,
+    3
+   ],
+   "trees_text": "All forest (pine and golden oak on this map)",
+   "bands": [
+    1,
+    2,
+    3
+   ],
+   "altitude_text": "All altitudes",
+   "months": [
+    9,
+    10
+   ],
+   "notes": [
+    "The brief says it fruits in warm spells. That rule is not in the score yet (TODO S5)."
+   ],
+   "season_text": "Sep-Oct",
+   "photos": [
+    {
+     "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/453190381/medium.jpeg",
+     "licence": "CC BY-NC",
+     "attribution": "(c) naturelovefungi, some rights reserved (CC BY-NC)",
+     "page": "https://www.inaturalist.org/photos/453190381",
+     "taxon": "Russula delica"
+    },
+    {
+     "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/453190418/medium.jpeg",
+     "licence": "CC BY-NC",
+     "attribution": "(c) naturelovefungi, some rights reserved (CC BY-NC)",
+     "page": "https://www.inaturalist.org/photos/453190418",
+     "taxon": "Russula delica"
+    },
+    {
+     "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/453190448/medium.jpeg",
+     "licence": "CC BY-NC",
+     "attribution": "(c) naturelovefungi, some rights reserved (CC BY-NC)",
+     "page": "https://www.inaturalist.org/photos/453190448",
+     "taxon": "Russula delica"
+    }
+   ],
+   "inat_pages": [
+    {
+     "name": "Russula delica",
+     "url": "https://www.inaturalist.org/taxa/352278"
+    }
+   ],
+   "records": {
+    "gbif_total": 0,
+    "inat_research": 0,
+    "months": {},
+    "links": [
+     {
+      "label": "GBIF: Russula delica",
+      "url": "https://www.gbif.org/species/2551331"
+     },
+     {
+      "label": "GBIF records in Cyprus: Russula delica",
+      "url": "https://www.gbif.org/occurrence/search?country=CY&taxon_key=2551331"
+     },
+     {
+      "label": "iNaturalist: Russula delica",
+      "url": "https://www.inaturalist.org/taxa/352278"
+     },
+     {
+      "label": "iNaturalist sightings in Cyprus: Russula delica",
+      "url": "https://www.inaturalist.org/observations?place_id=10289,96773&taxon_id=352278"
+     }
+    ]
+   }
+  },
+  {
+   "code": "tca",
+   "latin": "Tricholoma caligatum",
+   "common": "matsutake",
+   "local": "imero",
+   "local_confirmed": false,
+   "trees": [
+    1,
+    2,
+    3
+   ],
+   "trees_text": "Pine and golden oak",
+   "bands": [
+    2,
+    3
+   ],
+   "altitude_text": "Mid and high altitudes",
+   "months": [
+    11,
+    12,
+    1
+   ],
+   "notes": [],
+   "season_text": "Nov-Jan",
+   "photos": [
+    {
+     "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/29240063/medium.jpeg",
+     "licence": "CC BY",
+     "attribution": "(c) Davide Puddu, some rights reserved (CC BY), uploaded by Davide Puddu",
+     "page": "https://www.inaturalist.org/photos/29240063",
+     "taxon": "Tricholoma caligatum"
+    },
+    {
+     "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/30798399/medium.jpeg",
+     "licence": "CC BY-NC",
+     "attribution": "(c) mycowalt, some rights reserved (CC BY-NC), uploaded by mycowalt",
+     "page": "https://www.inaturalist.org/photos/30798399",
+     "taxon": "Tricholoma caligatum"
+    },
+    {
+     "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/13082500/medium.jpeg",
+     "licence": "CC BY-SA",
+     "attribution": "(c) mycowalt, some rights reserved (CC BY-SA), uploaded by mycowalt",
+     "page": "https://www.inaturalist.org/photos/13082500",
+     "taxon": "Tricholoma caligatum"
+    }
+   ],
+   "inat_pages": [
+    {
+     "name": "Tricholoma caligatum",
+     "url": "https://www.inaturalist.org/taxa/125704"
+    }
+   ],
+   "records": {
+    "gbif_total": 2,
+    "inat_research": 0,
+    "months": {
+     "12": 2
+    },
+    "links": [
+     {
+      "label": "GBIF: Tricholoma caligatum",
+      "url": "https://www.gbif.org/species/5241764"
+     },
+     {
+      "label": "GBIF records in Cyprus: Tricholoma caligatum",
+      "url": "https://www.gbif.org/occurrence/search?country=CY&taxon_key=5241764"
+     },
+     {
+      "label": "iNaturalist: Tricholoma caligatum",
+      "url": "https://www.inaturalist.org/taxa/125704"
+     },
+     {
+      "label": "iNaturalist sightings in Cyprus: Tricholoma caligatum",
+      "url": "https://www.inaturalist.org/observations?place_id=10289,96773&taxon_id=125704"
+     }
+    ]
+   }
+  },
+  {
+   "code": "mor",
+   "latin": "Morchella esculenta / elata",
+   "common": "morels",
+   "local": "arnaoui",
+   "local_confirmed": false,
+   "trees": [
+    4
+   ],
+   "trees_text": "Deciduous broadleaf trees; burned ground",
+   "bands": [
+    2,
+    3
+   ],
+   "altitude_text": "Mid and high altitudes",
+   "months": [
+    3,
+    4
+   ],
+   "notes": [
+    "Burned ground is not on the map yet (no data source chosen, TODO D5).",
+    "\"Other broadleaf\" mixes deciduous and evergreen trees. Our map cannot tell them apart."
+   ],
+   "season_text": "Mar-Apr",
+   "photos": [
+    {
+     "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/185479981/medium.jpg",
+     "licence": "CC BY-NC",
+     "attribution": "(c) Nicolò Oppicelli, some rights reserved (CC BY-NC), uploaded by Nicolò Oppicelli",
+     "page": "https://www.inaturalist.org/photos/185479981",
+     "taxon": "Morchella esculenta"
+    },
+    {
+     "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/175594791/medium.jpg",
+     "licence": "CC BY-NC",
+     "attribution": "(c) Nicolò Oppicelli, some rights reserved (CC BY-NC), uploaded by Nicolò Oppicelli",
+     "page": "https://www.inaturalist.org/photos/175594791",
+     "taxon": "Morchella esculenta"
+    },
+    {
+     "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/273233405/medium.jpeg",
+     "licence": "CC BY-NC",
+     "attribution": "(c) Barbara Klenner, bazı hakları saklıdır (CC BY-NC), yükleyen: Barbara Klenner",
+     "page": "https://www.inaturalist.org/photos/273233405",
+     "taxon": "Morchella elata"
+    }
+   ],
+   "inat_pages": [
+    {
+     "name": "Morchella esculenta",
+     "url": "https://www.inaturalist.org/taxa/58682"
+    },
+    {
+     "name": "Morchella elata",
+     "url": "https://www.inaturalist.org/taxa/1467061"
+    }
+   ],
+   "records": {
+    "gbif_total": 8,
+    "inat_research": 0,
+    "months": {
+     "3": 3,
+     "4": 3
+    },
+    "links": [
+     {
+      "label": "GBIF: Morchella esculenta",
+      "url": "https://www.gbif.org/species/2594602"
+     },
+     {
+      "label": "GBIF records in Cyprus: Morchella esculenta",
+      "url": "https://www.gbif.org/occurrence/search?country=CY&taxon_key=2594602"
+     },
+     {
+      "label": "iNaturalist: Morchella esculenta",
+      "url": "https://www.inaturalist.org/taxa/58682"
+     },
+     {
+      "label": "iNaturalist sightings in Cyprus: Morchella esculenta",
+      "url": "https://www.inaturalist.org/observations?place_id=10289,96773&taxon_id=58682"
+     },
+     {
+      "label": "GBIF: Morchella elata",
+      "url": "https://www.gbif.org/species/2594626"
+     },
+     {
+      "label": "GBIF records in Cyprus: Morchella elata",
+      "url": "https://www.gbif.org/occurrence/search?country=CY&taxon_key=2594626"
+     },
+     {
+      "label": "iNaturalist: Morchella elata",
+      "url": "https://www.inaturalist.org/taxa/1467061"
+     },
+     {
+      "label": "iNaturalist sightings in Cyprus: Morchella elata",
+      "url": "https://www.inaturalist.org/observations?place_id=10289,96773&taxon_id=1467061"
+     }
+    ]
+   }
+  },
+  {
+   "code": "slu",
+   "latin": "Suillus luteus",
+   "common": "slippery Jack",
+   "local": "lartias",
+   "local_confirmed": false,
+   "trees": [
+    1,
+    2
+   ],
+   "trees_text": "Pine",
+   "bands": [
+    1,
+    2,
+    3
+   ],
+   "altitude_text": "The pine belt",
+   "months": [
+    10,
+    11,
+    12,
+    1
+   ],
+   "notes": [],
+   "season_text": "Oct-Jan",
+   "photos": [
+    {
+     "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/12823339/medium.jpeg",
+     "licence": "CC BY",
+     "attribution": "(c) Davide Puddu, some rights reserved (CC BY), uploaded by Davide Puddu",
+     "page": "https://www.inaturalist.org/photos/12823339",
+     "taxon": "Suillus luteus"
+    },
+    {
+     "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/10473273/medium.jpg",
+     "licence": "CC BY-NC",
+     "attribution": "(c) Kari Pihlaviita, some rights reserved (CC BY-NC), uploaded by Kari Pihlaviita",
+     "page": "https://www.inaturalist.org/photos/10473273",
+     "taxon": "Suillus luteus"
+    },
+    {
+     "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/13310739/medium.jpg",
+     "licence": "CC BY-NC",
+     "attribution": "(c) Christian Schwarz, some rights reserved (CC BY-NC), uploaded by Christian Schwarz",
+     "page": "https://www.inaturalist.org/photos/13310739",
+     "taxon": "Suillus luteus"
+    }
+   ],
+   "inat_pages": [
+    {
+     "name": "Suillus luteus",
+     "url": "https://www.inaturalist.org/taxa/53488"
+    }
+   ],
+   "records": {
+    "gbif_total": 1,
+    "inat_research": 0,
+    "months": {
+     "1": 1
+    },
+    "links": [
+     {
+      "label": "GBIF: Suillus luteus",
+      "url": "https://www.gbif.org/species/7777157"
+     },
+     {
+      "label": "GBIF records in Cyprus: Suillus luteus",
+      "url": "https://www.gbif.org/occurrence/search?country=CY&taxon_key=7777157"
+     },
+     {
+      "label": "iNaturalist: Suillus luteus",
+      "url": "https://www.inaturalist.org/taxa/53488"
+     },
+     {
+      "label": "iNaturalist sightings in Cyprus: Suillus luteus",
+      "url": "https://www.inaturalist.org/observations?place_id=10289,96773&taxon_id=53488"
+     }
+    ]
+   }
+  }
+ ],
+ "lookalikes": [
+  {
+   "latin": "Amanita phalloides",
+   "common": "death cap",
+   "severity": "deadly",
+   "note": "No symptoms for 6-12 hours. Cooking does not remove the poison.",
+   "photos": [
+    {
+     "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/111266235/medium.jpg",
+     "licence": "CC BY-NC",
+     "attribution": "(c) Federico Calledda, some rights reserved (CC BY-NC), uploaded by Federico Calledda",
+     "page": "https://www.inaturalist.org/photos/111266235",
+     "taxon": "Amanita phalloides"
+    },
+    {
+     "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/289673781/medium.jpg",
+     "licence": "CC BY-NC",
+     "attribution": "(c) Christie Greening, some rights reserved (CC BY-NC), uploaded by Christie Greening",
+     "page": "https://www.inaturalist.org/photos/289673781",
+     "taxon": "Amanita phalloides"
+    }
+   ],
+   "inat_pages": [
+    {
+     "name": "Amanita phalloides",
+     "url": "https://www.inaturalist.org/taxa/52135"
+    }
+   ]
+  },
+  {
+   "latin": "Amanita verna",
+   "common": "",
+   "severity": "deadly",
+   "note": "",
+   "photos": [
+    {
+     "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/29238677/medium.jpeg",
+     "licence": "CC BY",
+     "attribution": "(c) Davide Puddu, some rights reserved (CC BY), uploaded by Davide Puddu",
+     "page": "https://www.inaturalist.org/photos/29238677",
+     "taxon": "Amanita verna"
+    },
+    {
+     "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/35754619/medium.jpg",
+     "licence": "CC BY-NC",
+     "attribution": "(c) salvatore_bacciu_paola_mereu, some rights reserved (CC BY-NC), uploaded by salvatore_bacciu_paola_mereu",
+     "page": "https://www.inaturalist.org/photos/35754619",
+     "taxon": "Amanita verna"
+    }
+   ],
+   "inat_pages": [
+    {
+     "name": "Amanita verna",
+     "url": "https://www.inaturalist.org/taxa/58684"
+    }
+   ]
+  },
+  {
+   "latin": "Amanita virosa",
+   "common": "",
+   "severity": "deadly",
+   "note": "",
+   "photos": [
+    {
+     "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/110521312/medium.jpg",
+     "licence": "CC BY-NC",
+     "attribution": "(c) Federico Calledda, some rights reserved (CC BY-NC), uploaded by Federico Calledda",
+     "page": "https://www.inaturalist.org/photos/110521312",
+     "taxon": "Amanita virosa"
+    },
+    {
+     "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/91430656/medium.jpeg",
+     "licence": "CC BY-NC",
+     "attribution": "(c) Ludo Leclerc, some rights reserved (CC BY-NC), uploaded by Ludo Leclerc",
+     "page": "https://www.inaturalist.org/photos/91430656",
+     "taxon": "Amanita virosa"
+    }
+   ],
+   "inat_pages": [
+    {
+     "name": "Amanita virosa",
+     "url": "https://www.inaturalist.org/taxa/58685"
+    }
+   ]
+  },
+  {
+   "latin": "Lepiota brunneoincarnata",
+   "common": "",
+   "severity": "deadly",
+   "note": "",
+   "photos": [
+    {
+     "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/99365273/medium.jpg",
+     "licence": "CC BY-NC",
+     "attribution": "(c) salvatore_bacciu_paola_mereu, some rights reserved (CC BY-NC), uploaded by salvatore_bacciu_paola_mereu",
+     "page": "https://www.inaturalist.org/photos/99365273",
+     "taxon": "Lepiota brunneoincarnata"
+    },
+    {
+     "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/97147095/medium.jpg",
+     "licence": "CC BY-NC",
+     "attribution": "(c) Wendy Frauchiger, some rights reserved (CC BY-NC), uploaded by Wendy Frauchiger",
+     "page": "https://www.inaturalist.org/photos/97147095",
+     "taxon": "Lepiota brunneoincarnata"
+    }
+   ],
+   "inat_pages": [
+    {
+     "name": "Lepiota brunneoincarnata",
+     "url": "https://www.inaturalist.org/taxa/515954"
+    }
+   ]
+  },
+  {
+   "latin": "Amanita proxima",
+   "common": "",
+   "severity": "toxic",
+   "note": "Damages the kidneys.",
+   "photos": [
+    {
+     "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/335522392/medium.jpg",
+     "licence": "CC BY-NC",
+     "attribution": "(c) Federico Calledda, some rights reserved (CC BY-NC), uploaded by Federico Calledda",
+     "page": "https://www.inaturalist.org/photos/335522392",
+     "taxon": "Amanita proxima"
+    },
+    {
+     "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/335522351/medium.jpg",
+     "licence": "CC BY-NC",
+     "attribution": "(c) Federico Calledda, some rights reserved (CC BY-NC), uploaded by Federico Calledda",
+     "page": "https://www.inaturalist.org/photos/335522351",
+     "taxon": "Amanita proxima"
+    }
+   ],
+   "inat_pages": [
+    {
+     "name": "Amanita proxima",
+     "url": "https://www.inaturalist.org/taxa/746195"
+    }
+   ]
+  },
+  {
+   "latin": "Amanita pantherina",
+   "common": "",
+   "severity": "toxic",
+   "note": "",
+   "photos": [
+    {
+     "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/112768591/medium.jpg",
+     "licence": "CC BY-NC",
+     "attribution": "(c) Federico Calledda, some rights reserved (CC BY-NC), uploaded by Federico Calledda",
+     "page": "https://www.inaturalist.org/photos/112768591",
+     "taxon": "Amanita pantherina"
+    },
+    {
+     "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/29239726/medium.jpeg",
+     "licence": "CC BY",
+     "attribution": "(c) Davide Puddu, some rights reserved (CC BY), uploaded by Davide Puddu",
+     "page": "https://www.inaturalist.org/photos/29239726",
+     "taxon": "Amanita pantherina"
+    }
+   ],
+   "inat_pages": [
+    {
+     "name": "Amanita pantherina",
+     "url": "https://www.inaturalist.org/taxa/48418"
+    }
+   ]
+  },
+  {
+   "latin": "Agaricus xanthodermus",
+   "common": "yellow stainer",
+   "severity": "toxic",
+   "note": "",
+   "photos": [
+    {
+     "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/5235305/medium.jpg",
+     "licence": "CC BY-NC",
+     "attribution": "(c) Damon Tighe, some rights reserved (CC BY-NC), uploaded by Damon Tighe",
+     "page": "https://www.inaturalist.org/photos/5235305",
+     "taxon": "Agaricus xanthodermus"
+    },
+    {
+     "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/334066709/medium.jpg",
+     "licence": "CC BY-NC",
+     "attribution": "(c) Taye Bright, some rights reserved (CC BY-NC), uploaded by Taye Bright",
+     "page": "https://www.inaturalist.org/photos/334066709",
+     "taxon": "Agaricus xanthodermus"
+    }
+   ],
+   "inat_pages": [
+    {
+     "name": "Agaricus xanthodermus",
+     "url": "https://www.inaturalist.org/taxa/118394"
+    }
+   ]
+  },
+  {
+   "latin": "Omphalotus olearius",
+   "common": "",
+   "severity": "toxic",
+   "note": "Looks like a chanterelle.",
+   "photos": [
+    {
+     "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/435797142/medium.jpeg",
+     "licence": "CC BY-NC",
+     "attribution": "(c) rcaccia, some rights reserved (CC BY-NC), uploaded by rcaccia",
+     "page": "https://www.inaturalist.org/photos/435797142",
+     "taxon": "Omphalotus olearius"
+    },
+    {
+     "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/445621110/medium.jpg",
+     "licence": "CC BY-NC",
+     "attribution": "(c) Radovan Bednár, some rights reserved (CC BY-NC), uploaded by Radovan Bednár",
+     "page": "https://www.inaturalist.org/photos/445621110",
+     "taxon": "Omphalotus olearius"
+    }
+   ],
+   "inat_pages": [
+    {
+     "name": "Omphalotus olearius",
+     "url": "https://www.inaturalist.org/taxa/64021"
+    }
+   ]
+  },
+  {
+   "latin": "Russula emetica",
+   "common": "the sickener (pink Russula)",
+   "severity": "toxic",
+   "note": "",
+   "photos": [
+    {
+     "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/180046156/medium.jpg",
+     "licence": "CC BY-NC",
+     "attribution": "(c) Vladimir Bryukhov, some rights reserved (CC BY-NC), uploaded by Vladimir Bryukhov",
+     "page": "https://www.inaturalist.org/photos/180046156",
+     "taxon": "Russula emetica"
+    },
+    {
+     "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/329251338/medium.jpg",
+     "licence": "CC BY-NC",
+     "attribution": "(c) uwekozina, some rights reserved (CC BY-NC), uploaded by uwekozina",
+     "page": "https://www.inaturalist.org/photos/329251338",
+     "taxon": "Russula emetica"
+    }
+   ],
+   "inat_pages": [
+    {
+     "name": "Russula emetica",
+     "url": "https://www.inaturalist.org/taxa/49449"
+    }
+   ]
+  },
+  {
+   "latin": "Lactarius chrysorrheus",
+   "common": "",
+   "severity": "toxic",
+   "note": "Check the milk colour: the red pine mushroom has orange milk.",
+   "photos": [
+    {
+     "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/108120413/medium.jpeg",
+     "licence": "CC BY-NC",
+     "attribution": "(c) Warren Cardimona, some rights reserved (CC BY-NC), uploaded by Warren Cardimona",
+     "page": "https://www.inaturalist.org/photos/108120413",
+     "taxon": "Lactarius chrysorrheus"
+    },
+    {
+     "url": "https://inaturalist-open-data.s3.amazonaws.com/photos/108120451/medium.jpeg",
+     "licence": "CC BY-NC",
+     "attribution": "(c) Warren Cardimona, some rights reserved (CC BY-NC), uploaded by Warren Cardimona",
+     "page": "https://www.inaturalist.org/photos/108120451",
+     "taxon": "Lactarius chrysorrheus"
+    }
+   ],
+   "inat_pages": [
+    {
+     "name": "Lactarius chrysorrheus",
+     "url": "https://www.inaturalist.org/taxa/1641132"
+    }
+   ]
+  }
+ ]
+}

@@ -29,6 +29,17 @@ export function emergencyHTML(): string {
   </div>`;
 }
 
+/** Phones: the one-line safety bar opens to the full message on tap (and closes again). */
+export function mountSafetyToggle(): void {
+  const bar = document.querySelector<HTMLElement>(".safety");
+  const btn = bar?.querySelector<HTMLButtonElement>(".safety-short");
+  if (!bar || !btn) return;
+  btn.addEventListener("click", () => {
+    const open = bar.classList.toggle("open");
+    btn.setAttribute("aria-expanded", String(open));
+  });
+}
+
 export function mountEmergency(openers: HTMLElement[]): void {
   const dlg = document.createElement("dialog");
   dlg.className = "emergency";

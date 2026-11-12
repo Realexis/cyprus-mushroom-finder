@@ -1,6 +1,6 @@
 # Cyprus Mushroom Finder — Phase 0 Plan
 
-**Status:** Phase 4 done (daily robot at 04:00 UTC). Live: https://realexis.github.io/cyprus-mushroom-finder/ · Code: https://github.com/Realexis/cyprus-mushroom-finder. Waiting for "next phase".
+**Status:** Phase 5 built on the `dev` branch (not live yet). Live site still shows Phase 4: https://realexis.github.io/cyprus-mushroom-finder/ · Code: https://github.com/Realexis/cyprus-mushroom-finder. Waiting for "next phase".
 **Rule zero:** the site shows **growing conditions only**. Never edibility.
 
 ---
@@ -66,7 +66,8 @@ shroomy/
 
 ### Private vs public (important)
 
-- A static site is **readable by anyone**. So the public site will **only ever hold the ~2 km hexagons**.
+- A static site is **readable by anyone**. ~~So the public site will only ever hold the ~2 km hexagons.~~
+  **Changed 2026-11-12 (user decision):** the public site shows the 250 m squares and 50 m hotspot zoom (conditions only).
 - The **250 m private tiles** and **all finds** go to Supabase behind login (Phase 6).
 - Until Phase 6, you see the private 250 m view **on your Mac only**.
 
@@ -140,6 +141,6 @@ These go in `docs/TODO-facts.md`. Scoring runs with clearly marked draft values 
 2. Weather + v1 score for today + first heatmap ✓
 3. Website v1 + deploy ✓
 4. Daily automation + 7-day forecast + confidence + mushroom clock ✓
-5. Spot panel, 3D, rain replay, species filter + cards
+5. Spot panel, 3D, rain replay, species filter + cards, 50 m hotspot zoom ✓ (on `dev`)
 6. Private finds log, public/private views, village memory
 7. Saturday planner, Friday briefing, learning pipeline, polish

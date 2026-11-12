@@ -59,3 +59,17 @@ openstreetmap:
   licence: ODbL 1.0
   licence_status: verified
   credit: "© OpenStreetMap contributors"
+inaturalist:
+  name: iNaturalist species photos
+  url: https://api.inaturalist.org/v1/
+  licence: Per photo. Only CC0, CC BY, CC BY-SA and CC BY-NC photos are used.
+  licence_status: verified
+  credit: "Species photos from iNaturalist (inaturalist.org). Each photo shows its author and licence."
+  use: Photos on the species cards. Shown from iNaturalist's open-data store, not copied.
+gbif:
+  name: GBIF occurrence records (Cyprus)
+  url: https://api.gbif.org/v1/
+  licence: Counts and links only. Each dataset keeps its own licence (CC0, CC BY or CC BY-NC).
+  licence_status: verified
+  credit: "Record counts from GBIF.org (Global Biodiversity Information Facility) and iNaturalist."
+  use: The "Public records in Cyprus" part of each species card. Never used for the score or the map.

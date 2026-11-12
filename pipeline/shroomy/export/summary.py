@@ -11,6 +11,7 @@ import numpy as np
 
 from .. import config
 from ..score import clock
+from ..score import species as SP
 
 TREE_NAMES = ["Calabrian pine (likely)", "Troodos black pine (likely)", "Golden oak (likely)",
               "Other broadleaf", "Tripylos cedar zone (closed)"]
@@ -39,6 +40,21 @@ def near(lat, lon, places):
     return f"{d:.0f} km {_compass(best[1], best[0], lat, lon)} of {best[2]}"
 
 
+def load_places():
+    return json.loads((config.DATA / "static" / "places.json").read_text())["places"]
+
+
+def pick(zones, key, n=TOP_N):
+    """Best zones by `key`, spread at least MIN_GAP_KM apart."""
+    picked = []
+    for z in sorted(zones, key=lambda z: -key(z)):
+        if all(_km(z["lat"], z["lon"], p["lat"], p["lon"]) >= MIN_GAP_KM for p in picked):
+            picked.append(z)
+        if len(picked) == n:
+            break
+    return picked
+
+
 def reasons(inp: dict, fac: dict) -> str:
     """Plain-language 'why', strongest factors first."""
     parts = [
@@ -58,20 +74,15 @@ def reasons(inp: dict, fac: dict) -> str:
     return s
 
 
-def build(zones: list, days: list, meta: dict) -> dict:
-    places = json.loads((config.DATA / "static" / "places.json").read_text())["places"]
+def build(zones: list, days: list, meta: dict, specs: list) -> dict:
     c = meta["clock"]
+    general = [z for z in zones if z["score"] is not None]
     out_days = []
     for d in days:
         k = d["offset"]
-        ranked = sorted(zones, key=lambda z: -z["score"][k])
-        picked = []
-        for z in ranked:
-            if all(_km(z["lat"], z["lon"], p["lat"], p["lon"]) >= MIN_GAP_KM for p in picked):
-                picked.append(z)
-            if len(picked) == TOP_N:
-                break
-        scores = np.array([z["score"][k] for z in zones])
+        month = date.fromisoformat(d["date"]).month
+        picked = pick(general, lambda z: z["score"][k])
+        scores = np.array([z["score"][k] for z in general])
         top = []
         for rank, z in enumerate(picked, 1):
             inp = {n: float(v[k]) for n, v in z["inputs"].items()}
@@ -79,7 +90,8 @@ def build(zones: list, days: list, meta: dict) -> dict:
             trees = {TREE_NAMES[i]: round(float(f), 2) for i, f in enumerate(z["trees"]) if f >= 0.1}
             top.append({
                 "rank": rank,
-                "where": near(z["lat"], z["lon"], places),
+                "where": z["where"],
+                "spot": z.get("spot"),             # index into spots.json (the site opens this zone)
                 "lat": round(z["lat"], 4), "lon": round(z["lon"], 4),
                 "score": int(round(z["score"][k])),
                 "why": reasons(inp, fac),
@@ -89,12 +101,26 @@ def build(zones: list, days: list, meta: dict) -> dict:
                 "inputs": {n: round(v, 1) for n, v in inp.items()},
                 "factors_0_to_1": {n: round(v, 2) for n, v in fac.items()},
             })
+        sp_out = {}
+        for s in specs:
+            label = f"good conditions for {s['latin']} ({s['common']}) habitat"
+            if not SP.in_season(month, s):
+                sp_out[s["code"]] = {"label": label, "in_season": False,
+                                     "season": SP.months_text(s["months"]), "top_zones": []}
+                continue
+            have = [z for z in zones if s["code"] in z["species"]]
+            sp_out[s["code"]] = {"label": label, "in_season": True, "season": SP.months_text(s["months"]),
+                                 "top_zones": [{"where": z["where"], "spot": z.get("spot"), "lat": round(z["lat"], 4),
+                                                "lon": round(z["lon"], 4),
+                                                "score": int(round(z["species"][s["code"]][k]))}
+                                               for z in pick(have, lambda z: z["species"][s["code"]][k], 3)]}
         out_days.append({
             "date": d["date"], "weekday": date.fromisoformat(d["date"]).strftime("%A"),
             "confidence": d["confidence"],
             "island": {"median_score": int(np.median(scores)),
-                       "zones_70_plus": int((scores >= 70).sum()), "zones_total": len(zones)},
+                       "zones_70_plus": int((scores >= 70).sum()), "zones_total": len(general)},
             "top_zones": top,
+            "species": sp_out,
         })
     return {
         "title": "Cyprus Mushroom Finder — growing conditions summary",
@@ -109,5 +135,7 @@ def build(zones: list, days: list, meta: dict) -> dict:
         "weather_run": meta["weather_run"], "generated_utc": meta["generated_utc"],
         "site": "https://realexis.github.io/cyprus-mushroom-finder/",
         "days": out_days,
-        "species": "Species filters arrive in Phase 5.",
+        "species_note": ("Species scores change only the habitat filter (trees, altitude) and the season "
+                         "window. They say 'good conditions for [species] habitat', never that the "
+                         "species is there. Out of season = no score."),
     }

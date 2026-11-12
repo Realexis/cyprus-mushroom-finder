@@ -17,6 +17,7 @@ from .. import config
 from ..grid import habitat_grid
 from . import factors as F
 from .downscale import Interpolator
+from .species import general_habitat
 
 OUT = config.PROCESSED / "scores"
 
@@ -78,7 +79,9 @@ def score_day(run_file, day_offset=0):
                                            S["season_altitude"]),
         "shade": np.nan_to_num(hab["shade_score"][rows, cols], nan=0.0),
     }
-    score = F.combine(f, S["weights"], hab["habitat_filter"][rows, cols])
+    # [S7] general map: open forest with a partner tree only (not "Other broadleaf").
+    general = general_habitat(hab["habitat_filter"], hab["likely_tree"], S["general_map_trees"])
+    score = F.combine(f, S["weights"], general[rows, cols])
 
     # --- write a raster with named bands
     layers = {"score": score, **{f"f_{k}": v for k, v in f.items()},
@@ -93,12 +96,14 @@ def score_day(run_file, day_offset=0):
         for i, (name, v) in enumerate(layers.items(), start=1):
             a = np.full((g.height, g.width), np.nan, "float32")
             a[rows, cols] = v
-            if name == "score" or name.startswith("f_"):
-                a[hab["habitat_filter"] == 0] = np.nan          # scores only on open forest
+            if name == "score":
+                a[~general] = np.nan                            # general score: partner-tree forest
+            elif name.startswith("f_"):
+                a[hab["habitat_filter"] == 0] = np.nan          # factors on all open forest (species)
             dst.write(a, i)
             dst.set_band_description(i, name)
 
-    hf = hab["habitat_filter"][rows, cols] > 0
+    hf = general[rows, cols]
     summ = {"day": day.isoformat(), "run": str(w["today"]), "day_offset": day_offset,
             "model": str(w["model"]),
             "forest_cells": int(hf.sum()),

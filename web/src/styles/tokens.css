@@ -2,8 +2,22 @@
    Dyslexia-friendly: Atkinson Hyperlegible, large type, generous spacing,
    left-aligned text (never justified). */
 
+/* Digits 0-9 only, from the device's own sans-serif font: Atkinson Hyperlegible draws
+   zero with a slash ("Ø"), which is easy to misread as 6 or 8 in numbers like 0.1 km.
+   Letters stay in Atkinson Hyperlegible. If no local font is found, Atkinson is used. */
+@font-face {
+  font-family: "Plain Digits"; font-weight: 400; unicode-range: U+0030-0039;
+  src: local("Helvetica Neue"), local("HelveticaNeue"), local("Arial"), local("ArialMT"),
+       local("Roboto"), local("Roboto-Regular"), local("Segoe UI"), local("SegoeUI");
+}
+@font-face {
+  font-family: "Plain Digits"; font-weight: 700; unicode-range: U+0030-0039;
+  src: local("Helvetica Neue Bold"), local("HelveticaNeue-Bold"), local("Arial Bold"), local("Arial-BoldMT"),
+       local("Roboto Bold"), local("Roboto-Bold"), local("Segoe UI Bold"), local("SegoeUI-Bold");
+}
+
 :root {
-  --font: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font: "Plain Digits", "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
   --fs-0: 0.875rem;
   --fs-1: 1rem;
   --fs-2: 1.125rem;
