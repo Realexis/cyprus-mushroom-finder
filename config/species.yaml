@@ -1,0 +1,105 @@
+# =====================================================================
+# Target species (v1). Facts come from the project brief. Tags:
+#   [BRIEF] = from the brief    [DRAFT] = our reading, listed in docs/TODO-facts.md
+#   [S7]    = the user's answer to open question S7 (2026-11-12)
+#
+# A species filter changes ONLY two things [BRIEF]:
+#   1. the habitat filter (which trees + which altitude bands count)
+#   2. the season window (months). Outside the window the score is 0.
+# Inside the window the season factor is 1; every other factor and weight
+# stays the same as the general map (config/scoring.yaml).
+#
+# Tree codes (pipeline habitat layer):
+#   1 Calabrian pine (likely)   2 Troodos black pine (likely)
+#   3 Golden oak (likely)       4 Other broadleaf   (5 cedar = closed reserve)
+# Altitude bands: 1 low, 2 mid, 3 high (>1,200 m)
+#
+# Words on the site: "good conditions for [species] habitat", never "find X here".
+# =====================================================================
+
+species:
+  - code: lde
+    latin: Lactarius deliciosus
+    common: red pine mushroom                       # [BRIEF]
+    local: kokkinomanitaro                          # [BRIEF] (the one local name not to confirm)
+    local_confirmed: true
+    trees: [1, 2, 3]                                # [BRIEF] pine; also golden oak, kermes oak
+    trees_text: "Pine (Calabrian and black pine); also golden oak and kermes oak"
+    bands: [1, 2, 3]                                # [BRIEF] "all pine"
+    altitude_text: "All pine altitudes"
+    months: [10, 11, 12, 1]                         # [BRIEF] Oct-Jan
+    notes:
+      - "Kermes oak is not on our tree map yet, so those areas are not counted."   # [DRAFT] D8
+    inat: ["Lactarius deliciosus"]
+
+  - code: lsa
+    latin: Lactarius sanguifluus
+    common: bloody milk cap                         # [BRIEF]
+    local: gematas                                  # [BRIEF] to confirm
+    local_confirmed: false
+    trees: [2]                                      # [BRIEF] black pine
+    trees_text: "Troodos black pine"
+    bands: [3]                                      # [BRIEF] >1,200 m
+    altitude_text: "Above 1,200 m"
+    months: [9, 10]                                 # [BRIEF] Sep-Oct
+    notes: []
+    inat: ["Lactarius sanguifluus"]
+
+  - code: rde
+    latin: Russula delica
+    common: milk-white brittlegill                  # [BRIEF]
+    local: aspromanitaro                            # [BRIEF] to confirm
+    local_confirmed: false
+    # [BRIEF] "all forest". [S7] Other broadleaf (4) counts only for morels -> left out here.
+    # Open question S9 in docs/TODO-facts.md.
+    trees: [1, 2, 3]
+    trees_text: "All forest (pine and golden oak on this map)"
+    bands: [1, 2, 3]                                # [BRIEF] all
+    altitude_text: "All altitudes"
+    months: [9, 10]                                 # [BRIEF] Sep-Oct, warm spells
+    notes:
+      - "The brief says it fruits in warm spells. That rule is not in the score yet (TODO S5)."
+    inat: ["Russula delica"]
+
+  - code: tca
+    latin: Tricholoma caligatum
+    common: matsutake                               # [BRIEF]
+    local: imero                                    # [BRIEF] to confirm
+    local_confirmed: false
+    trees: [1, 2, 3]                                # [BRIEF] pine, golden oak
+    trees_text: "Pine and golden oak"
+    bands: [2, 3]                                   # [BRIEF] mid-high
+    altitude_text: "Mid and high altitudes"
+    months: [11, 12, 1]                             # [BRIEF] Nov-Jan
+    notes: []
+    inat: ["Tricholoma caligatum"]
+
+  - code: mor
+    latin: Morchella esculenta / elata
+    common: morels                                  # [BRIEF]
+    local: arnaoui                                  # [BRIEF] to confirm
+    local_confirmed: false
+    # [BRIEF] deciduous trees, burned ground. Golden oak is evergreen, so only
+    # "Other broadleaf" (4) counts. [S7] morels keep Other broadleaf.
+    trees: [4]
+    trees_text: "Deciduous broadleaf trees; burned ground"
+    bands: [2, 3]                                   # [BRIEF] mid-high
+    altitude_text: "Mid and high altitudes"
+    months: [3, 4]                                  # [BRIEF] Mar-Apr
+    notes:
+      - "Burned ground is not on the map yet (no data source chosen, TODO D5)."
+      - "\"Other broadleaf\" mixes deciduous and evergreen trees. Our map cannot tell them apart."   # [DRAFT]
+    inat: ["Morchella esculenta", "Morchella elata"]
+
+  - code: slu
+    latin: Suillus luteus
+    common: slippery Jack                           # [BRIEF]
+    local: lartias                                  # [BRIEF] to confirm
+    local_confirmed: false
+    trees: [1, 2]                                   # [BRIEF] pine
+    trees_text: "Pine"
+    bands: [1, 2, 3]                                # [BRIEF] pine belt
+    altitude_text: "The pine belt"
+    months: [10, 11, 12, 1]                         # [BRIEF] Oct-Jan
+    notes: []
+    inat: ["Suillus luteus"]

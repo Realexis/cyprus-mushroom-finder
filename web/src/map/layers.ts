@@ -1,8 +1,18 @@
 // Our data layers on top of the basemap.
-import type { ExpressionSpecification, Map as MlMap } from "maplibre-gl";
+import type { ExpressionSpecification, FilterSpecification, Map as MlMap } from "maplibre-gl";
 import type { Theme } from "./style";
 
-export type Mode = "conditions" | "rain7" | "rain30";
+export type Mode = "conditions" | "rain7" | "rain30" | "replay";
+
+/** What the map is coloured for: the general map or one species' habitat. */
+export interface Filter {
+  code: string | null;               // null = general map
+  trees: number[]; bands: number[];  // species habitat (private 250 m cells)
+  inSeason: boolean;                 // species season window on the chosen day
+  seasonShare: number;               // points the season factor is worth (species: full)
+}
+
+export interface View { day: number; mode: Mode; priv: boolean; filter: Filter; replayIndex: number; }
 
 // Score colours: calm at the low end, warm glow at the top (same as the previews).
 export const SCORE_STOPS: [number, string][] = [
@@ -10,13 +20,43 @@ export const SCORE_STOPS: [number, string][] = [
 ];
 export const RAIN7_STOPS: [number, string][] = [[0, "#d9e8f2"], [10, "#9cc9e8"], [25, "#4f97d1"], [50, "#2a5fae"], [80, "#1b2f7a"]];
 export const RAIN30_STOPS: [number, string][] = [[0, "#d9e8f2"], [20, "#9cc9e8"], [50, "#4f97d1"], [80, "#2a5fae"], [120, "#1b2f7a"]];
+export const RAIN1_STOPS: [number, string][] = [[0, "rgba(217,232,242,0)"], [0.5, "#cfe3f0"], [3, "#9cc9e8"], [8, "#4f97d1"], [15, "#2a5fae"], [30, "#1b2f7a"]];
+// Shade (50 m hotspot zoom): sunny = pale sand, deep shade = deep teal.
+export const SHADE_STOPS: [number, string][] = [[0, "#f1e3b5"], [35, "#b9c98f"], [55, "#5f9e86"], [75, "#2f6f78"], [100, "#183a5a"]];
+const OUT_OF_SEASON = "#8c928f";
 
 function ramp(prop: ExpressionSpecification, stops: [number, string][]): ExpressionSpecification {
   return ["interpolate", ["linear"], prop, ...stops.flat()] as unknown as ExpressionSpecification;
 }
 
-export function scoreColor(day: number): ExpressionSpecification {
-  return ramp(["to-number", ["get", `s${day}`], 0], SCORE_STOPS);
+/** Property holding the hexagon score for this day and filter. */
+export const hexProp = (day: number, f: Filter) => (f.code ? `${f.code}${day}` : `s${day}`);
+
+function hexColor(v: View): ExpressionSpecification | string {
+  if (v.filter.code && !v.filter.inSeason) return OUT_OF_SEASON;
+  return ramp(["to-number", ["get", hexProp(v.day, v.filter)], 0], SCORE_STOPS);
+}
+
+function hexFilter(v: View): FilterSpecification {
+  return ["has", hexProp(v.day, v.filter)];
+}
+
+function cellColor(v: View): ExpressionSpecification | string {
+  if (!v.filter.code) return ramp(["to-number", ["get", `s${v.day}`], 0], SCORE_STOPS);
+  if (!v.filter.inSeason) return OUT_OF_SEASON;
+  return ramp(["+", ["to-number", ["get", `b${v.day}`], 0], v.filter.seasonShare], SCORE_STOPS);
+}
+
+function cellFilter(v: View): FilterSpecification {
+  if (!v.filter.code) return ["all", ["==", ["get", "closed"], 0], ["==", ["get", "g"], 1]];
+  return ["all", ["==", ["get", "closed"], 0],
+    ["in", ["get", "tree"], ["literal", v.filter.trees]],
+    ["in", ["get", "band"], ["literal", v.filter.bands]]];
+}
+
+function rainColor(v: View): ExpressionSpecification {
+  if (v.mode === "replay") return ramp(["to-number", ["at", v.replayIndex, ["get", "d"]], 0], RAIN1_STOPS);
+  return v.mode === "rain30" ? ramp(["get", "r30"], RAIN30_STOPS) : ramp(["get", "r7"], RAIN7_STOPS);
 }
 
 function hatch(theme: Theme): ImageData {
@@ -31,14 +71,21 @@ function hatch(theme: Theme): ImageData {
   return g.getImageData(0, 0, s, s);
 }
 
-export interface LayerUrls { terrain: string; hexes: string; rain: string; reserves: string; privateCells?: string; }
+export interface LayerUrls {
+  terrain: string; hexes: string; rain: string; reserves: string;
+  privateCells?: string; hotspots?: string; hotspotZones?: GeoJSON.FeatureCollection;
+}
 
-export function addOverlays(map: MlMap, theme: Theme, urls: LayerUrls, day: number, mode: Mode, priv: boolean) {
+export function addOverlays(map: MlMap, theme: Theme, urls: LayerUrls, v: View) {
   const firstSymbol = map.getStyle().layers.find((l) => l.type === "symbol")?.id;
   if (!map.hasImage("hatch")) map.addImage("hatch", hatch(theme));
+  const dem = { type: "raster-dem" as const, url: `pmtiles://${urls.terrain}`, encoding: "terrarium" as const,
+    tileSize: 256, attribution: "Copernicus DEM © DLR e.V., © Airbus" };
 
-  map.addSource("terrain", { type: "raster-dem", url: `pmtiles://${urls.terrain}`, encoding: "terrarium", tileSize: 256,
-    attribution: "Copernicus DEM © DLR e.V., © Airbus" });
+  // Two sources on the same tiles: MapLibre recommends one for hillshade, one for 3D.
+  map.addSource("terrain", dem);
+  const { attribution: _credit, ...dem3d } = dem;      // credit is shown once, by the hillshade source
+  map.addSource("terrain3d", dem3d);
   map.addLayer({
     id: "hillshade", type: "hillshade", source: "terrain",
     paint: {
@@ -52,23 +99,20 @@ export function addOverlays(map: MlMap, theme: Theme, urls: LayerUrls, day: numb
   map.addSource("rain", { type: "geojson", data: urls.rain, attribution: "Weather: Open-Meteo.com (CC BY 4.0)" });
   map.addLayer({
     id: "rain-fill", type: "fill", source: "rain",
-    layout: { visibility: mode === "conditions" ? "none" : "visible" },
-    paint: {
-      "fill-color": mode === "rain30" ? ramp(["get", "r30"], RAIN30_STOPS) : ramp(["get", "r7"], RAIN7_STOPS),
-      "fill-opacity": 0.72, "fill-antialias": false,
-    },
+    layout: { visibility: v.mode === "conditions" ? "none" : "visible" },
+    paint: { "fill-color": rainColor(v), "fill-opacity": 0.72, "fill-antialias": false },
   }, firstSymbol);
 
   map.addSource("hexes", { type: "geojson", data: urls.hexes, generateId: true,
     attribution: "Copernicus Land Monitoring Service · EEA" });
   map.addLayer({
-    id: "hex-fill", type: "fill", source: "hexes",
-    layout: { visibility: mode === "conditions" && !priv ? "visible" : "none" },
-    paint: { "fill-color": scoreColor(day), "fill-opacity": 0.78 },
+    id: "hex-fill", type: "fill", source: "hexes", filter: hexFilter(v),
+    layout: { visibility: v.mode === "conditions" && !v.priv ? "visible" : "none" },
+    paint: { "fill-color": hexColor(v), "fill-opacity": 0.78 },
   }, firstSymbol);
   map.addLayer({
-    id: "hex-line", type: "line", source: "hexes",
-    layout: { visibility: mode === "conditions" && !priv ? "visible" : "none" },
+    id: "hex-line", type: "line", source: "hexes", filter: hexFilter(v),
+    layout: { visibility: v.mode === "conditions" && !v.priv ? "visible" : "none" },
     paint: { "line-color": theme === "dark" ? "#0c1612" : "#f3f0e7", "line-width": ["interpolate", ["linear"], ["zoom"], 8, 0.3, 12, 1.2], "line-opacity": 0.7 },
   }, firstSymbol);
   map.addLayer({
@@ -80,11 +124,33 @@ export function addOverlays(map: MlMap, theme: Theme, urls: LayerUrls, day: numb
   if (urls.privateCells) {
     map.addSource("cells", { type: "vector", url: `pmtiles://${urls.privateCells}` });
     map.addLayer({
-      id: "cells-fill", type: "fill", source: "cells", "source-layer": "cells",
-      filter: ["==", ["get", "closed"], 0],
-      layout: { visibility: mode === "conditions" && priv ? "visible" : "none" },
-      paint: { "fill-color": scoreColor(day), "fill-opacity": 0.72, "fill-antialias": false },
+      id: "cells-fill", type: "fill", source: "cells", "source-layer": "cells", filter: cellFilter(v),
+      layout: { visibility: v.mode === "conditions" && v.priv ? "visible" : "none" },
+      paint: { "fill-color": cellColor(v), "fill-opacity": 0.72, "fill-antialias": false },
     }, firstSymbol);
+  }
+
+  // 50 m hotspot zoom (private): terrain shade inside the top zones, only when zoomed in.
+  if (urls.hotspots && urls.hotspotZones) {
+    map.addSource("hotspots", { type: "geojson", data: urls.hotspots });
+    map.addSource("hotzones", { type: "geojson", data: urls.hotspotZones });
+    const on = v.mode === "conditions" && v.priv ? "visible" : "none";
+    map.addLayer({
+      id: "hot-fill", type: "fill", source: "hotspots", minzoom: 11.5, layout: { visibility: on },
+      paint: { "fill-color": ramp(["get", "sh"], SHADE_STOPS),
+        "fill-opacity": ["interpolate", ["linear"], ["zoom"], 11.5, 0, 12.3, 0.85], "fill-antialias": false },
+    }, firstSymbol);
+    map.addLayer({
+      id: "hot-zone", type: "line", source: "hotzones", layout: { visibility: on },
+      paint: { "line-color": theme === "dark" ? "#f6dfa6" : "#8a5d00", "line-width": 2.5, "line-dasharray": [2, 1.2] },
+    }, firstSymbol);
+    map.addLayer({
+      id: "hot-label", type: "symbol", source: "hotzones", minzoom: 9, layout: { visibility: on,
+        "text-field": ["concat", "Top zone · ", ["get", "where"]], "text-font": ["Noto Sans Medium"], "text-size": 13,
+        "symbol-placement": "line", "text-max-angle": 30 },
+      paint: { "text-color": theme === "dark" ? "#f6dfa6" : "#5a3d00",
+        "text-halo-color": theme === "dark" ? "#0c1612" : "#ffffff", "text-halo-width": 1.6 },
+    });
   }
 
   map.addSource("reserves", { type: "geojson", data: urls.reserves,
@@ -101,18 +167,50 @@ export function addOverlays(map: MlMap, theme: Theme, urls: LayerUrls, day: numb
   });
 }
 
-export function setDay(map: MlMap, day: number) {
-  map.setPaintProperty("hex-fill", "fill-color", scoreColor(day));
-  if (map.getLayer("cells-fill")) map.setPaintProperty("cells-fill", "fill-color", scoreColor(day));
+/** Apply day, layer mode, private view and species filter to the existing layers. */
+export function applyView(map: MlMap, v: View) {
+  const vis = (on: boolean) => (on ? "visible" : "none");
+  const cond = v.mode === "conditions";
+  map.setLayoutProperty("rain-fill", "visibility", vis(!cond));
+  if (!cond) map.setPaintProperty("rain-fill", "fill-color", rainColor(v));
+  for (const id of ["hex-fill", "hex-line"]) {
+    map.setLayoutProperty(id, "visibility", vis(cond && !v.priv));
+    map.setFilter(id, hexFilter(v));
+  }
+  map.setPaintProperty("hex-fill", "fill-color", hexColor(v));
+  if (map.getLayer("cells-fill")) {
+    map.setLayoutProperty("cells-fill", "visibility", vis(cond && v.priv));
+    map.setFilter("cells-fill", cellFilter(v));
+    map.setPaintProperty("cells-fill", "fill-color", cellColor(v));
+  }
+  for (const id of ["hot-fill", "hot-zone", "hot-label"]) {
+    if (map.getLayer(id)) map.setLayoutProperty(id, "visibility", vis(cond && v.priv));
+  }
 }
 
-export function setMode(map: MlMap, mode: Mode, priv: boolean) {
-  const v = (on: boolean) => (on ? "visible" : "none");
-  map.setLayoutProperty("rain-fill", "visibility", v(mode !== "conditions"));
-  if (mode !== "conditions") {
-    map.setPaintProperty("rain-fill", "fill-color",
-      mode === "rain30" ? ramp(["get", "r30"], RAIN30_STOPS) : ramp(["get", "r7"], RAIN7_STOPS));
+/** Fast path for the rain replay: only the colour changes. */
+export function setReplayFrame(map: MlMap, v: View) {
+  map.setPaintProperty("rain-fill", "fill-color", rainColor(v));
+}
+
+// ---------------------------------------------------------------- 3D terrain
+export const EXAGGERATION = 1.5;     // [BRIEF] "exaggeration ~1.5"
+
+export function set3D(map: MlMap, on: boolean, theme: Theme, animate = true) {
+  // In 3D, let the mountain shading show through the colours a little more.
+  if (map.getLayer("hex-fill")) map.setPaintProperty("hex-fill", "fill-opacity", on ? 0.62 : 0.78);
+  if (map.getLayer("cells-fill")) map.setPaintProperty("cells-fill", "fill-opacity", on ? 0.6 : 0.72);
+  if (on) {
+    map.setTerrain({ source: "terrain3d", exaggeration: EXAGGERATION });
+    map.setSky({
+      "sky-color": theme === "dark" ? "#0f1d1a" : "#cfe0e6",
+      "horizon-color": theme === "dark" ? "#24362f" : "#f3f0e7",
+      "fog-color": theme === "dark" ? "#0c1612" : "#ece7da",
+      "sky-horizon-blend": 0.6, "horizon-fog-blend": 0.6, "fog-ground-blend": 0.4,
+    });
+    if (animate) map.easeTo({ pitch: 62, bearing: map.getBearing() || -18, duration: 900 });
+  } else {
+    map.setTerrain(null);
+    if (animate) map.easeTo({ pitch: 0, bearing: 0, duration: 700 });
   }
-  for (const id of ["hex-fill", "hex-line"]) map.setLayoutProperty(id, "visibility", v(mode === "conditions" && !priv));
-  if (map.getLayer("cells-fill")) map.setLayoutProperty("cells-fill", "visibility", v(mode === "conditions" && priv));
 }

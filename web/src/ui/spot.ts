@@ -1,0 +1,232 @@
+// The spot panel: everything about one tapped zone (public hexagon), 250 m square
+// (private) or 50 m hotspot square (private). Growing conditions only.
+import { SCORE_STOPS } from "../map/layers";
+import type { DayInfo, Meta } from "./controls";
+
+export interface SpotInfo {
+  where: string; alt: [number, number]; trees: Record<string, number>;
+  f: number[][]; in: number[][];                       // [day][factor] x100, [day][input]
+  road: { track_km: number; road_km: number; road: string } | null;
+}
+export interface Spots { factors: string[]; inputs: string[]; spots: SpotInfo[]; }
+
+export const TREES: Record<number, string> = {
+  1: "Calabrian pine (likely)", 2: "Troodos black pine (likely)", 3: "Golden oak (likely)",
+  4: "Other broadleaf", 5: "Tripylos cedar zone (closed)",
+};
+const BANDS: Record<number, string> = { 1: "low", 2: "mid", 3: "high (above 1,200 m)" };
+const FACTOR_LABEL: Record<string, string> = {
+  rain_total: "Rain, last 30 days", rain_pulse: "Soaking rain 7–20 days ago",
+  temperature: "Temperature, last 7 days", soil_moisture: "Soil moisture",
+  season_altitude: "Season for the altitude", shade: "Shade",
+};
+const CONF_TEXT = { high: "High confidence", medium: "Medium confidence", low: "Low confidence" };
+
+export const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]!));
+
+export const fmtDay = (iso: string, opts: Intl.DateTimeFormatOptions) =>
+  new Date(`${iso}T12:00:00`).toLocaleDateString("en-GB", { ...opts, timeZone: "Asia/Nicosia" });
+
+export function scoreColour(v: number) {
+  let c = SCORE_STOPS[0][1];
+  for (const [s, col] of SCORE_STOPS) if (v >= s) c = col;
+  return c;
+}
+
+export function words(v: number) {
+  if (v >= 80) return "Very good";
+  if (v >= 65) return "Good";
+  if (v >= 45) return "Fair";
+  return "Poor";
+}
+
+/** The mushroom clock in plain words (same rules as pipeline/shroomy/score/clock.py). */
+export function clockSentence(daysSince: number, c: Meta["clock"]): { text: string; open: boolean } {
+  if (daysSince < 0) return { text: `No soaking rain (${c.soak_mm} mm+) in the last month. Fruiting window closed.`, open: false };
+  if (daysSince < c.opens) {
+    const k = c.opens - daysSince;
+    return { text: `Soaking rain ${daysSince} days ago. Window opens in ${k} day${k === 1 ? "" : "s"}.`, open: false };
+  }
+  if (daysSince <= c.closes) {
+    const k = c.closes - daysSince;
+    return { text: `Soaking rain ${daysSince} days ago. Window OPEN, about ${k} more day${k === 1 ? "" : "s"}.`, open: true };
+  }
+  return { text: `Last soaking rain was ${daysSince} days ago. Fruiting window has closed.`, open: false };
+}
+
+/** What the panel needs to know about the current filter, per day. */
+export interface SpotContext {
+  meta: Meta; day: number;
+  species: { code: string; latin: string; season_text: string } | null;
+  inSeason: (day: number) => boolean;
+}
+
+/** A tapped spot, already turned into numbers per day. */
+export interface SpotData {
+  kind: "hex" | "cell" | "hot";
+  score: (day: number) => number | null;       // null = not habitat for this filter
+  clock?: (day: number) => number;
+  factors?: (day: number) => number[] | null;  // 0..1, in meta factor order
+  inputs?: (day: number) => number[] | null;
+  where?: string; trees?: string; altitude?: string; road?: string; note?: string;
+  hot?: Record<string, number>;
+}
+
+function factorText(name: string, inp: number[] | null, f: number, ctx: SpotContext, d: DayInfo): string {
+  if (name === "season_altitude") {
+    if (ctx.species) return ctx.inSeason(d.offset) ? `In season (${ctx.species.season_text})` : `Out of season (${ctx.species.season_text})`;
+    return fmtDay(d.date, { month: "long" });
+  }
+  if (name === "shade") return `${Math.round(f * 100)}/100`;
+  if (!inp) return "";
+  const [r30, pulse, t7, soil, frost] = inp;
+  switch (name) {
+    case "rain_total": return `${Math.round(r30)} mm`;
+    case "rain_pulse": return `${Math.round(pulse)} mm in 3 days`;
+    case "temperature": return `${t7.toFixed(1)} °C average${frost >= 1 ? ` · frost on ${Math.round(frost)} day${frost >= 2 ? "s" : ""}` : ""}`;
+    case "soil_moisture": return `wetter than ${Math.round(soil)}% of last season`;
+  }
+  return "";
+}
+
+function whyBars(s: SpotData, ctx: SpotContext): string {
+  const fac = s.factors?.(ctx.day);
+  if (!fac) return "";
+  const names = Object.keys(ctx.meta.weights);
+  const inp = s.inputs?.(ctx.day) ?? null;
+  const d = ctx.meta.days[ctx.day];
+  const rows = names.map((n, i) => {
+    let f = fac[i];
+    if (n === "season_altitude" && ctx.species) f = ctx.inSeason(ctx.day) ? 1 : 0;
+    const pct = Math.round(Math.max(0, Math.min(1, f)) * 100);
+    return `<li class="why-row">
+      <div class="why-top"><span>${FACTOR_LABEL[n]}</span><span class="muted">counts ${Math.round(ctx.meta.weights[n] * 100)}%</span></div>
+      <div class="why-bar" role="img" aria-label="${FACTOR_LABEL[n]}: ${pct} out of 100"><i style="width:${pct}%;background:${scoreColour(pct)}"></i></div>
+      <div class="why-val">${esc(factorText(n, inp, f, ctx, d))}</div></li>`;
+  }).join("");
+  return `<details class="why" open><summary><b>Why this score</b></summary><ul>${rows}</ul></details>`;
+}
+
+function forecast(s: SpotData, ctx: SpotContext): string {
+  const bars = ctx.meta.days.map((d) => {
+    const off = !!ctx.species && !ctx.inSeason(d.offset);         // out of season: no score
+    const v = off ? null : s.score(d.offset);
+    const label = d.offset === 0 ? "Today" : fmtDay(d.date, { weekday: "short" });
+    const h = v === null ? 0 : Math.max(4, v * 0.56);
+    return `<div class="fc-day${d.offset === ctx.day ? " sel" : ""}" title="${label} ${fmtDay(d.date, { day: "numeric", month: "short" })}: ${v ?? "–"} · ${CONF_TEXT[d.confidence]}">
+      <span class="fc-num">${v ?? "–"}</span>
+      <i style="height:${h}px;background:${v === null ? "transparent" : scoreColour(v)}"></i>
+      <span class="fc-lab">${label}</span><span class="dot ${d.confidence}" aria-hidden="true"></span></div>`;
+  }).join("");
+  return `<h3 class="spot-h">Next 8 days</h3><div class="fc" aria-label="Score for the next 8 days">${bars}</div>
+    <p class="muted small">Dots: forecast confidence (full = high, half = medium, empty = low).</p>`;
+}
+
+export function spotHTML(s: SpotData, ctx: SpotContext): string {
+  if (s.kind === "hot" && s.hot) return hotHTML(s);
+  const v = s.score(ctx.day);
+  const sp = ctx.species;
+  let head: string;
+  if (v === null) {
+    head = sp ? `<b>No <i>${esc(sp.latin)}</i> habitat here</b>` : `<b>Not scored on the general map</b>`;
+  } else if (sp && !ctx.inSeason(ctx.day)) {
+    head = `<b>Out of season for <i>${esc(sp.latin)}</i></b><span class="muted"> (${esc(sp.season_text)})</span>`;
+  } else {
+    head = sp ? `<b>${words(v)} conditions for <i>${esc(sp.latin)}</i> habitat</b>` : `<b>${words(v)} growing conditions</b>`;
+  }
+  const showScore = v !== null && !(sp && !ctx.inSeason(ctx.day));
+  const clk = s.clock ? clockSentence(s.clock(ctx.day), ctx.meta.clock) : null;
+  const facts = [
+    s.trees ? `<li><span aria-hidden="true">🌲</span> <b>Trees:</b> ${s.trees}</li>` : "",
+    s.altitude ? `<li><span aria-hidden="true">⛰</span> <b>Altitude:</b> ${s.altitude}</li>` : "",
+    s.road ? `<li><span aria-hidden="true">🚙</span> <b>Nearest:</b> ${s.road}</li>` : "",
+  ].join("");
+  return `
+    <div class="spot-head"><span>${head}</span>${showScore ? `<span class="spot-score">${v}<small>/100</small></span>` : ""}</div>
+    ${s.where ? `<p class="muted">${esc(s.where)}</p>` : ""}
+    ${s.note ? `<p class="muted small">${s.note}</p>` : ""}
+    ${clk ? `<p class="clock ${clk.open ? "open" : ""}"><span aria-hidden="true">⏱</span> <b>Mushroom clock:</b> ${clk.text}</p>` : ""}
+    ${showScore ? whyBars(s, ctx) : ""}
+    ${forecast(s, ctx)}
+    ${facts ? `<ul class="facts">${facts}</ul>` : ""}
+    <p class="muted small">Growing conditions only. <button class="link-btn" id="spot-close" type="button">Close</button></p>`;
+}
+
+function hotHTML(s: SpotData): string {
+  const h = s.hot!;
+  const part = (label: string, v: number) => `<li class="why-row"><div class="why-top"><span>${label}</span><span class="muted">${v}/100</span></div>
+    <div class="why-bar"><i style="width:${v}%;background:#2f6f78"></i></div></li>`;
+  return `
+    <div class="spot-head"><span><b>50 m terrain square</b><span class="tag warn" style="margin-left:6px">private</span></span>
+      <span class="spot-score">${h.sh}<small>/100 shade</small></span></div>
+    <p class="muted">${h.con ? "Conifer forest" : "Broadleaf forest"} · ${h.el} m</p>
+    <ul class="why-list">
+      ${part("Faces north-east (cooler)", h.fa)}${part("Valley bottom", h.va)}${part("Little autumn sun", h.ls)}
+    </ul>
+    <p class="muted small">Terrain only. Rain and temperature are the same for the whole zone
+      (the weather model is about 9 km). <button class="link-btn" id="spot-close" type="button">Close</button></p>`;
+}
+
+// ---------------------------------------------------------------- builders
+export function hexSpot(props: Record<string, number>, info: SpotInfo | undefined, prop: (d: number) => string,
+                        generalTrees: number[]): SpotData {
+  const trees = info ? Object.entries(info.trees).sort((a, b) => b[1] - a[1]).map(([k, share]) => {
+    const n = Number(k);
+    const off = !generalTrees.includes(n) ? " <span class=\"muted\">(not counted on the general map)</span>" : "";
+    return `${TREES[n]} ${Math.round(share * 100)}%${off}`;
+  }).join(" · ") : undefined;
+  const road = info?.road ? `forest track ≈ ${info.road.track_km} km · road ≈ ${info.road.road_km} km${info.road.road ? ` (${esc(info.road.road)})` : ""}
+    <span class="muted">from the middle of this zone</span>` : undefined;
+  return {
+    kind: "hex",
+    score: (d) => (props[prop(d)] === undefined ? null : Number(props[prop(d)])),
+    clock: (d) => Number(props[`p${d}`]),
+    factors: (d) => (info ? info.f[d].map((x) => x / 100) : null),
+    inputs: (d) => (info ? info.in[d] : null),
+    where: info ? `${info.where} · zone of about 2 km` : "Zone of about 2 km",
+    trees, road,
+    altitude: info ? `${info.alt[0].toLocaleString("en-GB")}–${info.alt[1].toLocaleString("en-GB")} m` : undefined,
+    note: "Averages over the forest in this ~2 km hexagon. Exact spots are never shown publicly.",
+  };
+}
+
+/** Private 250 m cell details (cells_info.bin from the pipeline). */
+export class CellInfo {
+  private constructor(private a: Int16Array, private nf: number, private ni: number, private days: number) {}
+  static async load(url: string, meta: { factors: string[]; inputs: string[]; days: number }): Promise<CellInfo> {
+    const buf = await fetch(url).then((r) => r.arrayBuffer());
+    return new CellInfo(new Int16Array(buf), meta.factors.length, meta.inputs.length, meta.days);
+  }
+  private get stride() { return this.days * (this.nf + this.ni) + 2; }
+  factors(i: number, d: number): number[] | null {
+    const o = i * this.stride + d * (this.nf + this.ni);
+    const f = [...this.a.subarray(o, o + this.nf)];
+    return f.some((x) => x < 0) ? null : f.map((x) => x / 100);
+  }
+  inputs(i: number, d: number): number[] {
+    const o = i * this.stride + d * (this.nf + this.ni) + this.nf;
+    return [...this.a.subarray(o, o + this.ni)].map((x) => x / 10);
+  }
+  road(i: number): [number, number] {
+    const o = (i + 1) * this.stride - 2;
+    return [this.a[o], this.a[o + 1]];
+  }
+}
+
+export function cellSpot(props: Record<string, number>, info: CellInfo | null, score: (d: number) => number | null,
+                         lngLat: { lng: number; lat: number }): SpotData {
+  const i = Number(props.i);
+  const m = (x: number) => (x < 0 ? "–" : x < 1000 ? `${Math.round(x / 10) * 10} m` : `${(x / 1000).toFixed(1)} km`);
+  const rd = info?.road(i);
+  return {
+    kind: "cell", score,
+    clock: (d) => Number(props[`p${d}`]),
+    factors: (d) => info?.factors(i, d) ?? null,
+    inputs: (d) => info?.inputs(i, d) ?? null,
+    where: `250 m square · ${lngLat.lat.toFixed(4)}, ${lngLat.lng.toFixed(4)}`,
+    trees: TREES[Number(props.tree)] ?? "Forest",
+    altitude: `${Number(props.elev).toLocaleString("en-GB")} m · ${BANDS[Number(props.band)] ?? ""} band`,
+    road: rd ? `forest track ${m(rd[0])} · road ${m(rd[1])}` : undefined,
+    note: `<span class="tag warn">private · this Mac only</span>`,
+  };
+}

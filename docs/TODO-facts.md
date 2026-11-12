@@ -23,8 +23,19 @@ These values are **not in the brief**. The code runs with a **[DRAFT]** placehol
 | S4 | Mushroom clock shift for high/cool cells | 0 days |
 | S5 | Russula delica "warm spells" rule | none yet |
 | S6 | Soaking event must end on a wet day (≥ 1 mm) | 1 mm (standard wet-day definition) |
-| S7 | **Should "Other broadleaf" count as habitat in the general map?** Brief: "no partner tree, no mushroom" | counted for now |
+| S7 | ~~Should "Other broadleaf" count as habitat in the general map?~~ | **Answered 2026-11-12: no, except for morels.** `score.general_map_trees: [1, 2, 3]` |
 | S8 | Soil "normal" uses only ONE season (Oct 2025-Jan 2026) | add 2 more seasons, one per day |
+| S9 | *Russula delica* is "all forest" in the brief. Should "Other broadleaf" count for it? (S7 answer kept it out) | not counted |
+
+## Species and lookalikes (Phase 5)
+| # | What | Draft value now | Where |
+|---|---|---|---|
+| L1 | **Which lookalikes go with which species** (the brief lists 10, no pairing) | every card shows all 10 | `config/lookalikes.yaml` |
+| L2 | Severity "deadly" for *Amanita verna* and *A. virosa* (brief only says "deadly/toxic") | deadly (general mycology references) | `config/lookalikes.yaml` |
+| L3 | Taxon for the 'pink "sickener" Russula' | *Russula emetica* | `config/lookalikes.yaml` |
+| L4 | Morels = deciduous trees. Golden oak is evergreen, so only "Other broadleaf" counts; that class mixes deciduous and evergreen trees | Other broadleaf, mid + high | `config/species.yaml` |
+| D8 | Kermes oak map (brief: red pine mushroom also with kermes oak) | not mapped, not counted | `config/species.yaml` |
+| P1 | 50 m hotspot zoom: **private only** for now (finer than the public ~2 km rule). Make public? | private | `pipeline/shroomy/export/hotspots.py` |
 
 ## Data and legal
 | # | What | Status |

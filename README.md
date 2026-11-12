@@ -31,6 +31,10 @@ cd ../web && npm run dev                  # site with the private view at http:/
 One-off builds (already done): `shroomy.habitat.fetch`, `shroomy.habitat.build`,
 `shroomy.weather.fetch --clim`, `shroomy.export.terrain`.
 
+Species cards: `uv run python -m shroomy.export.species` rebuilds `web/src/generated/species.json`
+from `config/species.yaml` + `config/lookalikes.yaml` + iNaturalist photos (licence-checked, cached).
+Private 50 m hotspot zoom: built by `shroomy.export.web` on your Mac (never in the public site).
+
 ## Where things are
 - `config/` — every weight, threshold, source and credit
 - `pipeline/` — Python data pipeline

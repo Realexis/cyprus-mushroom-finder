@@ -59,3 +59,10 @@ openstreetmap:
   licence: ODbL 1.0
   licence_status: verified
   credit: "© OpenStreetMap contributors"
+inaturalist:
+  name: iNaturalist species photos
+  url: https://api.inaturalist.org/v1/
+  licence: Per photo. Only CC0, CC BY, CC BY-SA and CC BY-NC photos are used.
+  licence_status: verified
+  credit: "Species photos from iNaturalist (inaturalist.org). Each photo shows its author and licence."
+  use: Photos on the species cards. Shown from iNaturalist's open-data store, not copied.

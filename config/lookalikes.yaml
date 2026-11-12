@@ -1,0 +1,71 @@
+# =====================================================================
+# Deadly and toxic lookalikes. Shown FIRST on every species card [BRIEF].
+#
+# The brief lists these 10 but does not say which lookalike goes with which
+# species. Until the Cyprus Mycological Association confirms that (TODO L1),
+# EVERY species card shows ALL of them. Over-warning is the right mistake.
+#
+# severity: deadly | toxic
+#   [BRIEF] = the brief says so. [DRAFT] = general mycology references; confirm (TODO L2).
+# =====================================================================
+
+lookalikes:
+  - latin: Amanita phalloides
+    common: death cap                       # [BRIEF]
+    severity: deadly                        # [BRIEF] "death cap poisons show no symptoms for 6-12 hours"
+    note: "No symptoms for 6-12 hours. Cooking does not remove the poison."
+    inat: Amanita phalloides
+
+  - latin: Amanita verna
+    common: ""
+    severity: deadly                        # [DRAFT] L2
+    note: ""
+    inat: Amanita verna
+
+  - latin: Amanita virosa
+    common: ""
+    severity: deadly                        # [DRAFT] L2
+    note: ""
+    inat: Amanita virosa
+
+  - latin: Lepiota brunneoincarnata
+    common: ""
+    severity: deadly                        # [BRIEF] "(deadly)"
+    note: ""
+    inat: Lepiota brunneoincarnata
+
+  - latin: Amanita proxima
+    common: ""
+    severity: toxic                         # [BRIEF] "(kidneys)"
+    note: "Damages the kidneys."
+    inat: Amanita proxima
+
+  - latin: Amanita pantherina
+    common: ""
+    severity: toxic                         # [BRIEF] listed as deadly/toxic
+    note: ""
+    inat: Amanita pantherina
+
+  - latin: Agaricus xanthodermus
+    common: yellow stainer                  # [BRIEF]
+    severity: toxic
+    note: ""
+    inat: Agaricus xanthodermus
+
+  - latin: Omphalotus olearius
+    common: ""
+    severity: toxic
+    note: "Looks like a chanterelle."       # [BRIEF]
+    inat: Omphalotus olearius
+
+  - latin: Russula emetica
+    common: the sickener (pink Russula)     # [BRIEF] 'pink "sickener" Russula'. Taxon = [DRAFT] L3
+    severity: toxic
+    note: ""
+    inat: Russula emetica
+
+  - latin: Lactarius chrysorrheus
+    common: ""
+    severity: toxic
+    note: "Check the milk colour: the red pine mushroom has orange milk."   # [BRIEF]
+    inat: Lactarius chrysorrheus
