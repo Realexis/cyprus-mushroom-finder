@@ -35,8 +35,9 @@ One-off builds (already done): `shroomy.habitat.fetch`, `shroomy.habitat.build`,
 
 Species cards: `uv run python -m shroomy.export.species` rebuilds `web/src/generated/species.json`
 from `config/species.yaml` + `config/lookalikes.yaml` + iNaturalist photos (licence-checked, cached).
-Public data includes the 250 m forest squares (`cells.pmtiles` + details) and, when the 25 m terrain and
-forest map are present, the 50 m hotspot zoom. The daily robot makes the squares with GDAL (no tippecanoe needed).
+Public data includes the 250 m forest squares (`cells.pmtiles` + details), made daily (the robot uses GDAL,
+no tippecanoe needed). The 50 m shade is a fixed island-wide file built once:
+`uv run python -m shroomy.export.shade50` → `web/public/tiles/shade50.pmtiles` (goes in the `static-v1` release).
 
 ## Where things are
 - `config/` — every weight, threshold, source and credit

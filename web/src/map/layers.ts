@@ -138,16 +138,18 @@ export function addOverlays(map: MlMap, theme: Theme, urls: LayerUrls, v: View) 
       filter: ["==", ["get", "i"], -1], paint: { "line-color": SEL_CORE, "line-width": selW(2, 3.5) } }, firstSymbol);
   }
 
-  // 50 m hotspot zoom: terrain shade inside the top zones, only when zoomed in.
-  if (urls.hotspots && urls.hotspotZones) {
+  // 50 m shade (island-wide, terrain only) when zoomed in, and the top-zone outlines.
+  const on = v.mode === "conditions" && v.priv ? "visible" : "none";
+  if (urls.hotspots) {
     map.addSource("hotspots", { type: "vector", url: `pmtiles://${urls.hotspots}` });
-    map.addSource("hotzones", { type: "geojson", data: urls.hotspotZones });
-    const on = v.mode === "conditions" && v.priv ? "visible" : "none";
     map.addLayer({
       id: "hot-fill", type: "fill", source: "hotspots", "source-layer": "hotspots", minzoom: 11.5, layout: { visibility: on },
       paint: { "fill-color": ramp(["get", "sh"], SHADE_STOPS),
         "fill-opacity": ["interpolate", ["linear"], ["zoom"], 11.5, 0, 12.3, 0.85], "fill-antialias": false },
     }, firstSymbol);
+  }
+  if (urls.hotspotZones) {
+    map.addSource("hotzones", { type: "geojson", data: urls.hotspotZones });
     map.addLayer({
       // Top zones: a thin solid ring from far away (so you can see where to zoom), dashed up close.
       id: "hot-zone", type: "line", source: "hotzones", layout: { visibility: on },

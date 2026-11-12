@@ -19,13 +19,15 @@ import { words } from "./ui/spot";
 
 const abs = (p: string) => new URL(p, document.baseURI).href;
 
-/** Are the 250 m forest squares published? (If not, the map falls back to ~2 km zones.) */
-async function hasCells(): Promise<boolean> {
+/** Is this file published? (The dev server answers missing files with the HTML page.) */
+async function hasFile(path: string): Promise<boolean> {
   try {
-    const r = await fetch(abs("data/cells.pmtiles"), { method: "HEAD" });
+    const r = await fetch(abs(path), { method: "HEAD" });
     return r.ok && (r.headers.get("content-type") ?? "").indexOf("html") < 0;
   } catch { return false; }
 }
+/** 250 m forest squares published? (If not, the map falls back to ~2 km zones.) */
+const hasCells = () => hasFile("data/cells.pmtiles");
 
 async function getJSON<T>(url: string): Promise<T | null> {
   try {
@@ -86,11 +88,12 @@ async function main() {
   const protocol = new Protocol();
   maplibregl.addProtocol("pmtiles", protocol.tile);
 
-  const [meta, priv, spots, rain] = await Promise.all([
+  const [meta, priv, spots, rain, shade] = await Promise.all([
     fetch(abs("data/meta.json"), { cache: "no-cache" }).then((r) => r.json() as Promise<Meta>),
     hasCells(),
     getJSON<Spots>(abs("data/spots.json")),
     getJSON<GeoJSON.FeatureCollection>(abs("data/rain.geojson")),
+    hasFile("tiles/shade50.pmtiles"),
   ]);
 
   if (meta.weather_run < cyprusToday()) {
@@ -107,12 +110,11 @@ async function main() {
     const im = await getJSON<{ factors: string[]; inputs: string[]; days: number }>(abs("data/cells_info.json"));
     if (im) cellInfo = await CellInfo.load(abs("data/cells_info.bin"), im).catch(() => null);
   })();
-  let hotZones: HotZone[] = [];
+  // Top-zone outlines (daily). The 50 m shade itself is the fixed file tiles/shade50.pmtiles.
   let hotZonesGeo: GeoJSON.FeatureCollection | undefined;
   if (priv) {
     const hz = await getJSON<{ zones: (HotZone & { ring: number[][] })[] }>(abs("data/hotspot_zones.json"));
     if (hz) {
-      hotZones = hz.zones;
       hotZonesGeo = { type: "FeatureCollection", features: hz.zones.map((z) => ({ type: "Feature",
         properties: { where: z.where, score: z.score }, geometry: { type: "Polygon", coordinates: [z.ring] } })) };
     }
@@ -125,7 +127,7 @@ async function main() {
     terrain: v("tiles/terrain.pmtiles"), hexes: abs("data/hexes.geojson"),
     rain: abs("data/rain.geojson"), reserves: abs("data/reserves.geojson"),
     cells: priv ? v("data/cells.pmtiles") : undefined,
-    hotspots: priv && hotZonesGeo ? v("data/hotspots.pmtiles") : undefined,
+    hotspots: priv && shade ? v("tiles/shade50.pmtiles") : undefined,         // island-wide 50 m shade
     hotspotZones: hotZonesGeo,
   };
   const basemap = v("tiles/basemap.pmtiles");
@@ -190,7 +192,7 @@ async function main() {
     return hexSpot(props, spots?.spots[Number(props.h)], (d) => hexProp(d, panel.filter), meta.general_map_trees);
   };
 
-  const panel: Panel = new Panel(sheet, meta, priv, islandRain(rain, 30), hotZones.length > 0,
+  const panel: Panel = new Panel(sheet, meta, priv, islandRain(rain, 30), shade,
     (p) => {
       if (!map.isStyleLoaded()) return;
       applyView(map, p.view);
