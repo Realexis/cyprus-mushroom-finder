@@ -9,7 +9,7 @@ npm run build
 if find dist -iname "*cells*" -o -iname "*private*" | grep -q .; then
   echo "✗ private files found in dist — refusing to deploy"; exit 1
 fi
-REMOTE=$(git -C .. remote get-url origin)
+REMOTE=${DEPLOY_REMOTE:-$(git -C .. remote get-url origin)}
 TMP=$(mktemp -d)
 cp -R dist/. "$TMP"
 touch "$TMP/.nojekyll"

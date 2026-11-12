@@ -29,14 +29,15 @@ def _daily_mean_from_hourly(times, values):
     return {d: float(np.mean(v)) for d, v in out.items()}
 
 
-def fetch_main(run_day: date | None = None):
+def fetch_main(run_day: date | None = None, past_days: int | None = None, out_name: str = "run"):
     cfg = config.load("weather")["open_meteo"]
     caps = config.load("weather")["budget"]
     tz = ZoneInfo(cfg["timezone"])
     run_day = run_day or datetime.now(tz).date()
     pts = main_points()
     n = len(pts["lat"])
-    n_days = cfg["past_days"] + cfg["forecast_days"]
+    past = cfg["past_days"] if past_days is None else past_days
+    n_days = past + cfg["forecast_days"]
     n_vars = len(cfg["daily"]) + len(cfg["hourly"])
     per = cfg["locations_per_request"]
     est = openmeteo.call_cost(n, n_vars, n_days)
@@ -44,7 +45,7 @@ def fetch_main(run_day: date | None = None):
 
     budget = openmeteo.Budget(caps)
     params = {"daily": ",".join(cfg["daily"]), "hourly": ",".join(cfg["hourly"]),
-              "past_days": cfg["past_days"], "forecast_days": cfg["forecast_days"],
+              "past_days": past, "forecast_days": cfg["forecast_days"],
               "models": cfg["model"], "timezone": cfg["timezone"]}
     raw_dir = config.RAW / "weather" / run_day.isoformat()
     results = []
@@ -52,7 +53,7 @@ def fetch_main(run_day: date | None = None):
         s = slice(b * per, (b + 1) * per)
         print(f" - batch {b + 1}/{math.ceil(n / per)}")
         results += openmeteo.fetch(cfg["forecast_url"], pts["lat"][s], pts["lon"][s], params,
-                                   n_vars, n_days, budget, raw_dir / f"main_b{b:03d}.json")
+                                   n_vars, n_days, budget, raw_dir / f"main_p{past}_b{b:03d}.json")
 
     dates = results[0]["daily"]["time"]
     arr = {v: np.full((n, len(dates)), np.nan, "float32") for v in cfg["daily"]}
@@ -67,7 +68,7 @@ def fetch_main(run_day: date | None = None):
         elev[i] = r.get("elevation", np.nan)
 
     OUT.mkdir(parents=True, exist_ok=True)
-    out = OUT / f"run_{run_day.isoformat()}.npz"
+    out = OUT / f"{out_name}_{run_day.isoformat()}.npz"
     np.savez_compressed(out, dates=np.array(dates), today=run_day.isoformat(),
                         lon=pts["lon"], lat=pts["lat"], x=pts["x"], y=pts["y"],
                         elev_om=elev, precip=arr["precipitation_sum"],

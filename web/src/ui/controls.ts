@@ -2,7 +2,24 @@
 import { RAIN30_STOPS, RAIN7_STOPS, SCORE_STOPS, type Mode } from "../map/layers";
 
 export interface DayInfo { offset: number; date: string; confidence: "high" | "medium" | "low"; }
-export interface Meta { weather_run: string; generated_utc: string; model: string; days: DayInfo[]; credits: unknown[]; }
+export interface Meta {
+  weather_run: string; generated_utc: string; model: string; days: DayInfo[]; credits: unknown[];
+  clock: { opens: number; closes: number; soak_mm: number };
+}
+
+/** The mushroom clock in plain words (same rules as pipeline/shroomy/score/clock.py). */
+export function clockSentence(daysSince: number, c: Meta["clock"]): { text: string; open: boolean } {
+  if (daysSince < 0) return { text: `No soaking rain (${c.soak_mm} mm+) in the last month. Fruiting window closed.`, open: false };
+  if (daysSince < c.opens) {
+    const k = c.opens - daysSince;
+    return { text: `Soaking rain ${daysSince} days ago. Window opens in ${k} day${k === 1 ? "" : "s"}.`, open: false };
+  }
+  if (daysSince <= c.closes) {
+    const k = c.closes - daysSince;
+    return { text: `Soaking rain ${daysSince} days ago. Window OPEN, about ${k} more day${k === 1 ? "" : "s"}.`, open: true };
+  }
+  return { text: `Last soaking rain was ${daysSince} days ago. Fruiting window has closed.`, open: false };
+}
 
 const TREES: Record<number, string> = {
   1: "Calabrian pine (likely)", 2: "Troodos black pine (likely)", 3: "Golden oak (likely)",
@@ -127,6 +144,10 @@ export class Panel {
     el.innerHTML = `
       <div class="spot-head"><span><b>${words(v)}</b></span><span class="spot-score">${v}<small style="font-size:1rem">/100</small></span></div>
       ${extra}
+      ${p[`p${this.day}`] !== undefined ? (() => {
+        const c = clockSentence(Number(p[`p${this.day}`]), this.meta.clock);
+        return `<p class="clock ${c.open ? "open" : ""}"><span aria-hidden="true">⏱</span> <b>Mushroom clock:</b> ${c.text}</p>`;
+      })() : ""}
       <div class="spark" aria-label="Score for the next 8 days">${bars}</div>
       <p class="muted">Next 8 days · growing conditions only.
         <button class="link-btn" id="spot-close" type="button">Close</button></p>`;

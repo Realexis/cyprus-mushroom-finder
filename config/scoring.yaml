@@ -125,6 +125,7 @@ score:
     window_opens_days_after_pulse: 7   # [BRIEF]
     window_closes_days_after_pulse: 20 # [BRIEF]
     high_cool_shift_days: 0            # [DRAFT] brief: "earlier for high/cool cells", no number
+    wet_day_mm: 1.0                    # a soaking event must END on a wet day (WMO wet-day = 1 mm)
 
 # ---------------------------------------------------------------------
 # PUBLIC VIEW (the deployed website). Exact 250 m cells are NEVER published.

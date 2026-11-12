@@ -217,3 +217,5 @@ dialog.emergency::backdrop { background: rgba(0, 0, 0, 0.6); }
 @media (max-width: 899px) {
   .map-note { top: 8px; bottom: auto; left: 8px; max-width: calc(100% - 80px); }
 }
+.clock { margin-top: 8px !important; padding: 8px 10px; border-radius: 10px; background: var(--surface); border: 1px solid var(--line); }
+.clock.open { border-color: var(--accent); }
