@@ -6,6 +6,7 @@ import "./styles/app.css";
 import * as maplibregl from "maplibre-gl";
 import type { MapGeoJSONFeature } from "maplibre-gl";
 import { Protocol } from "pmtiles";
+import { pmtiles } from "./map/files";
 import { addOverlays, applyView, hexProp, set3D, setReplayFrame, setSelection, type LayerUrls } from "./map/layers";
 import { baseStyle, type Theme } from "./map/style";
 import { Panel, type HotZone, type Meta } from "./ui/controls";
@@ -27,7 +28,7 @@ async function hasFile(path: string): Promise<boolean> {
   } catch { return false; }
 }
 /** 250 m forest squares published? (If not, the map falls back to ~2 km zones.) */
-const hasCells = () => hasFile("data/cells.pmtiles");
+const hasCells = () => hasFile(pmtiles("data/cells.pmtiles"));
 
 async function getJSON<T>(url: string): Promise<T | null> {
   try {
@@ -113,7 +114,7 @@ async function main() {
     hasCells(),
     getJSON<Spots>(abs("data/spots.json")),
     getJSON<GeoJSON.FeatureCollection>(abs("data/rain.geojson")),
-    hasFile("tiles/shade50.pmtiles"),
+    hasFile(pmtiles("tiles/shade50.pmtiles")),
   ]);
 
   if (meta.weather_run < cyprusToday()) {
@@ -144,13 +145,13 @@ async function main() {
   // fetches fresh pieces instead of mixing in old cached copies (which breaks PMTiles reads).
   const v = (p: string) => `${abs(p)}?v=${encodeURIComponent(meta.generated_utc)}`;
   const urls: LayerUrls = {
-    terrain: v("tiles/terrain.pmtiles"), hexes: abs("data/hexes.geojson"),
+    terrain: v(pmtiles("tiles/terrain.pmtiles")), hexes: abs("data/hexes.geojson"),
     rain: abs("data/rain.geojson"), reserves: abs("data/reserves.geojson"),
-    cells: priv ? v("data/cells.pmtiles") : undefined,
-    hotspots: priv && shade ? v("tiles/shade50.pmtiles") : undefined,         // island-wide 50 m shade
+    cells: priv ? v(pmtiles("data/cells.pmtiles")) : undefined,
+    hotspots: priv && shade ? v(pmtiles("tiles/shade50.pmtiles")) : undefined,         // island-wide 50 m shade
     hotspotZones: hotZonesGeo,
   };
-  const basemap = v("tiles/basemap.pmtiles");
+  const basemap = v(pmtiles("tiles/basemap.pmtiles"));
   let theme: Theme = currentTheme();
 
   const map = new maplibregl.Map({

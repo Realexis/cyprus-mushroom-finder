@@ -224,6 +224,8 @@ export function setTerrainHeight(map: MlMap, h: number) {
 const GROUND_FILLS = ["rain-fill", "hex-fill", "cells-fill", "hot-fill"];
 
 export function set3D(map: MlMap, on: boolean, theme: Theme, animate = true) {
+  // Pressed before the map has loaded: nothing to do yet. main.ts re-applies 3D once the layers exist.
+  if (!map.getSource("terrain3d")) return;
   const dark = theme === "dark";
   const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
   // In 3D, let the mountain shading show through the colours a little more.
