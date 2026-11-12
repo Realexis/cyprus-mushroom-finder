@@ -138,7 +138,10 @@ export class Panel {
     const rainNote = this.mode === "rain7" || this.mode === "rain30"
       ? `<p class="conf-line">Rain shown is the <b>${this.mode === "rain7" ? "last 7" : "last 30"} days</b>, up to today.</p>` : "";
     const options = [`<option value="">All forest (general map)</option>`,
-      ...SPECIES.map((s) => `<option value="${s.code}" ${s.code === this.species ? "selected" : ""}>${esc(s.latin)} · ${esc(s.common)}</option>`)].join("");
+      ...SPECIES.map((s) => {
+        const on = s.months.includes(this.monthOf(this.day));
+        return `<option value="${s.code}" ${s.code === this.species ? "selected" : ""}>${esc(s.latin)} · ${esc(s.common)}${on ? "" : ` · out of season (${esc(s.season_text)})`}</option>`;
+      })].join("");
     const seasonMsg = sp ? (this.inSeason(this.day)
       ? `<p class="filter-line">Good conditions for <i>${esc(sp.latin)}</i> habitat · <span class="tag">in season ${esc(sp.season_text)}</span></p>`
       : `<p class="filter-line warn-line"><b>Out of season.</b> <i>${esc(sp.latin)}</i> season is ${esc(sp.season_text)}.
@@ -154,7 +157,7 @@ export class Panel {
       <div class="sheet-more">
       <h2 id="sp-h"><label for="species">Conditions for</label></h2>
       <div class="sp-row">
-        <select id="species" aria-describedby="sp-help" data-tip="Pick a mushroom to colour the map for its habitat: its trees, its altitude and its season. The map never says the mushroom is there.">${options}</select>
+        <select id="species" aria-describedby="sp-help" data-tip="Pick a mushroom to colour the map for its habitat: its trees, its altitude and its season. Out of season = grey, no score. The map never says the mushroom is there.">${options}</select>
         <button id="cards-btn" type="button" class="icon-btn" aria-label="Open species cards" data-tip="Photos, season, trees and the deadly lookalikes for each mushroom.">Species cards</button>
       </div>
       <p id="sp-help" class="muted small">A species changes only the trees, altitude and season that count.</p>

@@ -11,7 +11,8 @@ let current: HTMLElement | null = null;
 let timer = 0;
 let holdTimer = 0;
 let swallowClick = false;
-let fromMap = false;                 // true while the bubble shows a map-hover tip
+let fromMap = false;
+let keyboard = false;                // was the last input a key press? (focus tips only then)                 // true while the bubble shows a map-hover tip
 
 function ensure() {
   if (tip) return tip;
@@ -95,6 +96,7 @@ export function mountTips() {
     if ((e as PointerEvent).pointerType === "touch") return;
     const el = target(e);
     if (!el || el === current) return;
+    if (el.tagName === "SELECT" && document.activeElement === el) return;   // its menu may be open
     window.clearTimeout(timer);
     timer = window.setTimeout(() => showFor(el), SHOW_DELAY_MS);
   });
@@ -106,10 +108,15 @@ export function mountTips() {
     hide();
   });
   // Keyboard focus
+  // Menus (select) count as ":focus-visible" even after a mouse click, so we check the
+  // last input ourselves: focus tips only for keyboard users. Never over an open menu.
+  document.addEventListener("keydown", (e) => { if (e.key === "Tab" || e.key.startsWith("Arrow")) keyboard = true; }, true);
+  document.addEventListener("pointerdown", () => { keyboard = false; }, true);
   document.addEventListener("focusin", (e) => {
     const el = target(e);
-    if (el && (el as HTMLElement).matches(":focus-visible")) showFor(el); else hide();
+    if (el && keyboard && el.tagName !== "SELECT") showFor(el); else hide();
   });
+  document.addEventListener("change", () => hide(), true);
   document.addEventListener("focusout", () => hide());
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") hide(); });
   // Phone: press and hold
