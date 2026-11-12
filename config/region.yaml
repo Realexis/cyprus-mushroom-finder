@@ -1,0 +1,8 @@
+# Map area and grids.
+crs: "EPSG:32636"            # UTM zone 36N — metres, right for Cyprus
+bbox_lonlat: [32.20, 34.50, 34.65, 35.75]   # west, south, east, north (whole island)
+grids:
+  terrain_m: 25              # DEM work grid. GLO-30 is ~30 m; 25 m makes 250 m = exactly 10x10 cells
+  forest_m: 10               # Copernicus HRL forest type resolution
+  habitat_m: 250             # [BRIEF] habitat + score grid
+  weather_m: 3000            # [BRIEF] ~3 km weather points

@@ -1,0 +1,35 @@
+# Facts we still need
+
+These values are **not in the brief**. The code runs with a **[DRAFT]** placeholder
+(see `config/scoring.yaml`). Nothing here is presented to users as fact.
+
+## Habitat (Phase 1)
+| # | What | Draft value now | Where |
+|---|---|---|---|
+| H1 | Share of a 250 m cell that must be forest | 25% | `habitat.forest_min_fraction` |
+| H2 | **Mid / low altitude boundary** | 600 m | `habitat.altitude_bands.mid_min_m` |
+| H3 | Does **serpentinite** count as "Troodos igneous rock" for golden oak? | yes | `habitat.trees.troodos_igneous_units` |
+| H4 | Share of a cell that must be igneous rock | 50% | `habitat.trees.igneous_min_fraction` |
+| H5 | **Shade recipe**: weights of slope facing / valley / low sun | equal thirds | `habitat.shade.weights` |
+| H6 | Valley index radius and depth for full effect | 500 m, 30 m | `habitat.shade.valley_*` |
+| H7 | Autumn sun date used for hillshade | 31 Oct, 08-16 h | `habitat.shade.autumn_sun_*` |
+
+## Score (Phase 2+)
+| # | What | Draft value now |
+|---|---|---|
+| S1 | Frost penalty size | -0.1 per frost day |
+| S2 | Soil moisture percentile mapping | 0 at p20 -> 1 at p80 |
+| S3 | **Season x altitude table** as numbers | drafted from the brief's words |
+| S4 | Mushroom clock shift for high/cool cells | 0 days |
+| S5 | Russula delica "warm spells" rule | none yet |
+
+## Data and legal
+| # | What | Status |
+|---|---|---|
+| D1 | **Geology licence** (Geological Survey Dept. via DLS INSPIRE) | unknown. Used internally only. Ask INSPIRE@dls.moi.gov.cy |
+| D2 | Natura 2000 licence record | expected CC BY 4.0, record not read yet |
+| D3 | **Areas not under Republic control** (north): picking rules, reserves | no data. Forest is mapped; legal notes do not apply there |
+| D4 | British Sovereign Base Areas: picking rules | unknown |
+| D5 | Burned ground source for morels | not chosen |
+| D6 | Rare species list for the public view | not given |
+| D7 | Local Greek names (except kokkinomanitaro) | "to confirm with the Cyprus Mycological Association" |

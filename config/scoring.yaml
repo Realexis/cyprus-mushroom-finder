@@ -1,0 +1,135 @@
+# =====================================================================
+# Cyprus Mushroom Finder — ALL weights and thresholds live here.
+# Tune freely. Every value is tagged:
+#   [BRIEF]  = from the project brief (the science section)
+#   [DRAFT]  = NOT given in the brief. A placeholder so the code runs.
+#              Listed in docs/TODO-facts.md. Please confirm or change.
+# =====================================================================
+
+# ---------------------------------------------------------------------
+# HABITAT (Phase 1)
+# ---------------------------------------------------------------------
+habitat:
+  # A 250 m cell counts as forest when this share of its 10 m pixels
+  # is forest (conifer + broadleaf).
+  forest_min_fraction: 0.25            # [DRAFT]
+
+  # Altitude bands (metres above sea level).
+  altitude_bands:
+    high_min_m: 1200                   # [BRIEF] high Troodos above 1,200 m
+    mid_min_m: 600                     # [DRAFT] brief says "mid" and "low" but gives no boundary
+
+  # Tree zones.
+  trees:
+    black_pine_min_m: 1200             # [BRIEF] Pinus nigra 1,200-1,950 m, central Troodos
+    black_pine_max_m: 1950             # [BRIEF]
+    calabrian_pine_max_m: 1200         # [BRIEF] "up to ~1,200 m" (used only as a label check)
+    # Golden oak only on Troodos igneous rock [BRIEF].
+    # Which geology units count as "Troodos igneous rock".
+    # Unit names come from the Cyprus Geological Survey map (DLS INSPIRE).
+    # These are the Troodos ophiolite rocks.
+    troodos_igneous_units:
+      - Upper Pillow Lavas
+      - Lower Pillow Lavas
+      - Pillow Lavas
+      - Vitrophyric Pillow Lavas
+      - Pillow Breccia
+      - Basal Group
+      - Sheeted Dykes (Diabase)
+      - Plagiogranite
+      - Gabbro
+      - Isotropic Gabbros
+      - Isotropic Wehrlites
+      - Wehrlite
+      - Dunite
+      - Harzburgite
+      - Pyroxenite
+      - Serpentinite                   # [DRAFT] metamorphosed ophiolite rock; confirm it counts
+      - Sheared Serpentinite           # [DRAFT] same question
+    # A 250 m cell is "on Troodos igneous rock" when this share of it is.
+    igneous_min_fraction: 0.5          # [DRAFT]
+
+  # Shade score (0 = exposed, 1 = deep shade). [DRAFT] recipe.
+  # Brief: north/east-facing slopes, valley bottoms and autumn
+  # hillshade keep moisture. The brief gives no weights.
+  shade:
+    weights:                           # [DRAFT] equal thirds
+      facing: 0.3333
+      valley: 0.3333
+      low_sun: 0.3334
+    facing_best_azimuth_deg: 45        # [DRAFT] north-east = midway between N and E
+    facing_full_effect_slope_deg: 15   # [DRAFT] flatter ground gets a neutral 0.5
+    valley_radius_m: 500               # [DRAFT] TPI neighbourhood radius
+    valley_full_effect_m: 30           # [DRAFT] TPI of -30 m = full valley score
+    # Autumn sun: the date and hours used for hillshade.
+    autumn_sun_date: "2026-10-31"      # [DRAFT] a typical autumn day
+    autumn_sun_hours_local: [8, 9, 10, 11, 12, 13, 14, 15, 16]   # [DRAFT]
+    utc_offset_hours: 2                # Cyprus winter time (EET)
+    cast_shadows: true                 # mountains shade their neighbours
+    shadow_max_distance_m: 6000        # [DRAFT] how far a ridge can cast shade
+
+# ---------------------------------------------------------------------
+# DAILY SCORE (Phase 2) — all from the brief unless tagged.
+# score = habitat_filter (0/1) x weighted sum x 100
+# ---------------------------------------------------------------------
+score:
+  weights:
+    rain_total: 0.20                   # [BRIEF]
+    rain_pulse: 0.15                   # [BRIEF]
+    temperature: 0.25                  # [BRIEF]
+    soil_moisture: 0.15                # [BRIEF]
+    season_altitude: 0.15              # [BRIEF]
+    shade: 0.10                        # [BRIEF]
+
+  rain_total:                          # total rain over the last N days
+    days: 30                           # [BRIEF]
+    zero_below_mm: 20                  # [BRIEF]
+    full_at_mm: 80                     # [BRIEF]
+
+  rain_pulse:                          # biggest 3-day sum, 7-20 days ago
+    window_days: 3                     # [BRIEF] "over 1-3 days"
+    min_days_ago: 7                    # [BRIEF]
+    max_days_ago: 20                   # [BRIEF]
+    zero_below_mm: 10                  # [BRIEF]
+    full_at_mm: 25                     # [BRIEF]
+    soaking_event_mm: 20               # [BRIEF] ">= ~20 mm" (used by the mushroom clock)
+
+  temperature:                         # 7-day mean, trapezoid
+    days: 7                            # [BRIEF]
+    zero_at_c: 3                       # [BRIEF]
+    best_from_c: 8                     # [BRIEF]
+    best_to_c: 18                      # [BRIEF]
+    zero_again_c: 24                   # [BRIEF]
+    frost_threshold_c: 0               # [DRAFT] daily min at/below this = frost day
+    frost_penalty_per_day: 0.1         # [DRAFT] brief says "frost = penalty", no size
+    lapse_rate_c_per_km: -6.5          # [BRIEF]
+
+  soil_moisture:
+    # Percentile vs the cell's own history -> 0..1.
+    zero_at_percentile: 20             # [DRAFT]
+    full_at_percentile: 80             # [DRAFT]
+
+  # Month x altitude band, 0..1. [DRAFT] numbers turned from the brief's words:
+  # high (>1,200 m) starts mid-late Sep; mid Oct-Dec; low Nov-Feb.
+  # Spring is 0 here: spring species (morels) get their own window via the species filter.
+  season_altitude:
+    high: {jan: 0.2, feb: 0.1, mar: 0.0, apr: 0.0, may: 0.0, jun: 0.0, jul: 0.0, aug: 0.0, sep: 0.7, oct: 1.0, nov: 1.0, dec: 0.5}
+    mid:  {jan: 0.4, feb: 0.2, mar: 0.0, apr: 0.0, may: 0.0, jun: 0.0, jul: 0.0, aug: 0.0, sep: 0.2, oct: 1.0, nov: 1.0, dec: 1.0}
+    low:  {jan: 1.0, feb: 1.0, mar: 0.0, apr: 0.0, may: 0.0, jun: 0.0, jul: 0.0, aug: 0.0, sep: 0.0, oct: 0.3, nov: 1.0, dec: 1.0}
+
+  forecast_confidence:                 # [BRIEF]
+    high_max_day: 2
+    medium_max_day: 4                  # day 5+ = low
+
+  mushroom_clock:
+    window_opens_days_after_pulse: 7   # [BRIEF]
+    window_closes_days_after_pulse: 20 # [BRIEF]
+    high_cool_shift_days: 0            # [DRAFT] brief: "earlier for high/cool cells", no number
+
+# ---------------------------------------------------------------------
+# PUBLIC VIEW (the deployed website). Exact 250 m cells are NEVER published.
+# ---------------------------------------------------------------------
+public_view:
+  h3_resolution: 7                   # H3 res 7 hexagons, ~2.4 km across [BRIEF: "~2 km hexagons"]
+  min_open_forest_cells: 4           # [DRAFT] hide hexagons with less than ~0.25 km² of open forest
+  aggregate: mean                    # [DRAFT] mean score of the open forest cells in the hexagon

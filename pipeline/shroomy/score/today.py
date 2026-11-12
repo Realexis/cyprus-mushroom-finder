@@ -1,0 +1,130 @@
+"""Score every 250 m forest cell for one day (v1, rule-based).
+
+Run:  uv run python -m shroomy.score.today [YYYY-MM-DD]
+
+Output: data/processed/scores/score_<day>.tif (score + every factor, named bands)
+        data/processed/scores/score_<day>.json (summary numbers)
+"""
+import json
+import sys
+from datetime import date
+
+import numpy as np
+import rasterio
+from scipy.spatial import cKDTree
+
+from .. import config
+from ..grid import habitat_grid
+from . import factors as F
+from .downscale import Interpolator
+
+OUT = config.PROCESSED / "scores"
+
+
+def load_habitat():
+    with rasterio.open(config.PROCESSED / "habitat_250m.tif") as src:
+        return {src.descriptions[i]: src.read(i + 1) for i in range(src.count)}
+
+
+def score_day(run_file, day_offset=0):
+    """Score day `today + day_offset` using the weather run in `run_file`."""
+    S = config.load("scoring")["score"]
+    w = np.load(run_file)
+    dates = [str(d) for d in w["dates"]]
+    t = dates.index(str(w["today"])) + day_offset
+    day = date.fromisoformat(dates[t])
+
+    g = habitat_grid()
+    hab = load_habitat()
+    land = hab["land_fraction"] > 0.5
+    rows, cols = np.nonzero(land)                         # score all land (rain layer too)
+    cx = g.west + (cols + 0.5) * g.res
+    cy = g.north - (rows + 0.5) * g.res
+    interp = Interpolator(np.c_[w["x"], w["y"]], np.c_[cx, cy])
+    elev = np.nan_to_num(hab["elevation_m"][rows, cols], nan=0.0)
+    lapse = S["temperature"]["lapse_rate_c_per_km"]
+
+    # --- rain (per point, then spread)
+    p = w["precip"]
+    rt = S["rain_total"]; rp = S["rain_pulse"]
+    rain30_pt = F.rain_total(p, t, rt["days"])
+    rain7_pt = F.rain_total(p, t, 7)
+    pulse_pt, pulse_ago_pt = F.rain_pulse(p, t, rp["window_days"], rp["min_days_ago"], rp["max_days_ago"])
+    rain30, rain7, pulse = interp(rain30_pt), interp(rain7_pt), interp(pulse_pt)
+
+    # --- temperature: to sea level at the points, spread, then back up to each cell's height
+    tc = S["temperature"]
+    days = slice(t - tc["days"] + 1, t + 1)
+    t0 = F.to_sea_level(w["tmean"][:, days], w["elev_om"][:, None], lapse)
+    tmin0 = F.to_sea_level(w["tmin"][:, days], w["elev_om"][:, None], lapse)
+    tmean_cells = F.from_sea_level(interp(t0), elev[:, None], lapse)
+    tmin_cells = F.from_sea_level(interp(tmin0), elev[:, None], lapse)
+    t7 = tmean_cells.mean(axis=1)
+    frost = (tmin_cells <= tc["frost_threshold_c"]).sum(axis=1)
+
+    # --- soil moisture percentile vs the nearest climatology point (same model)
+    clim = np.load(config.PROCESSED / "weather" / "soil_climatology.npz")
+    _, nn = cKDTree(np.c_[clim["x"], clim["y"]]).query(np.c_[w["x"], w["y"]])
+    soil_pct_pt = F.percentile_in(w["soil"][:, t], clim["sorted_values"][nn])
+    soil_pct = interp(np.nan_to_num(soil_pct_pt, nan=np.nanmedian(soil_pct_pt)))
+
+    sm = S["soil_moisture"]
+    f = {
+        "rain_total": F.ramp(rain30, rt["zero_below_mm"], rt["full_at_mm"]),
+        "rain_pulse": F.ramp(pulse, rp["zero_below_mm"], rp["full_at_mm"]),
+        "temperature": F.temperature_factor(t7, frost, tc),
+        "soil_moisture": F.ramp(soil_pct, sm["zero_at_percentile"], sm["full_at_percentile"]),
+        "season_altitude": F.season_factor(day.month, hab["altitude_band"][rows, cols].astype(int),
+                                           S["season_altitude"]),
+        "shade": np.nan_to_num(hab["shade_score"][rows, cols], nan=0.0),
+    }
+    score = F.combine(f, S["weights"], hab["habitat_filter"][rows, cols])
+
+    # --- write a raster with named bands
+    layers = {"score": score, **{f"f_{k}": v for k, v in f.items()},
+              "rain_30d_mm": rain30, "rain_7d_mm": rain7, "pulse_mm": pulse,
+              "t7_mean_c": t7, "frost_days": frost, "soil_percentile": soil_pct}
+    OUT.mkdir(parents=True, exist_ok=True)
+    tif = OUT / f"score_{day.isoformat()}.tif"
+    prof = dict(driver="GTiff", width=g.width, height=g.height, count=len(layers), dtype="float32",
+                crs=g.crs, transform=g.transform, nodata=np.nan, compress="deflate", predictor=3,
+                tiled=True)
+    with rasterio.open(tif, "w", **prof) as dst:
+        for i, (name, v) in enumerate(layers.items(), start=1):
+            a = np.full((g.height, g.width), np.nan, "float32")
+            a[rows, cols] = v
+            if name == "score" or name.startswith("f_"):
+                a[hab["habitat_filter"] == 0] = np.nan          # scores only on open forest
+            dst.write(a, i)
+            dst.set_band_description(i, name)
+
+    hf = hab["habitat_filter"][rows, cols] > 0
+    summ = {"day": day.isoformat(), "run": str(w["today"]), "day_offset": day_offset,
+            "model": str(w["model"]),
+            "forest_cells": int(hf.sum()),
+            "score": {q: float(np.percentile(score[hf], v)) for q, v in
+                      (("p10", 10), ("median", 50), ("p90", 90), ("max", 100))},
+            "cells_score_60_plus": int((score[hf] >= 60).sum()),
+            "factor_means_forest": {k: float(np.mean(v[hf])) for k, v in f.items()},
+            "inputs_forest_median": {"rain_30d_mm": float(np.median(rain30[hf])),
+                                     "rain_7d_mm": float(np.median(rain7[hf])),
+                                     "pulse_mm": float(np.median(pulse[hf])),
+                                     "t7_mean_c": float(np.median(t7[hf])),
+                                     "frost_days": float(np.median(frost[hf])),
+                                     "soil_percentile": float(np.median(soil_pct[hf]))},
+            "island_rain_30d_mm_max": float(rain30.max())}
+    (OUT / f"score_{day.isoformat()}.json").write_text(json.dumps(summ, indent=2))
+    print(json.dumps(summ, indent=2))
+    return tif
+
+
+def latest_run():
+    runs = sorted((config.PROCESSED / "weather").glob("run_*.npz"))
+    if not runs:
+        raise SystemExit("No weather run yet: uv run python -m shroomy.weather.fetch")
+    return runs[-1]
+
+
+if __name__ == "__main__":
+    off = int(sys.argv[1]) if len(sys.argv) > 1 else 0
+    score_day(latest_run(), off)

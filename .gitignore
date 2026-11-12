@@ -1,0 +1,19 @@
+# Big data and caches never go into git.
+data/
+*.pmtiles
+.venv/
+__pycache__/
+.pytest_cache/
+node_modules/
+dist/
+.DS_Store
+# Private things, never public.
+private/
+*.env
+.env*
+# Preview images show 250 m detail -> private.
+previews/
+# Built or downloaded site assets (rebuilt by the pipeline / deploy script).
+web/public/tiles/
+web/public/vendor/
+web/public/data/

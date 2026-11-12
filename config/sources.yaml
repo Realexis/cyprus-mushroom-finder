@@ -1,0 +1,61 @@
+# Every data source: where it comes from, its licence, and the exact credit line.
+# The "About the data" page is built from this file.
+# licence_status: verified | to_verify
+
+dem:
+  name: Copernicus DEM GLO-30
+  url: https://copernicus-dem-30m.s3.amazonaws.com/
+  tiles: [N34_00_E032_00, N34_00_E033_00, N34_00_E034_00, N35_00_E032_00, N35_00_E033_00, N35_00_E034_00]
+  licence: Copernicus DEM licence (free, attribution required)
+  licence_status: verified
+  credit: "© DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA; all rights reserved"
+  note: Surface model — includes tree tops and buildings.
+
+forest_type:
+  name: Copernicus HRL Forest Type 2018 (10 m)
+  url: https://image.discomap.eea.europa.eu/arcgis/rest/services/GioLandPublic/HRL_ForestType_2018/ImageServer
+  classes: {0: non-forest, 1: broadleaved, 2: coniferous, 255: outside area}
+  licence: Copernicus full, free and open data policy (Regulation (EU) 2021/696)
+  licence_status: verified
+  credit: "© European Union, Copernicus Land Monitoring Service 2018, European Environment Agency (EEA)"
+
+nature_reserves:
+  name: EEA Nationally designated areas (NatDA) v24 — Cyprus code CY04 "Nature reserve"
+  url: https://bio.discomap.eea.europa.eu/arcgis/rest/services/ProtectedSites/NatDAv24_Dyna_WM/MapServer/4
+  filter: "countryCode='CY' AND designationTypeCode='CY04'"
+  licence: CC BY 4.0
+  licence_status: verified
+  credit: "Nationally designated areas (NatDA) v24 © European Environment Agency (EEA), CC BY 4.0"
+  note: >
+    Covers the 7 nature reserves of the Republic of Cyprus (Chionistra, Drys tis Lanias,
+    Kryos Potamos, Livadhi tou Pasha, Madari, Pikromiloudhi, Tripylos-Mavroi Kremmoi).
+    No reserve data for areas not under Republic control (TODO).
+
+natura2000:
+  name: Natura 2000 sites (EEA)
+  url: https://bio.discomap.eea.europa.eu/arcgis/rest/services/ProtectedSites/Natura2000Sites/MapServer
+  filter: "MS='CY'"
+  licence: CC BY 4.0
+  licence_status: to_verify   # EEA standard licence; record not yet read
+  credit: "Natura 2000 © European Environment Agency (EEA)"
+
+geology:
+  name: Geology of Cyprus — Geologic Units (Geological Survey Department, via DLS INSPIRE)
+  url: https://eservices.dls.moi.gov.cy/inspire/rest/services/INSPIRE/GE_Geology/MapServer
+  licence: Licence being confirmed with the Department of Lands and Surveys
+  licence_status: to_verify
+  credit: "Geological Survey Department, Republic of Cyprus (via Department of Lands and Surveys INSPIRE services)"
+  use: Used only inside the model to find the golden oak zone. The rock map itself is not published.
+  contact: INSPIRE@dls.moi.gov.cy
+
+# Later phases (already planned):
+open_meteo:
+  name: Open-Meteo Forecast API
+  licence: CC BY 4.0 (non-commercial free tier)
+  licence_status: verified
+  credit: "Weather data by Open-Meteo.com (CC BY 4.0)"
+openstreetmap:
+  name: OpenStreetMap (Geofabrik Cyprus extract, Protomaps build)
+  licence: ODbL 1.0
+  licence_status: verified
+  credit: "© OpenStreetMap contributors"

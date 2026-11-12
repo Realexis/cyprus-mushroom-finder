@@ -1,0 +1,72 @@
+/* Design tokens. Dark forest-green and light paper themes.
+   Dyslexia-friendly: Atkinson Hyperlegible, large type, generous spacing,
+   left-aligned text (never justified). */
+
+:root {
+  --font: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --fs-0: 0.875rem;
+  --fs-1: 1rem;
+  --fs-2: 1.125rem;
+  --fs-3: 1.375rem;
+  --fs-4: 1.75rem;
+  --lh: 1.6;
+  --track: 0.012em;
+  --radius: 14px;
+  --radius-s: 10px;
+  --gap: 12px;
+  --tap: 48px;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+
+  /* Light: warm paper */
+  --bg: #f3f0e7;
+  --surface: #fffdf8;
+  --surface-2: #ebe6d9;
+  --line: #d8d1c0;
+  --ink: #1b2620;
+  --ink-soft: #4f5f55;
+  --accent: #8a5d00;
+  --accent-ink: #ffffff;
+  --safety-bg: #fff1cf;
+  --safety-ink: #5a3d00;
+  --sos-bg: #b3261e;
+  --sos-ink: #ffffff;
+  --closed: #8c928f;
+  --focus: #1c6dd0;
+}
+
+:root[data-theme="dark"] {
+  --bg: #0c1612;
+  --surface: #14211b;
+  --surface-2: #1d2d25;
+  --line: #2c3d34;
+  --ink: #e9efe6;
+  --ink-soft: #a9b8ad;
+  --accent: #e0b040;
+  --accent-ink: #1a1405;
+  --safety-bg: #3a2f12;
+  --safety-ink: #f6dfa6;
+  --sos-bg: #e5483b;
+  --sos-ink: #ffffff;
+  --closed: #8c928f;
+  --focus: #8cc4ff;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0c1612;
+    --surface: #14211b;
+    --surface-2: #1d2d25;
+    --line: #2c3d34;
+    --ink: #e9efe6;
+    --ink-soft: #a9b8ad;
+    --accent: #e0b040;
+    --accent-ink: #1a1405;
+    --safety-bg: #3a2f12;
+    --safety-ink: #f6dfa6;
+    --sos-bg: #e5483b;
+    --sos-ink: #ffffff;
+    --focus: #8cc4ff;
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  }
+}
