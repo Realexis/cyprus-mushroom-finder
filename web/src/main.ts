@@ -10,7 +10,7 @@ import { pmtiles } from "./map/files";
 import { addOverlays, applyView, hexProp, set3D, setReplayFrame, setSelection, type LayerUrls } from "./map/layers";
 import { baseStyle, type Theme } from "./map/style";
 import { Panel, type HotZone, type Meta } from "./ui/controls";
-import { mountEmergency } from "./ui/safety";
+import { mountEmergency, mountSafetyToggle } from "./ui/safety";
 import { mountSpecies, speciesByCode } from "./ui/species";
 import { CellInfo, cellSpot, hexSpot, type SpotData, type Spots } from "./ui/spot";
 import { applyTheme, currentTheme, toggleTheme } from "./ui/theme";
@@ -102,6 +102,7 @@ class TerrainControl implements maplibregl.IControl {
 async function main() {
   applyTheme(currentTheme());
   mountTips();
+  mountSafetyToggle();
   const guide = mountGuide();
   mountEmergency([...document.querySelectorAll<HTMLElement>("[data-emergency]")]);
 
@@ -230,8 +231,9 @@ async function main() {
   // Fit Cyprus into the part of the map NOT covered by the panel.
   const fitCyprus = () => {
     const pad = phone.matches
-      ? { top: 16, right: 16, left: 16, bottom: sheet.offsetHeight + 16 }
+      ? { top: 4, right: 4, left: 4, bottom: sheet.offsetHeight + 4 }
       : { top: 24, right: 60, bottom: 24, left: sheet.offsetWidth + 40 };
+    // Phones: Cyprus is wide and flat, so its width sets the zoom; use every pixel of it.
     map.fitBounds([[32.27, 34.56], [34.6, 35.7]], { padding: pad, duration: 0 });
   };
   map.once("load", () => {

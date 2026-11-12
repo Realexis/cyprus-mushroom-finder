@@ -196,7 +196,7 @@ function mapsLinks(s: SpotData): string {
         data-tip="Send a Google Maps pin of ${what} to a friend. On a computer it copies the link."><span aria-hidden="true">📍</span> <span class="maps-btn-label">Share location</span></button>
     </div>
     <p class="muted small maps-note">${note}
-      Forest tracks may be rough. <b>No rakes</b>: pick by hand or knife.</p>
+      Forest tracks may be rough.</p>
   </div>`;
 }
 
@@ -269,6 +269,7 @@ export function spotHTML(s: SpotData, ctx: SpotContext): string {
         data-tip="Go back to the general map and list every species' habitat for this spot.">Compare all species here</button></p>` : "")
       : speciesHere(s, ctx)}
     ${facts ? `<ul class="facts">${facts}</ul>` : ""}
+    <p class="no-rakes" data-tip="Cyprus law: rakes and tools are banned in the forest (up to 1 year in prison, up to €5,000 fine, or both). No fires in or within 2 km of forests."><b>No rakes.</b> Pick by hand or knife. Put the leaf litter back.</p>
     <p class="muted small">Growing conditions only. <button class="link-btn" id="spot-close" type="button" data-tip="Close this panel.">Close</button></p>`;
 }
 

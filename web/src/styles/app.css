@@ -446,3 +446,34 @@ dialog.guide-dlg::backdrop { background: rgba(0, 0, 0, 0.55); }
 .oos-note { display: block; margin-top: 6px; font-size: var(--fs-0); color: var(--ink-soft); }
 .legend-zoom { margin-top: 10px; }
 .swatch.dashed { height: 14px; border: 2.5px dashed var(--accent); background: transparent; }
+
+/* ================================================================ ux-v2 Fix 1: mobile map space */
+.safety-short { display: none; }
+.no-rakes { margin: 10px 0 0 !important; padding: 8px 10px; border-radius: 10px; font-size: var(--fs-1);
+  background: var(--surface); border: 1px solid var(--line); cursor: help; }
+@media (min-width: 900px) { .no-rakes { display: none; } }     /* desktop keeps the note on the map */
+@media (max-width: 899px) {
+  .brand-cy { display: none; }                                   /* "Mushroom Finder" fits on one line */
+  .map-note { display: none; }                                   /* moved into the zone panel */
+  .safety { padding: 0 8px 0 12px; align-items: center; }
+  .safety > svg { margin-top: 0; }
+  .safety-full { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .safety-short { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex: 1; min-width: 0;
+    min-height: 44px; padding: 0; border: 0; background: none; color: inherit; font: inherit; font-weight: 700;
+    text-align: left; cursor: pointer; }
+  .safety-short-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .safety-more { flex: none; width: 28px; text-align: center; transition: transform 0.15s ease; }
+  .safety.open { align-items: flex-start; padding-top: 8px; padding-bottom: 8px; }
+  .safety.open .safety-full { position: static; width: auto; height: auto; clip: auto; white-space: normal; flex: 1; }
+  .safety.open .safety-short { flex: none; min-height: 28px; }
+  .safety.open .safety-short-text { display: none; }
+  .safety.open .safety-more { transform: rotate(180deg); }
+}
+@media (max-width: 899px) {
+  /* Fit the whole one-line message: 13.5 px bold at 375 px wide, scaling with the screen. */
+  .safety { padding: 0 6px 0 10px; gap: 8px; }
+  .safety > svg { width: 18px; height: 18px; }
+  .safety-short { gap: 4px; }
+  .safety-short-text { font-size: min(0.875rem, 3.6vw); letter-spacing: 0; }
+  .safety-more { width: 20px; }
+}
