@@ -273,6 +273,8 @@ document.addEventListener("click", (e) => {
   void shareLink(b);
 });
 
+// The mushroom clock sits right under the headline, always visible, so a score is never shown
+// without its timing (Real chose this, option A, 2026-11-13). Text only: it does not change the score.
 export function spotHTML(s: SpotData, ctx: SpotContext): string {
   if (s.kind === "hot" && s.hot) return hotHTML(s);
   const v = s.score(ctx.day);
@@ -295,11 +297,11 @@ export function spotHTML(s: SpotData, ctx: SpotContext): string {
   return `
     <div class="spot-head"><span>${head}</span>${showScore ? `<span class="spot-score" data-tip="0 to 100: how good the growing conditions are here. It does not mean a mushroom is there.">${v}<small>/100</small></span>` : ""}</div>
     ${s.where ? `<p class="muted">${esc(s.where)}</p>` : ""}
+    ${clk ? `<p class="clock ${clk.open ? "open" : ""}" data-tip="${esc(clockTip(ctx.meta.clock))}"><span aria-hidden="true">⏱</span> <b>Mushroom clock:</b> ${clk.text}${ctx.meta.clock.counted_from ? ` <span class="muted">(rain counted from ${esc(fmtDay(ctx.meta.clock.counted_from, { day: "numeric", month: "long" }))})</span>` : ""}</p>` : ""}
     ${s.note ? `<p class="muted small">${s.note}</p>` : ""}
     ${mapsLinks(s)}
-    <button type="button" class="spot-more-btn" id="spot-more" data-tip="Show or hide the rest: mushroom clock, why this score, the 8 days, species and trees."></button>
+    <button type="button" class="spot-more-btn" id="spot-more" data-tip="Show or hide the rest: why this score, the 8 days, species and trees."></button>
     <div class="spot-rest">
-    ${clk ? `<p class="clock ${clk.open ? "open" : ""}" data-tip="${esc(clockTip(ctx.meta.clock))}"><span aria-hidden="true">⏱</span> <b>Mushroom clock:</b> ${clk.text}${ctx.meta.clock.counted_from ? ` <span class="muted">(rain counted from ${esc(fmtDay(ctx.meta.clock.counted_from, { day: "numeric", month: "long" }))})</span>` : ""}</p>` : ""}
     ${showScore ? whyBars(s, ctx) : ""}
     ${forecast(s, ctx)}
     ${ctx.species ? (s.speciesBase ? `<p><button type="button" class="link-btn" data-pick-species=""
