@@ -212,13 +212,15 @@ export function cardHTML(c: CardInput, meta: Meta, day: number): string {
         <p class="muted small">Why this score: six things count. A long bar = that thing is good right now.</p>
         ${breakdown(d, meta, day)}</div>`;
 
-  // 2. Mushrooms in season here (this square's trees and altitude, this month).
+  // 2. Mushrooms in season here (this square's trees and altitude, this month): photo and name.
   const sp = inSeasonHere(Number(p.tree), Number(p.band), month);
   const season = `<h3 class="card-h">In season here in ${monthName}</h3>
     ${sp.length ? `<ul class="sp-list">${sp.map((s) => `<li><button type="button" class="sp-open" data-open-card="${s.code}"
-        data-tip="Open the mushroom card: photos, what to look for, and its deadly lookalikes."><span><i>${esc(s.latin)}</i>
-        <span class="muted">· ${esc(s.common)} · ${esc(s.season_text)}</span></span><span class="sp-open-go" aria-hidden="true">›</span></button></li>`).join("")}</ul>
-      <p class="muted small">Their trees, altitude and month fit this square. It does not mean they are here. Tap one for its card and its deadly lookalikes.</p>`
+        data-tip="Open the mushroom card: photos, what to look for, where, when, and its deadly lookalikes.">
+        ${s.photos[0] ? `<img class="sp-thumb" src="${esc(s.photos[0].url)}" alt="" loading="lazy" referrerpolicy="no-referrer" />` : `<span class="sp-thumb"></span>`}
+        <span class="sp-name"><i>${esc(s.latin)}</i><span class="sp-common">${esc(s.common)}</span></span>
+        <span class="sp-open-go" aria-hidden="true">›</span></button></li>`).join("")}</ul>
+      <p class="muted small">Their trees, altitude and month fit this square. It does not mean they are here.</p>`
       : `<p class="muted small">None of our target mushrooms is in season for these trees and this altitude in ${monthName}.</p>`}`;
 
   // 3. Place facts.
@@ -242,7 +244,8 @@ export function cardHTML(c: CardInput, meta: Meta, day: number): string {
   const clock = `<p class="clock ${clk.open ? "open" : ""}" data-tip="${esc(clockTip(meta.clock))}"><span aria-hidden="true">⏱</span>
     <b>Mushroom clock:</b> ${clk.text}${meta.clock.counted_from ? ` <span class="muted">(rain counted from ${esc(fmtDay(meta.clock.counted_from, { day: "numeric", month: "long" }))})</span>` : ""}</p>`;
 
-  return `<div class="card-bar"><span class="muted small">250 m forest square · today</span>
+  const what = c.shade ? "50 m spot · conditions of its 250 m square" : "250 m forest square · today";
+  return `<div class="card-bar"><span class="muted small">${what}</span>
       <button type="button" class="card-x" data-card-close aria-label="Close this card" data-tip="Close this card.">✕</button></div>
     ${rating}${season}${facts}${maps}${clock}
     ${c.failed ? `<p class="muted small">Some details could not load. Check your connection and tap the square again.</p>` : ""}

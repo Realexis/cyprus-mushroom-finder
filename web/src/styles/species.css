@@ -171,3 +171,4 @@ dialog.species-dlg.sc::backdrop { background: rgba(0, 0, 0, 0.6); }
 
 /* Lite: the emergency numbers sit in the card safety line (the card covers the top bar). */
 .sc-safety a { color: inherit; }
+.sc-me .sc-jump { margin: 14px 0 0; }

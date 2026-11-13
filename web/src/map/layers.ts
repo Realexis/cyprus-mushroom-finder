@@ -94,6 +94,11 @@ export function addOverlays(map: MlMap, theme: Theme, urls: LayerUrls, v: View) 
   map.addLayer({ id: "cells-selected", type: "line", source: "cells", "source-layer": "cells",
     filter: ["==", ["get", "i"], -1], paint: { "line-color": SEL_CORE, "line-width": selW(2, 3.5) } }, firstSymbol);
 
+  // The tapped 50 m shade square (close up): one solid colour, outlined.
+  map.addSource("picked", { type: "geojson", data: EMPTY });
+  map.addLayer({ id: "picked-halo", type: "line", source: "picked", paint: { "line-color": SEL_HALO, "line-width": 5 } }, firstSymbol);
+  map.addLayer({ id: "picked-core", type: "line", source: "picked", paint: { "line-color": SEL_CORE, "line-width": 2.5 } }, firstSymbol);
+
   map.addSource("reserves", { type: "geojson", data: urls.reserves,
     attribution: "Nature reserves: EEA NatDA (CC BY 4.0)" });
   map.addLayer({ id: "reserve-fill", type: "fill", source: "reserves", paint: { "fill-pattern": "hatch" } }, firstSymbol);
@@ -126,9 +131,12 @@ export function setRainData(map: MlMap, rain: GeoJSON.FeatureCollection) {
   (map.getSource("rain") as { setData?: (d: GeoJSON.FeatureCollection) => void } | undefined)?.setData?.(rain);
 }
 
-/** Outline the tapped square (by cell index), or nothing. */
-export function setSelection(map: MlMap, cellIndex: number | null) {
+/** Outline what was tapped: the 50 m shade square close up (`small`), else the 250 m square
+ *  (by cell index), or nothing. */
+export function setSelection(map: MlMap, cellIndex: number | null, small: GeoJSON.Geometry | null = null) {
   for (const id of ["cells-selected", "cells-selected-halo"]) {
-    if (map.getLayer(id)) map.setFilter(id, ["==", ["get", "i"], cellIndex ?? -1]);
+    if (map.getLayer(id)) map.setFilter(id, ["==", ["get", "i"], small ? -1 : cellIndex ?? -1]);
   }
+  (map.getSource("picked") as { setData?: (d: GeoJSON.FeatureCollection) => void } | undefined)?.setData?.(
+    small ? { type: "FeatureCollection", features: [{ type: "Feature", properties: {}, geometry: small }] } : EMPTY);
 }

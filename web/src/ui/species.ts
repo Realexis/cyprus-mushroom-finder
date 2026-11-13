@@ -1,7 +1,7 @@
 // Species guide: a simple list of mushrooms, and one scrolling page per mushroom.
-// Order on every mushroom page (the user's choice, 2026-11-12): a red link to the lookalikes at the top,
-// then the mushroom (photos, what to look for), then danger signs and ALL deadly / toxic lookalikes,
-// then where to look and when.
+// Order on every mushroom page (Real's choice for Lite, 2026-11-13): the mushroom (photos, name, and a
+// red link to the lookalikes), what to look for, where, when, then the danger signs and ALL deadly /
+// toxic lookalikes at the bottom.
 // Facts: species.json (project brief) plus field notes below, each backed by a listed source.
 // Photos: iNaturalist; every photo opens a larger view with its author and licence.
 // Nothing here ever says a mushroom can be eaten.
@@ -282,14 +282,6 @@ export function mountSpecies(month: () => number): (code?: string) => void {
     const onNow = inSeason(sp, now);
     const k = monthsUntil(sp, now), nextM = ((now - 1 + k) % 12) + 1;
     return `
-      <section class="sc-danger" aria-labelledby="sc-danger-h">
-        <h3 class="sc-h danger" id="sc-danger-h" tabindex="-1">${WARN_ICON}Danger: lookalikes</h3>
-        ${f?.danger.length ? `<p class="sc-sign-h"><b>Leave it alone if you see:</b></p>
-          <ul class="sc-signs">${f.danger.map((d) => `<li>${esc(d)}</li>`).join("")}</ul>` : ""}
-        <p>These ${LOOKALIKES.length} grow in the same forests. ${nDeadly} can kill. Tap one to see it larger.</p>
-        ${lookRows()}
-      </section>
-
       <section class="sc-me">
         <div class="sc-car-wrap">
           <ul class="sc-car" tabindex="0" aria-label="Photos of ${esc(sp.latin)}. Swipe for more.">
@@ -304,6 +296,7 @@ export function mountSpecies(month: () => number): (code?: string) => void {
         <h3 class="sc-name"><i>${esc(sp.latin)}</i></h3>
         <p class="sc-sub">${esc(sp.common)}. Local name <b>${esc(sp.local)}</b>${sp.local_confirmed ? "" : `<span class="sc-q" tabindex="0"
           data-tip="Spelling still to confirm with the Cyprus Mycological Association.">?</span>`}</p>
+        <a class="sc-jump" href="#sc-danger-h" data-act="jump">${WARN_ICON}<span><b>${nDeadly} deadly lookalikes</b> grow in the same forests. See them at the bottom.</span></a>
       </section>
 
       ${f ? `<section class="sc-sec">
@@ -326,6 +319,14 @@ export function mountSpecies(month: () => number): (code?: string) => void {
         <p class="sc-when ${onNow ? "on" : ""}">${onNow
           ? `${icon("check")}<span><b>In season now</b> (${esc(sp.season_text)}).</span>`
           : `<span><b>Not in season in ${monthName(now)}.</b> Season ${esc(sp.season_text)}: starts in ${monthName(nextM)}.</span>`}</p>
+      </section>
+
+      <section class="sc-danger" aria-labelledby="sc-danger-h">
+        <h3 class="sc-h danger" id="sc-danger-h" tabindex="-1">${WARN_ICON}Danger: lookalikes</h3>
+        ${f?.danger.length ? `<p class="sc-sign-h"><b>Leave it alone if you see:</b></p>
+          <ul class="sc-signs">${f.danger.map((d) => `<li>${esc(d)}</li>`).join("")}</ul>` : ""}
+        <p>These ${LOOKALIKES.length} grow in the same forests. ${nDeadly} can kill. Tap one to see it larger.</p>
+        ${lookRows()}
       </section>
 
       <button type="button" class="sc-more" data-act="info">${icon("info", 20)}Sources, photo credits and notes</button>`;

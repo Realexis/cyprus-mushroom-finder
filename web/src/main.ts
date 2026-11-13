@@ -22,9 +22,9 @@ import { FullMap, readUrlView, trackMapReady } from "./ui/fullmap";
 
 const abs = (p: string) => new URL(p, document.baseURI).href;
 
-/** The double tap lands here: the 50 m shade squares show (from zoom 12) and a 250 m square is
- *  about 32 screen pixels wide, big enough to tap, with ~3 km of forest around. */
-const SQUARE_ZOOM = 13;
+/** The double tap lands here: the 50 m shade squares show, each about 13 screen pixels wide,
+ *  so one solid colour can be tapped (Real, 13 Nov), with ~1.5 km of forest around. */
+const SQUARE_ZOOM = 14;
 /** Two taps closer than this (time, distance) are a double tap. */
 const DOUBLE_TAP_MS = 300;
 const DOUBLE_TAP_PX = 40;
@@ -117,14 +117,15 @@ async function main() {
   if (urlView.full) fullMap.set(true, false);
 
   // ------------------------------------------------------------ the panel and the tapped square
-  let picked: { i: number; lngLat: maplibregl.LngLat } | null = null;
+  let picked: { i: number; lngLat: maplibregl.LngLat; small: GeoJSON.Geometry | null } | null = null;
   const pinEl = document.createElement("div");
   pinEl.className = "pick-pin";
   pinEl.setAttribute("aria-hidden", "true");
   const pin = new maplibregl.Marker({ element: pinEl });
   const applySelection = () => {
-    setSelection(map, picked?.i ?? null);
-    if (picked) pin.setLngLat(picked.lngLat).addTo(map); else pin.remove();
+    setSelection(map, picked?.i ?? null, picked?.small ?? null);
+    // Close up the 50 m outline marks the spot; the ring would hide it.
+    if (picked && !picked.small) pin.setLngLat(picked.lngLat).addTo(map); else pin.remove();
   };
 
   const legendEl = document.getElementById("map-legend")!;
@@ -181,7 +182,7 @@ async function main() {
     const shadeF = map.getLayer("shade-fill") && map.getZoom() >= 11.5
       ? map.queryRenderedFeatures(point, { layers: ["shade-fill"] })[0] : undefined;
     const shade = shadeF ? (shadeF.properties as Record<string, number>) : undefined;
-    picked = { i, lngLat };
+    picked = { i, lngLat, small: shadeF ? shadeF.geometry : null };
     applySelection();
     panel.showCard({ props, shade, detail: null });
     if (cellsIndex) {
