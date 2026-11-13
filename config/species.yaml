@@ -100,8 +100,8 @@ species:
     inat: ["Morchella esculenta", "Morchella elata"]
 
   - code: slu
-    latin: Suillus luteus
-    common: slippery Jack                           # [BRIEF]
+    latin: Suillus                                  # Real, 2026-11-13: the genus (was S. luteus [BRIEF])
+    common: slippery Jacks                          # [BRIEF] "slippery Jack", now plural for the genus
     local: lartias                                  # [BRIEF] to confirm
     local_confirmed: false
     trees: [1, 2]                                   # [BRIEF] pine
@@ -111,8 +111,6 @@ species:
     months: [10, 11, 12, 1, 2]                      # [BRIEF] Oct-Jan, + Feb: 33 Suillus records Oct-Feb, peak Dec-Jan
     notes: []
     # Step 7 (audit GAPS G13): Cyprus has 0 public records of S. luteus, 5 of S. collinitus; the
-    # Dept of Forests lists S. collinitus and S. granulatus [NOTE]. The NAME stays until Real decides
-    # (suggested: "Slippery Jacks (Suillus)"). The card counts records for the whole genus;
-    # photos stay S. luteus, to match the name on the card.
-    inat: ["Suillus luteus"]
-    records: ["Suillus"]
+    # Dept of Forests lists S. collinitus and S. granulatus [NOTE]. Real chose (2026-11-13) to name
+    # the genus: "Slippery Jacks (Suillus)". Photos and record counts are for the whole genus.
+    inat: ["Suillus"]

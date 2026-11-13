@@ -65,7 +65,7 @@ const SOURCES: Record<string, { label: string; url: string }> = {
   w_lsa: { label: "Wikipedia: Lactarius sanguifluus", url: "https://en.wikipedia.org/wiki/Lactarius_sanguifluus" },
   w_rde: { label: "Wikipedia: Russula delica", url: "https://en.wikipedia.org/wiki/Russula_delica" },
   w_tca: { label: "Wikipedia: Tricholoma caligatum", url: "https://en.wikipedia.org/wiki/Tricholoma_caligatum" },
-  w_slu: { label: "Wikipedia: Suillus luteus", url: "https://en.wikipedia.org/wiki/Suillus_luteus" },
+  w_slu: { label: "Wikipedia: Suillus (slippery Jacks)", url: "https://en.wikipedia.org/wiki/Suillus" },
   w_arb: { label: "Wikipedia: Morchella arbutiphila (described from Cyprus)", url: "https://en.wikipedia.org/wiki/Morchella_arbutiphila" },
   w_dis: { label: "Wikipedia: Morchella disparilis (described from Cyprus)", url: "https://en.wikipedia.org/wiki/Morchella_disparilis" },
   w_false: { label: "Wikipedia: False morel", url: "https://en.wikipedia.org/wiki/False_morel" },

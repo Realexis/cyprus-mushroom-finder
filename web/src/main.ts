@@ -107,6 +107,13 @@ class TerrainControl implements maplibregl.IControl {
 
 async function main() {
   applyTheme(currentTheme());
+  // Test copies say so in the header. Set VITE_PREVIEW_LABEL when building a preview
+  // (web/.env.local, not in git); the live site's robot build has no label.
+  const previewLabel = import.meta.env.VITE_PREVIEW_LABEL as string | undefined;
+  if (previewLabel) {
+    document.querySelector(".brand-sub")?.insertAdjacentHTML("afterend",
+      ` <span class="ver-badge" data-tip="A test copy of the site. Not the live site.">${previewLabel.replace(/[&<>"]/g, "")}</span>`);
+  }
   mountTips();
   mountSafetyToggle();
   const guide = mountGuide();

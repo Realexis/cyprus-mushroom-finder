@@ -28,13 +28,15 @@ from ..grid import habitat_grid
 from ..score import clock
 from ..score import species as SP
 from ..score.factors import FACTORS
+from ..score.downscale import Interpolator
 from ..score.today import latest_run, load_habitat, score_day
 from . import roads, summary
 
 PUBLIC = config.ROOT / "web" / "public" / "data"
 STATIC = config.DATA / "static"
 N_DAYS = 8
-INPUTS = ["rain_30d_mm", "pulse_mm", "t7_mean_c", "soil_percentile", "frost_days", "rain3_max_mm"]
+INPUTS = ["rain_30d_mm", "pulse_mm", "t7_mean_c", "soil_percentile", "frost_days", "rain3_max_mm",
+          "gate_pct", "rain3_age_d"]
 
 
 def confidence(offset: int) -> str:
@@ -106,14 +108,31 @@ def season_weather(w):
     return p, dates, len(dates) - len(w["dates"])
 
 
-def clock_days(w, t0):
-    """Per weather point, for day offsets 0..7: (days since the latest soaking rain,
-    days after it that the window opens). See score/clock.py window()."""
+def clock_grid(w, t0, hab, g):
+    """The mushroom clock for every forest square, days 0..7, as grid arrays (rows x cols x 8):
+    days since the latest soaking rain, and days after it that the window opens.
+
+    Worked out from the daily rain blended to each square: the same series and the same
+    soaking-rain rule as the water gate (score/today.py), so the clock line and the
+    "Soaking rain in the last month" line never disagree (feedback round 2, fix 1).
+    Also returns the first day the clock can see, when that is after 1 September.
+    """
     S = config.load("scoring")["score"]
     p, dates, off = season_weather(w)
-    out = [clock.window(p, off + t0 + k, S, dates) for k in range(N_DAYS)]
-    return (np.stack([o[1] for o in out], axis=1),                     # (points, 8)
-            np.stack([o[2] for o in out], axis=1))
+    rows, cols = np.nonzero(hab["forest_type"] > 0)
+    cx = g.west + (cols + 0.5) * g.res
+    cy = g.north - (rows + 0.5) * g.res
+    cell_p = Interpolator(np.c_[w["x"], w["y"]], np.c_[cx, cy])(p)          # (squares, days)
+    days = np.full(hab["forest_type"].shape + (N_DAYS,), clock.NONE, "int16")
+    opens = np.zeros(hab["forest_type"].shape + (N_DAYS,), "int16")
+    for k in range(N_DAYS):
+        _, d, o = clock.window(cell_p, off + t0 + k, S, dates)
+        days[rows, cols, k] = d
+        opens[rows, cols, k] = o
+    today_s, mmdd = dates[off + t0], S["mushroom_clock"].get("season_starts", "09-01")
+    start = f"{int(today_s[:4]) - (today_s[5:] < mmdd)}-{mmdd}"                 # 1 September of this season
+    counted_from = dates[0] if dates[0] > start else None
+    return days, opens, counted_from
 
 
 def species_scores(base, months, specs, share, gate=1.0):
@@ -148,7 +167,7 @@ def build(run, private=True):            # `private` is kept for old callers; ev
     hab = load_habitat(today)
     g = habitat_grid()
     to_ll = Transformer.from_crs(g.crs, "EPSG:4326", always_xy=True)
-    clk_pt, opn_pt = clock_days(w, t0)
+    clk, opn, counted_from = clock_grid(w, t0, hab, g)
     pt_tree = cKDTree(np.c_[w["x"], w["y"]])
     rd = roads.load()
 
@@ -189,11 +208,12 @@ def build(run, private=True):            # `private` is kept for old callers; ev
         sp_cells = {c: v for c, v in sp_cells.items() if len(v) >= min_cells}
         if not has_gen and not sp_cells:
             continue
-        _, ip = pt_tree.query([cx[m].mean(), cy[m].mean()])
+        mid = m[np.argmin((cx[m] - cx[m].mean()) ** 2 + (cy[m] - cy[m].mean()) ** 2)]   # square nearest the middle
+        zr, zc = rows[mid], cols[mid]
         ring = [[lo, la] for la, lo in h3.cell_to_boundary(hx)]
         ring.append(ring[0])
-        props = {"h": len(spots), **{f"p{i}": int(clk_pt[ip, i]) for i in range(N_DAYS)},
-                 **{f"o{i}": int(opn_pt[ip, i]) for i in range(N_DAYS)}}
+        props = {"h": len(spots), **{f"p{i}": int(clk[zr, zc, i]) for i in range(N_DAYS)},
+                 **{f"o{i}": int(opn[zr, zc, i]) for i in range(N_DAYS)}}
         zone_of[rows[m], cols[m]] = len(spots)
         gen_score = _nanmean(score[mg]) if has_gen else None
         if has_gen:
@@ -222,7 +242,7 @@ def build(run, private=True):            # `private` is kept for old callers; ev
         zones.append({
             "hex": hx, "lat": clat, "lon": clon, "score": gen_score,
             "species": sp_mean,
-            "factors": fm, "inputs": im, "clock": clk_pt[ip], "clock_opens": opn_pt[ip],
+            "factors": fm, "inputs": im, "clock": clk[zr, zc], "clock_opens": opn[zr, zc],
             "trees": np.bincount(tree[m], minlength=8)[1:8] / len(m), "alt": alt,
             "where": spots[-1]["where"],
             "spot": len(spots) - 1,                           # index into spots.json (zone details)
@@ -263,6 +283,7 @@ def build(run, private=True):            # `private` is kept for old callers; ev
         "clock": {"opens": mc.get("first_window_opens_days", mc["window_opens_days_after_pulse"]),
                   "later_opens": mc.get("later_window_opens_days"),
                   "closes": mc["window_closes_days_after_pulse"],
+                  "counted_from": counted_from,       # the clock's rain memory starts here (None = 1 Sep)
                   "soak_mm": S["score"]["rain_pulse"]["soaking_event_mm"]},
         "weights": {k: round(W[k] / tot_w, 4) for k in FACTORS},
         "season_share": round(share, 3),
@@ -278,20 +299,19 @@ def build(run, private=True):            # `private` is kept for old callers; ev
     (PUBLIC / "summary.json").write_text(json.dumps(summ, indent=1, ensure_ascii=False))
     print(f" - summary.json: top {len(summ['days'][0]['top_zones'])} zones per day + species")
 
-    export_cells(days, hab, g, to_ll, (clk_pt, opn_pt), pt_tree, rd, W, zone_of)
+    export_cells(days, hab, g, to_ll, (clk, opn), rd, W, zone_of)
     from . import hotspots
     hotspots.build(summ, g)
 
 
-def export_cells(days, hab, g, to_ll, clk, pt_tree, rd, W, zone_of):
+def export_cells(days, hab, g, to_ll, clock_grids, rd, W, zone_of):
     """Every 250 m forest square -> PMTiles + details files (public)."""
-    clk_pt, opn_pt = clk
+    clk, opn = clock_grids
     OUT = PUBLIC
     S = config.load("scoring")["score"]
     rows, cols = np.nonzero(hab["forest_type"] > 0)
     x = g.west + (cols + 0.5) * g.res
     y = g.north - (rows + 0.5) * g.res
-    _, near_pt = pt_tree.query(np.c_[x, y])
     tree = hab["likely_tree"][rows, cols].astype(int)
     band = hab["altitude_band"][rows, cols].astype(int)
     open_ = hab["habitat_filter"][rows, cols] > 0
@@ -332,8 +352,8 @@ def export_cells(days, hab, g, to_ll, clk, pt_tree, rd, W, zone_of):
         props = {f"s{i}": (int(round(d["score"][r, c])) if np.isfinite(d["score"][r, c]) else None)
                  for i, d in enumerate(days)}
         props.update({f"b{i}": int(round(sp_in[n, i])) for i in range(N_DAYS)})   # species score in season
-        props.update({f"p{i}": int(clk_pt[near_pt[n], i]) for i in range(N_DAYS)})
-        props.update({f"o{i}": int(opn_pt[near_pt[n], i]) for i in range(N_DAYS)})
+        props.update({f"p{i}": int(clk[r, c, i]) for i in range(N_DAYS)})
+        props.update({f"o{i}": int(opn[r, c, i]) for i in range(N_DAYS)})
         props.update({"i": n, "tree": int(tree[n]), "band": int(band[n]), "g": int(gen[n]),
                       "elev": int(round(float(np.nan_to_num(hab["elevation_m"][r, c])))),
                       "closed": int(not open_[n])})

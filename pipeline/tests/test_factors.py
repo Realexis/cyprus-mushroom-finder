@@ -105,3 +105,24 @@ def test_max_window_rain_only_inside_last_month():
 def test_water_gate_shape():
     g = F.water_gate([0, 10, 20, 55], 20)
     assert list(g) == [0, 0.5, 1, 1]
+
+
+def test_recent_soak_full_until_20_days_then_fades():
+    p = np.zeros((1, 60))
+    p[0, 8:11] = 10                              # 30 mm, ends on day 10 (a wet day)
+    for t, want in ((30, 30), (35, 15), (39, 3), (40, 0)):   # ages 20, 25, 29, 30
+        faded, raw, age = F.recent_soak(p, t, 30, 3, 1.0, 20)
+        assert faded[0] == pytest.approx(want)
+    faded, raw, age = F.recent_soak(p, 35, 30, 3, 1.0, 20)
+    assert (raw[0], age[0]) == (30, 25)
+    p[0, 25] = 12                                # a smaller, newer rain now sets the gate
+    faded, raw, age = F.recent_soak(p, 35, 30, 3, 1.0, 20)
+    assert (faded[0], raw[0], age[0]) == (15, 30, 25)       # 30 x 0.5 = 15 beats 12
+    faded, raw, age = F.recent_soak(p, 37, 30, 3, 1.0, 20)
+    assert (faded[0], raw[0], age[0]) == (12, 12, 12)       # 30 x 0.3 = 9 < 12
+
+
+def test_recent_soak_needs_a_wet_last_day_like_the_clock():
+    p = np.zeros((1, 40)); p[0, 30] = 25           # one storm on day 30
+    faded, raw, age = F.recent_soak(p, 32, 30, 3, 1.0, 20)
+    assert (raw[0], age[0]) == (25, 2)             # dated to the storm, not to the dry days after it

@@ -8,7 +8,9 @@ export interface DayInfo { offset: number; date: string; confidence: "high" | "m
 export interface Meta {
   weather_run: string; generated_utc: string; model: string; days: DayInfo[]; credits: unknown[];
   rain_days: string[];
-  clock: { opens: number; closes: number; soak_mm: number; later_opens?: number | null };
+  clock: { opens: number; closes: number; soak_mm: number; later_opens?: number | null;
+    /** First day of rain the clock can see, when later than 1 September. */
+    counted_from?: string | null };
   weights: Record<string, number>; season_share: number; general_map_trees: number[];
   /** Score x (biggest 3-day rain in the last `days` days / full_at_mm, never above 1). */
   water_gate?: { enabled: boolean; full_at_mm: number; days: number };
@@ -172,7 +174,7 @@ export class Panel {
           aria-label="${label} ${num}. ${b ? `Best zone ${b.score} out of 100` : oos ? "Out of season" : "No score"}. Forecast ${word}."
           data-tip="${long}. ${scoreTip} Forecast ${word}: ${CONF_TIP[d.confidence]}">
         <span class="day-top"><b>${label}</b><span class="day-date">${num}</span></span>
-        <span class="day-score">${b ? `<i style="background:${scoreColour(b.score)}"></i>${b.score}` : "–"}</span>
+        <span class="day-score">${b ? `<i style="background:${scoreColour(b.score)}"></i><small class="day-best">best</small>${b.score}` : "–"}</span>
         <span class="day-conf"><i class="dot ${d.confidence}"></i>Forecast: ${word}</span></button>`;
     }).join("");
     const cur = this.meta.days[this.day];

@@ -24,13 +24,23 @@ These values are **not in the brief**. The code runs with a **[DRAFT]** placehol
 | S5 | Russula delica "warm spells" rule | none yet |
 | S6 | Soaking event must end on a wet day (≥ 1 mm) | 1 mm (standard wet-day definition) |
 | S7 | ~~Should "Other broadleaf" count as habitat in the general map?~~ | **Answered 2026-11-12: no, except for morels.** `score.general_map_trees: [1, 2, 3]` |
-| S8 | Soil "normal": **two** seasons now (Oct-Jan 2025-26, a drought, + 2024-25; all 139 points, 246 days each, 13 Nov 2026) | a third season (2023-24) would make it steadier |
-| S12 | **Water gate shape**: below one soaking rain (20 mm) the score falls in a straight line (10 mm = half). No source gives the shape | straight line [GUESS] (`score.water_gate`) |
-| S13 | **Clock window closes 20 days after the LATEST soaking rain** (the brief's number; no outside source backs it) | 20 days [GUESS] (`score.mushroom_clock.window_closes_days_after_pulse`) |
-| S14 | **Burn cut for partner trees**: a square more than half burned stops counting as its tree. The 50% comes from burn morels [LAR16]; no source gives it for pine/oak partners | 50% [GUESS] (`habitat.burned.min_fraction`) |
-| S15 | Season table: September-April now never below 0.5 [LOI16]; every other value is still the [DRAFT] from S3 | see S3 (`score.season_altitude`) |
-| S16 | **Morel filter is very wide**: Calabrian pine, golden oak zone, other broadleaf and recently burned forest at all altitudes [LOI16]. It covers nearly all forest, so it says little about where | wide, said on the card (`config/species.yaml` (mor)) |
+| S8 | Soil "normal" uses TWO seasons now (2024-25, 2025-26; all 139 points, 246 days each), both dry. 2023-24 still to add (~1,200 calls) | 2 seasons |
 | S9 | *Russula delica* is "all forest" in the brief. Should "Other broadleaf" count for it? (S7 answer kept it out) | not counted |
+
+## New guesses from the V3 Fable feedback (2026-11-13)
+Each is tagged `[GUESS]` in `config/*.yaml`. No source gives a number. Source tags: `docs/SOURCES.md`.
+
+| # | What | Guess now | Where |
+|---|---|---|---|
+| G1 | Water gate below 20 mm: a straight line (10 mm = half the score) | straight line | `scoring.yaml` `score.water_gate` |
+| G2 | Fade of old rain in the gate: full until 20 days old, straight down to 0 at 30 days | 20 → 30 days | `scoring.yaml` `water_gate.full_until_days` |
+| G3 | The fruiting window closes 20 days after the **latest** soaking rain (with one rain, the first window is open only days 18-20) | 20 days | `scoring.yaml` `mushroom_clock` |
+| G4 | Season floor: no month September-April below 0.5 (the 0.5 itself) | 0.5 | `scoring.yaml` `season_altitude` |
+| G5 | Burned forest: the cut at more than 50 % burned, for **partner-tree** species (LAR16 gives 50 % for morels only) | 50 % | `scoring.yaml` `habitat.burned` |
+| G6 | Burned forest **never comes back** as partner-tree habitat on this map (no regrowth rule) | never | `pipeline/shroomy/habitat/burns.py` |
+| G7 | The clock's rain memory starts on the first day of saved history (12 Oct 2026), not 1 September, until the history reaches back | from 12 Oct | `pipeline/shroomy/export/web.py` `clock_grid` |
+| G8 | **Morel filter** covers nearly all forest (Calabrian pine, golden oak, other broadleaf, recent burns, all altitudes). Fable suggests keeping only recent burns + other broadleaf. Real, 2026-11-13: no clear view yet, so unchanged. V5: the morel card now says it covers 94% of forest squares (when, not where) | unchanged, said on the card | `config/species.yaml` (morels) |
+| G9 | ~~**EFFIS fire-map licence** not yet checked~~ **Checked 2026-11-13 (V5): CC BY 4.0**, credit + changes stated (`config/sources.yaml` `burned_areas`) | kept | `config/sources.yaml` |
 
 ## Species and lookalikes (Phase 5)
 | # | What | Draft value now | Where |
@@ -41,7 +51,7 @@ These values are **not in the brief**. The code runs with a **[DRAFT]** placehol
 | L4 | Morels = deciduous trees. Golden oak is evergreen, so only "Other broadleaf" counts; that class mixes deciduous and evergreen trees | Other broadleaf, mid + high | `config/species.yaml` |
 | F1 | **Species field notes** ("What to look for", "Where to look", "Leave it alone if") were researched from public sources on 2026-11-12 (Cyprus Dept. of Forests, KYKPEE, Wikipedia, First Nature…). User chose to show them, labelled "not checked by an expert". **Have every line checked by the Cyprus Mycological Association** | shown, labelled | `web/src/ui/species.ts` (FIELD) |
 | F2 | Woolly milk cap (*Lactarius torminosus*, poisonous, grows in Cyprus per sources) is not in the 10-lookalike list | add to `config/lookalikes.yaml`? | `config/lookalikes.yaml` |
-| F3 | Which *Suillus* is "lartias"? Cyprus Dept. of Forests lists *S. collinitus* and *S. granulatus*, not *S. luteus* | to confirm | `config/species.yaml` |
+| F3 | Which *Suillus* is "lartias"? Cyprus Dept. of Forests lists *S. collinitus* and *S. granulatus*, not *S. luteus*. **2026-11-13 (Real): the card now names the genus, "slippery Jacks (*Suillus*)".** The local name still to confirm | genus | `config/species.yaml` |
 | F4 | Cyprus morels: *M. arbutiphila* and *M. disparilis* were described from Cyprus (2016); the names *M. esculenta / elata* may need updating | to confirm | `config/species.yaml` |
 | D8 | Kermes oak map (brief: red pine mushroom also with kermes oak) | not mapped, not counted | `config/species.yaml` |
 | S10 | Species scores differ only by trees, altitude and season (brief rule), so species sharing a habitat get the same number. Species-specific rain/temperature rules? | none (not in the brief) | `config/species.yaml` |

@@ -576,3 +576,11 @@ details.oos p { margin: 2px 0; }
   /* "Data delayed" sits at the bottom of the map on phones, clear of the colour key */
   .delayed { top: auto; bottom: calc(var(--sheet-h, 120px) + 8px); font-size: var(--fs-0); padding: 4px 12px; white-space: nowrap; }
 }
+
+/* ================================================================ V3 + Fable round 2 */
+/* The day number is the BEST zone of the day, not every square: say so on the button. */
+.day .day-score .day-best { font-size: var(--fs-0); font-weight: 400; color: var(--ink-soft); margin-right: 3px; }
+.day[aria-pressed="true"] .day-score .day-best { color: var(--accent-ink); }     /* readable on the selected day */
+/* Preview label (only when the build sets VITE_PREVIEW_LABEL; the live site has none). */
+.ver-badge { display: inline-block; margin-left: 6px; padding: 0 7px; border-radius: 999px; font-size: 0.72rem; font-weight: 700;
+  line-height: 1.6; background: #1f5f5b; color: #fff; vertical-align: middle; white-space: nowrap; }

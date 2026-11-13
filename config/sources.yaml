@@ -78,7 +78,7 @@ burned_areas:
   name: EFFIS burnt areas (MODIS/Sentinel-2 mapped fires), Cyprus, 2018 onwards
   url: https://maps.effis.emergency.copernicus.eu/effis (WFS layer modis.ba.poly.<year>)
   licence: CC BY 4.0 (EFFIS data licence page, https://forest-fire.emergency.copernicus.eu/about-effis/data-license, read 2026-11-13). Credit required and changes must be indicated.
-  licence_status: verified
+  licence_status: verified    # Real, 2026-11-13: keep burned forest on the map (licence now checked)
   credit: "Burnt areas © European Union, European Forest Fire Information System (EFFIS), Copernicus Emergency Management Service, CC BY 4.0. Changed: Cyprus fires only, outlines rounded, used to mark burned forest."
   use: Forest burned since the 2018 forest map stops counting as habitat; recent burns count for morels.
 

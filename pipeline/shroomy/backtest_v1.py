@@ -97,7 +97,7 @@ def run(label: str, ref: str | None):
     gen = np.isin(tree, S["general_map_trees"])
     sp_mask = {s["code"]: SP.species_habitat(np.ones_like(tree), tree, band, s) for s in specs}
     interp = Interpolator(np.c_[w["x"], w["y"]], np.c_[cx, cy])
-    pt_of_cell = cKDTree(np.c_[w["x"], w["y"]]).query(np.c_[cx, cy])[1]
+    cell_p = interp(w["precip"])                  # daily rain per square: gate and clock use the same
 
     days = list(range(first_t, len(dates)))
     general = np.full((len(rows), len(days)), np.nan, "float32")
@@ -107,7 +107,7 @@ def run(label: str, ref: str | None):
     for j, t in enumerate(days):
         day = date.fromisoformat(dates[t])
         f, inp = day_factors(S, w, t, interp, elev, band, shade, day.month, clim=None)
-        gate, _ = water_gate(S, w["precip"], t, interp)
+        gate, _, _ = water_gate(S, cell_p, t)
         general[:, j] = F.combine(f, W, gen) * gate
         general[~gen, j] = np.nan
         base = SP.base_score(f, W)
@@ -116,8 +116,7 @@ def run(label: str, ref: str | None):
                 v = (base + share) * gate
                 species[s["code"]][:, j] = np.where(sp_mask[s["code"]], v, np.nan)
         gate_med.append(float(np.median(gate[gen])))
-        st = clock_state(w["precip"], t, S, dates)
-        clock_open.append(st[pt_of_cell])
+        clock_open.append(clock_state(cell_p, t, S, dates))
 
     clock_open = np.stack(clock_open, axis=1)                 # (cells, days) bool
     sdates = [dates[t] for t in days]

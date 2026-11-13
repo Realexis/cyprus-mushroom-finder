@@ -148,6 +148,13 @@ score:
     full_at_mm: 20                     # [LOI19] "first substantial rainfall of the season (>20 mm)";
                                        # = rain_pulse.soaking_event_mm [BRIEF]
     # The straight line below 20 mm (10 mm = half the score) is a [GUESS]: no source gives the shape.
+    # Only 3-day rains that END on a wet day count (mushroom_clock.wet_day_mm), the same rule as the
+    # clock, worked out from the same daily rain per square, so the clock and the gate agree.
+    # Fade (feedback round 2, fix 2): a rain counts fully until it is full_until_days old, then less
+    # each day, down to 0 at `days`. Before, a rain fell out of the 30 days all at once and scores
+    # dropped ~20 points overnight with no change in the weather.
+    full_until_days: 20                # = mushroom_clock.window_closes_days_after_pulse; the straight-line
+                                       # fade from 20 to 30 days is a [GUESS]
 
   forecast_confidence:                 # [BRIEF]
     high_max_day: 2
