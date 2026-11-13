@@ -15,6 +15,9 @@
 # Altitude bands: 1 low, 2 mid, 3 high (>1,200 m)
 #
 # Words on the site: "good conditions for [species] habitat", never "find X here".
+#
+# V3 Fable feedback (2026-11-13) changed months and morel habitat. Source tags (LOI16, LOI19,
+# WIK-LS, PIO08, ...) are explained in docs/SOURCES.md.
 # =====================================================================
 
 species:
@@ -27,7 +30,7 @@ species:
     trees_text: "Pine (Calabrian and black pine); also golden oak and kermes oak"
     bands: [1, 2, 3]                                # [BRIEF] "all pine"
     altitude_text: "All pine altitudes"
-    months: [10, 11, 12, 1]                         # [BRIEF] Oct-Jan
+    months: [10, 11, 12, 1, 2]                      # [BRIEF] Oct-Jan, + Feb: records in Feb; season best Nov-Feb [LOI16]
     notes:
       - "Kermes oak is not on our tree map yet, so those areas are not counted."   # [DRAFT] D8
     inat: ["Lactarius deliciosus"]
@@ -41,7 +44,7 @@ species:
     trees_text: "Troodos black pine"
     bands: [3]                                      # [BRIEF] >1,200 m
     altitude_text: "Above 1,200 m"
-    months: [9, 10]                                 # [BRIEF] Sep-Oct
+    months: [9, 10, 11]                             # [BRIEF] Sep-Oct, + Nov: fruits Sep-Nov in southern Europe [WIK-LS]
     notes: []
     inat: ["Lactarius sanguifluus"]
 
@@ -79,15 +82,17 @@ species:
     common: morels                                  # [BRIEF]
     local: arnaoui                                  # [BRIEF] to confirm
     local_confirmed: false
-    # [BRIEF] deciduous trees, burned ground. Golden oak is evergreen, so only
-    # "Other broadleaf" (4) counts. [S7] morels keep Other broadleaf.
-    trees: [4]
-    trees_text: "Deciduous broadleaf trees; burned ground"
-    bands: [2, 3]                                   # [BRIEF] mid-high
-    altitude_text: "Mid and high altitudes"
-    months: [3, 4]                                  # [BRIEF] Mar-Apr
+    # V3 Fable feedback step 6 (audit GAPS A12): Cyprus morels were found at 500-600 m with
+    # Cistus, olive and Calabrian pine, and with strawberry tree on Troodos [LOI16, LOI16m].
+    # "Other broadleaf above 600 m" (the old rule) had no source. [S7] morels keep Other broadleaf.
+    # This makes the morel map wider and less sharp: that is what we know.
+    trees: [1, 3, 4]                                # [LOI16] Calabrian pine; Troodos broadleaf zone; other broadleaf
+    trees_text: "Calabrian pine, golden oak and other broadleaf trees; often after a fire"
+    bands: [1, 2, 3]                                # [LOI16] finds at 500-600 m and on Troodos
+    altitude_text: "All altitudes"
+    months: [2, 3, 4]                               # [BRIEF] Mar-Apr, + Feb: GBIF Feb 2, Mar 13, Apr 24; finds 14-24 Feb [LOI16]
     notes:
-      - "Burned ground is not on the map yet (no data source chosen, TODO D5)."
+      - "Morels are patchy and often follow a fire. This map does not know about recent fires yet."
       - "\"Other broadleaf\" mixes deciduous and evergreen trees. Our map cannot tell them apart."   # [DRAFT]
     inat: ["Morchella esculenta", "Morchella elata"]
 
@@ -100,6 +105,11 @@ species:
     trees_text: "Pine"
     bands: [1, 2, 3]                                # [BRIEF] pine belt
     altitude_text: "The pine belt"
-    months: [10, 11, 12, 1]                         # [BRIEF] Oct-Jan
+    months: [10, 11, 12, 1, 2]                      # [BRIEF] Oct-Jan, + Feb: 33 Suillus records Oct-Feb, peak Dec-Jan
     notes: []
+    # Step 7 (audit GAPS G13): Cyprus has 0 public records of S. luteus, 5 of S. collinitus; the
+    # Dept of Forests lists S. collinitus and S. granulatus [NOTE]. The NAME stays until Real decides
+    # (suggested: "Slippery Jacks (Suillus)"). The card counts records for the whole genus;
+    # photos stay S. luteus, to match the name on the card.
     inat: ["Suillus luteus"]
+    records: ["Suillus"]

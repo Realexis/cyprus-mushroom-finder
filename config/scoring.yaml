@@ -117,11 +117,14 @@ score:
 
   # Month x altitude band, 0..1. [DRAFT] numbers turned from the brief's words:
   # high (>1,200 m) starts mid-late Sep; mid Oct-Dec; low Nov-Feb.
-  # Spring is 0 here: spring species (morels) get their own window via the species filter.
+  # V3 Fable feedback step 5 (audit GAPS G4, A7): the Cyprus season runs September to April,
+  # best November to February [LOI16]; survey counts peak December to March [LOI19].
+  # So inside September-April no month is below 0.5 [LOI16]. May-August stay 0.
+  # The other values are still the [DRAFT] guesses: no data to set them better.
   season_altitude:
-    high: {jan: 0.2, feb: 0.1, mar: 0.0, apr: 0.0, may: 0.0, jun: 0.0, jul: 0.0, aug: 0.0, sep: 0.7, oct: 1.0, nov: 1.0, dec: 0.5}
-    mid:  {jan: 0.4, feb: 0.2, mar: 0.0, apr: 0.0, may: 0.0, jun: 0.0, jul: 0.0, aug: 0.0, sep: 0.2, oct: 1.0, nov: 1.0, dec: 1.0}
-    low:  {jan: 1.0, feb: 1.0, mar: 0.0, apr: 0.0, may: 0.0, jun: 0.0, jul: 0.0, aug: 0.0, sep: 0.0, oct: 0.3, nov: 1.0, dec: 1.0}
+    high: {jan: 0.5, feb: 0.5, mar: 0.5, apr: 0.5, may: 0.0, jun: 0.0, jul: 0.0, aug: 0.0, sep: 0.7, oct: 1.0, nov: 1.0, dec: 0.5}
+    mid:  {jan: 0.5, feb: 0.5, mar: 0.5, apr: 0.5, may: 0.0, jun: 0.0, jul: 0.0, aug: 0.0, sep: 0.5, oct: 1.0, nov: 1.0, dec: 1.0}
+    low:  {jan: 1.0, feb: 1.0, mar: 0.5, apr: 0.5, may: 0.0, jun: 0.0, jul: 0.0, aug: 0.0, sep: 0.5, oct: 0.5, nov: 1.0, dec: 1.0}
 
   # Water gate (V3 Fable feedback, audit GAPS A1 + A3): no soaking rain = a low score.
   # Without it, temperature, season and shade alone gave up to ~50 points in a dry month.
