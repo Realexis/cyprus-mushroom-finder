@@ -18,6 +18,8 @@ import { hideMapTip as hideTip, mountTips, showAt } from "./ui/tips";
 import { mountGuide } from "./ui/guide";
 import { renderLegend } from "./ui/legend";
 import { words } from "./ui/spot";
+import "./styles/fullmap.css";
+import { mountFullMap, readUrlView, trackMapReady } from "./ui/fullmap";
 
 const abs = (p: string) => new URL(p, document.baseURI).href;
 
@@ -106,7 +108,9 @@ class TerrainControl implements maplibregl.IControl {
 }
 
 async function main() {
-  applyTheme(currentTheme());
+  // Web-address switches for screenshots: ?full=1&layer=<id>&day=<0-7>&theme=<light|dark>
+  const urlView = readUrlView();
+  applyTheme(urlView.theme ?? currentTheme());
   mountTips();
   mountSafetyToggle();
   const guide = mountGuide();
@@ -160,7 +164,7 @@ async function main() {
     hotspotZones: hotZonesGeo,
   };
   const basemap = v(pmtiles("tiles/basemap.pmtiles"));
-  let theme: Theme = currentTheme();
+  let theme: Theme = urlView.theme ?? currentTheme();
 
   const map = new maplibregl.Map({
     container: "map",
@@ -180,6 +184,11 @@ async function main() {
   const terrainCtl = new TerrainControl((on) => set3D(map, on, theme));
   map.addControl(terrainCtl, "top-right");
   map.addControl(new maplibregl.GeolocateControl({ positionOptions: { enableHighAccuracy: true } }), "top-right");
+  trackMapReady(map);
+  // Full map: always flat and north up, so screenshots of every version line up.
+  const setFull = mountFullMap(map, { mapApi: maplibregl, before: () => {
+    if (terrainCtl.on) { terrainCtl.on = false; terrainCtl.update(); set3D(map, false, theme); }
+  } });
   // Our own tips on MapLibre's buttons (and no second, native browser tooltip).
   const ctlTips: Record<string, string> = {
     ".maplibregl-ctrl-zoom-in": "Zoom in. You can also scroll or pinch.",
@@ -290,12 +299,22 @@ async function main() {
     if (lastPick) pin.setLngLat(lastPick.lngLat).addTo(map); else pin.remove();
   };
 
+  document.addEventListener("full-map-closed", () => fitCyprus());
+
   const onStyle = () => {
     addOverlays(map, theme, urls, panel.view);
     if (terrainCtl.on) set3D(map, true, theme, false);
     applySelection();
   };
   map.once("load", onStyle);
+  // Apply the web-address switches once the map and its layers exist.
+  map.once("load", () => {
+    let changed = false;
+    if (urlView.day !== null && urlView.day < meta.days.length) { panel.day = urlView.day; changed = true; }
+    if (urlView.layer && urlView.layer !== "general" && speciesByCode(urlView.layer)) { panel.species = urlView.layer; changed = true; }
+    if (changed) { panel.refresh(); applyView(map, panel.view); drawLegend(); }
+    if (urlView.full) setFull(true);
+  });
 
   // Loading message: hide once the map has drawn its layers for the first time.
   const loading = document.getElementById("loading")!;
@@ -311,7 +330,7 @@ async function main() {
     window.clearTimeout(slow);
     loading.classList.add("done");
     window.setTimeout(() => (loading.hidden = true), 400);
-    guide.openIfFirstVisit();
+    if (!urlView.full) guide.openIfFirstVisit();
   };
   map.once("idle", finishLoading);
   map.on("sourcedata", (e) => {

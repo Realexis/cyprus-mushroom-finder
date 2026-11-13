@@ -8,8 +8,8 @@
     "build": "node scripts/check-words.mjs && tsc --noEmit && vite build",
     "preview": "vite preview",
     "check:words": "node scripts/check-words.mjs",
-    "predev": "node scripts/copy-worker.mjs",
-    "prebuild": "node scripts/copy-worker.mjs",
+    "predev": "node scripts/copy-worker.mjs && node scripts/views.mjs",
+    "prebuild": "node scripts/copy-worker.mjs && node scripts/views.mjs",
     "postbuild": "node scripts/zip-pmtiles-names.mjs"
   },
   "dependencies": {

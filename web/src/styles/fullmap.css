@@ -1,0 +1,41 @@
+/* Full map mode (see src/ui/fullmap.ts). The map fills the window; only a slim safety line,
+   the colour key, the credits and an exit button stay. */
+
+.ctrl-full-group .ctrl-full {
+  width: auto !important; padding: 0 10px; display: inline-flex; align-items: center; gap: 6px;
+  font-size: 0.9rem; font-weight: 700; color: var(--ink); white-space: nowrap;
+}
+.ctrl-full svg { width: 16px; height: 16px; flex: none; }
+
+.full-safety, .full-exit { display: none; }
+
+:root.full-map .topbar,
+:root.full-map .app > .safety,
+:root.full-map #sheet,
+:root.full-map .map-note,
+:root.full-map .maplibregl-ctrl-top-right,
+:root.full-map .maplibregl-ctrl-top-left,
+:root.full-map .pick-pin,
+:root.full-map #tip, :root.full-map .tip { display: none !important; }
+
+:root.full-map .app { grid-template-rows: 1fr; }
+
+:root.full-map .full-safety {
+  display: block; position: absolute; z-index: 6; left: 0; right: 0; bottom: 0;
+  padding: 4px max(12px, env(safe-area-inset-right, 0px)) calc(4px + env(safe-area-inset-bottom, 0px)) max(12px, env(safe-area-inset-left, 0px));
+  background: var(--safety-bg); color: var(--safety-ink);
+  font-size: 0.85rem; font-weight: 700; line-height: 1.35; text-align: center;
+}
+
+:root.full-map .full-exit {
+  display: inline-flex; align-items: center; position: absolute; z-index: 6;
+  top: calc(10px + env(safe-area-inset-top, 0px)); right: calc(10px + env(safe-area-inset-right, 0px));
+  min-height: 40px; padding: 0 14px; border-radius: 12px; cursor: pointer;
+  border: 1px solid var(--line); background: color-mix(in srgb, var(--surface) 92%, transparent);
+  color: var(--ink); font-weight: 700; font-size: 0.9rem; box-shadow: var(--shadow);
+}
+
+/* Keep the colour key and the credits clear of the safety line. */
+:root.full-map #map-legend { bottom: 40px !important; left: 10px !important; right: auto !important; top: auto !important; }
+:root.full-map .maplibregl-ctrl-bottom-right,
+:root.full-map .maplibregl-ctrl-bottom-left { bottom: 30px !important; }
