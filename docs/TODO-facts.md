@@ -53,3 +53,6 @@ These values are **not in the brief**. The code runs with a **[DRAFT]** placehol
 | D5 | Burned ground source for morels | not chosen |
 | D6 | Rare species list for the public view | not given |
 | D7 | Local Greek names (except kokkinomanitaro) | "to confirm with the Cyprus Mycological Association" |
+| D9 | **Coordinates of the Department of Meteorology rain stations** (not in the daily PDF) | not known. Needed to compare stations with the weather model. Ask the department or find their station list |
+| D10 | **Licence of the department's daily rain PDF and rain maps** | not stated. Archive kept private. Ask the department before any public use |
+| D11 | Does the Copernicus Soil Water Index 1 km (Europe) have pixels south of 35.0 N (Troodos)? Why no file after 15 Sep 2026? | catalogue says 35-72 N; needs a free account to open one file |

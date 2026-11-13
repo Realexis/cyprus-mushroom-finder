@@ -81,3 +81,31 @@ burned_areas:
   licence_status: to_verify   # EFFIS is a Copernicus EMS service; its own data page not yet read
   credit: "Burnt areas © European Union, European Forest Fire Information System (EFFIS), Copernicus Emergency Management Service"
   use: Forest burned since the 2018 forest map stops counting as habitat; recent burns count for morels.
+
+# V5 (2026-11-13): new daily sources. NOT used by the score or the site yet.
+dom_rain:
+  name: Cyprus Department of Meteorology, provisional daily and cumulative precipitation (stations)
+  url: https://www.dom.org.cy/CLIMATOLOGY/English/Provisional%20Precipitation%20Data/
+  file: "Daily and Cummulative Precipitation_DDMMYYYY_ENG.pdf (only today's file stays online)"
+  licence: Not stated on the page or in the PDF
+  licence_status: to_verify     # ask the department before ANY public use
+  credit: "Department of Meteorology, Republic of Cyprus (provisional data)"
+  use: Saved daily into a PRIVATE archive on the Mac (shared shelf, files/dom-rain). Never published.
+  stations_in_forest: [PANO PANAGIA, STAVROS PSOKAS, PRODROMOS, PLATANIA, SAITTAS, PANAGIA BRIDGE]   # user's list
+  note: >
+    17 stations + an island average on 13 Nov 2026. No coordinates in the PDF (TODO D9).
+    The same folder also keeps daily rain MAPS (contour pictures, JPG) for rainy days since 2019:
+    .../Provisional%20Precipitation%20Data/Daily%20Precipitation%20Map/<year>/<month>/
+
+swi_europe_1km:
+  name: Copernicus CLMS Soil Water Index, Europe, 1 km, daily, version 2 (Sentinel-1 + Metop ASCAT)
+  url: https://land.copernicus.eu/en/products/soil-moisture/daily-soil-water-index-europe-1km-v2
+  catalogue: https://stac.dataspace.copernicus.eu/v1/collections/clms_swi_europe_1km_daily_v2_cog
+  licence: Copernicus full, free and open data policy (https://land.copernicus.eu/en/data-policy)
+  licence_status: to_verify     # data-policy page linked by the catalogue, not yet read in full
+  credit: "Soil Water Index © European Union, Copernicus Land Monitoring Service"
+  access: Catalogue is public; the files need a free Copernicus Data Space account (the USER creates it).
+  note: >
+    Checked 2026-11-13: the catalogue says the map covers 35.0-72.0 N only. Most of the Troodos forest
+    is just south of 35.0 N. And no file after 15 Sep 2026 (same for every CLMS soil-moisture product).
+    On hold until both are checked: `uv run python -m shroomy.sources.swi`.
