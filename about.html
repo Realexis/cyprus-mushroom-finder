@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#14211b" />
+  <title>About the data · Cyprus Mushroom Finder</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M4 15c0-6 5-11 12-11s12 5 12 11z' fill='%23e0b040'/%3E%3Crect x='12' y='15' width='8' height='12' rx='3' fill='%23e9efe6'/%3E%3C/svg%3E" />
+  <script type="module" crossorigin src="./assets/about-B-ciBmAW.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/theme-CPTmELGb.js">
+  <link rel="stylesheet" crossorigin href="./assets/theme-DHBwf_Jo.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./">
+      <svg width="34" height="34" viewBox="0 0 32 32" aria-hidden="true">
+        <path d="M4 15c0-6 5-11 12-11s12 5 12 11z" fill="#e0b040" />
+        <rect x="12" y="15" width="8" height="12" rx="3" fill="#e9efe6" />
+      </svg>
+      <span class="brand-text"><span class="brand-name">Cyprus Mushroom Finder</span><br />
+        <span class="brand-sub">← Back to the map</span></span>
+    </a>
+    <button class="sos" type="button" data-emergency aria-haspopup="dialog">Emergency</button>
+  </header>
+  <div class="safety" role="note">
+    <span>Conditions only. Never eat a wild mushroom based on this map, an app or an AI.</span>
+  </div>
+
+  <main class="page">
+    <h1>About the data</h1>
+    <p>This map shows <b>growing conditions</b> in Cyprus forests: where rain, temperature, soil moisture,
+      season and shade are right for wild mushrooms to fruit. It does <b>not</b> show where mushrooms are,
+      and it says nothing about any mushroom you find.</p>
+
+    <h2>How the score works</h2>
+    <p>Each 250 m forest square gets a score from 0 to 100, every day. Six things count:</p>
+    <ul>
+      <li><b>Rain, last 30 days</b> (20%): 0 below 20 mm, full at 80 mm.</li>
+      <li><b>A soaking rain 7–20 days ago</b> (15%): biggest 3-day total. 0 below 10 mm, full at 25 mm.</li>
+      <li><b>Temperature, last 7 days</b> (25%): best 8–18 °C, zero at 3 °C and 24 °C. Frost lowers it.</li>
+      <li><b>Soil moisture</b> (15%): today compared with that place's normal.</li>
+      <li><b>Season for the altitude</b> (15%): high Troodos starts earlier, low hills later.</li>
+      <li><b>Shade</b> (10%): north/east slopes, valley bottoms and little autumn sun.</li>
+    </ul>
+    <p><b>Partner trees only.</b> The general map counts pine and golden oak forest.
+      "Other broadleaf" forest is not scored there (no partner tree for our autumn species), but it counts for morels.</p>
+    <p><b>Species filters</b> change only two things: which trees and altitudes count, and the season months.
+      They say "good conditions for [species] habitat". They never say a species is there.</p>
+    <p>Squares with no forest score 0. <b>Nature reserves are closed</b> and always score 0.
+      Temperature is corrected for height (−6.5 °C per 1,000 m).
+      Future days use the weather forecast, so confidence drops after 2 days.</p>
+    <p>The map shows every <b>250 m forest square</b>. The weather behind each square comes from a model about 9 km wide,
+      so the fine detail comes from the forest itself: trees, altitude and shade. In the top zones you can also zoom into
+      <b>50 m terrain</b> (shade only, no finer weather).</p>
+    <p>The map shows growing conditions only. It never shows where mushrooms are, and never anyone's finds.</p>
+
+    <h2>The law and the forest</h2>
+    <div class="card">
+      <p>Picking is allowed in state forests without a permit, <b>except in nature reserves</b>.</p>
+      <p><b>Rakes and tools are banned</b>: up to 1 year in prison, up to €5,000 fine, or both.</p>
+      <p><b>No fires</b> in forests or within 2 km of them.</p>
+      <p>Pick by hand or knife. Put the leaf litter back.</p>
+    </div>
+
+    <h2>Data sources and credits</h2>
+    <div id="credits"><p>Loading…</p></div>
+    <p class="tag">Weather run: <span id="run">…</span></p>
+
+    <h2>Species photos</h2>
+    <p>Every species card photo comes from <a href="https://www.inaturalist.org">iNaturalist</a>.
+      We only use photos with a CC0, CC BY, CC BY-SA or CC BY-NC licence. The author and licence of each photo:</p>
+    <ul id="photo-credits" class="photo-credits"><li>Loading…</li></ul>
+
+    <h2>Safety</h2>
+    <div class="safety-card">Conditions only. Never eat a wild mushroom based on this map, an app or an AI.</div>
+    <p>Poisoning: call <a href="tel:112"><b>112</b></a> or the Cyprus Poison Centre <a href="tel:1401"><b>1401</b></a>.
+      Do not wait for symptoms.</p>
+  </main>
+</body>
+</html>
