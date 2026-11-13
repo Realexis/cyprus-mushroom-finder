@@ -77,9 +77,9 @@ gbif:
 burned_areas:
   name: EFFIS burnt areas (MODIS/Sentinel-2 mapped fires), Cyprus, 2018 onwards
   url: https://maps.effis.emergency.copernicus.eu/effis (WFS layer modis.ba.poly.<year>)
-  licence: Copernicus full, free and open data policy (Regulation (EU) 2021/696)
-  licence_status: to_verify   # EFFIS is a Copernicus EMS service; its own data page not yet read
-  credit: "Burnt areas © European Union, European Forest Fire Information System (EFFIS), Copernicus Emergency Management Service"
+  licence: CC BY 4.0 (EFFIS data licence page, https://forest-fire.emergency.copernicus.eu/about-effis/data-license, read 2026-11-13). Credit required and changes must be indicated.
+  licence_status: verified
+  credit: "Burnt areas © European Union, European Forest Fire Information System (EFFIS), Copernicus Emergency Management Service, CC BY 4.0. Changed: Cyprus fires only, outlines rounded, used to mark burned forest."
   use: Forest burned since the 2018 forest map stops counting as habitat; recent burns count for morels.
 
 # V5 (2026-11-13): new daily sources. NOT used by the score or the site yet.
@@ -89,6 +89,7 @@ dom_rain:
   file: "Daily and Cummulative Precipitation_DDMMYYYY_ENG.pdf (only today's file stays online)"
   licence: Not stated on the page or in the PDF
   licence_status: to_verify     # ask the department before ANY public use
+  public: false                 # never listed on the site (export/web.py public_credits)
   credit: "Department of Meteorology, Republic of Cyprus (provisional data)"
   use: Saved daily into a PRIVATE archive on the Mac (shared shelf, files/dom-rain). Never published.
   stations_in_forest: [PANO PANAGIA, STAVROS PSOKAS, PRODROMOS, PLATANIA, SAITTAS, PANAGIA BRIDGE]   # user's list
@@ -103,6 +104,7 @@ swi_europe_1km:
   catalogue: https://stac.dataspace.copernicus.eu/v1/collections/clms_swi_europe_1km_daily_v2_cog
   licence: Copernicus full, free and open data policy (https://land.copernicus.eu/en/data-policy)
   licence_status: to_verify     # data-policy page linked by the catalogue, not yet read in full
+  public: false                 # not used by the site yet
   credit: "Soil Water Index © European Union, Copernicus Land Monitoring Service"
   access: Catalogue is public; the files need a free Copernicus Data Space account (the USER creates it).
   note: >

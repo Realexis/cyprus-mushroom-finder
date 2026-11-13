@@ -123,6 +123,14 @@ def species_scores(base, months, specs, share, gate=1.0):
             for s in specs}
 
 
+def public_credits(sources: dict) -> list:
+    """Credits for the About page. Sources marked `public: false` (saved privately, not used by
+    the site, licence not cleared) are left out."""
+    return [{"name": v["name"], "credit": v["credit"], "licence": v["licence"],
+             "status": v["licence_status"], "use": v.get("use", "")}
+            for v in sources.values() if isinstance(v, dict) and "credit" in v and v.get("public", True)]
+
+
 def build(run, private=True):            # `private` is kept for old callers; everything is public now
     w = np.load(run)
     today = date.fromisoformat(str(w["today"]))
@@ -262,9 +270,7 @@ def build(run, private=True):            # `private` is kept for old callers; ev
                        "full_at_mm": (S["score"].get("water_gate") or {}).get("full_at_mm", 20),
                        "days": (S["score"].get("water_gate") or {}).get("days", 30)},
         "general_map_trees": S["score"]["general_map_trees"],
-        "credits": [{"name": v["name"], "credit": v["credit"], "licence": v["licence"],
-                     "status": v["licence_status"], "use": v.get("use", "")}
-                    for v in sources.values() if isinstance(v, dict) and "credit" in v],
+        "credits": public_credits(sources),
         "safety": "Conditions only. Never eat a wild mushroom based on this map, an app or an AI.",
     }
     (PUBLIC / "meta.json").write_text(json.dumps(meta, indent=1))

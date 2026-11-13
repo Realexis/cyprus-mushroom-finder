@@ -24,7 +24,12 @@ These values are **not in the brief**. The code runs with a **[DRAFT]** placehol
 | S5 | Russula delica "warm spells" rule | none yet |
 | S6 | Soaking event must end on a wet day (≥ 1 mm) | 1 mm (standard wet-day definition) |
 | S7 | ~~Should "Other broadleaf" count as habitat in the general map?~~ | **Answered 2026-11-12: no, except for morels.** `score.general_map_trees: [1, 2, 3]` |
-| S8 | Soil "normal" uses only ONE season (Oct 2025-Jan 2026) | add 2 more seasons, one per day |
+| S8 | Soil "normal": **two** seasons now (Oct-Jan 2025-26, a drought, + 2024-25; all 139 points, 246 days each, 13 Nov 2026) | a third season (2023-24) would make it steadier |
+| S12 | **Water gate shape**: below one soaking rain (20 mm) the score falls in a straight line (10 mm = half). No source gives the shape | straight line [GUESS] (`score.water_gate`) |
+| S13 | **Clock window closes 20 days after the LATEST soaking rain** (the brief's number; no outside source backs it) | 20 days [GUESS] (`score.mushroom_clock.window_closes_days_after_pulse`) |
+| S14 | **Burn cut for partner trees**: a square more than half burned stops counting as its tree. The 50% comes from burn morels [LAR16]; no source gives it for pine/oak partners | 50% [GUESS] (`habitat.burned.min_fraction`) |
+| S15 | Season table: September-April now never below 0.5 [LOI16]; every other value is still the [DRAFT] from S3 | see S3 (`score.season_altitude`) |
+| S16 | **Morel filter is very wide**: Calabrian pine, golden oak zone, other broadleaf and recently burned forest at all altitudes [LOI16]. It covers nearly all forest, so it says little about where | wide, said on the card (`config/species.yaml` (mor)) |
 | S9 | *Russula delica* is "all forest" in the brief. Should "Other broadleaf" count for it? (S7 answer kept it out) | not counted |
 
 ## Species and lookalikes (Phase 5)

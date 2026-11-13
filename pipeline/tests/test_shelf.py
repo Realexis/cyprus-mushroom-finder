@@ -112,3 +112,11 @@ def test_cached_get_uses_shelf_then_labels_downloads(shelf_dir, tmp_path):
     f2 = tmp_path / "two" / "x.json"                  # another copy, same exact request
     shelf.cached_get("gbif", URL, {"q": "x"}, f2, lambda: calls.append(2))
     assert calls == [1] and json.loads(f2.read_text()) == {"ok": 1}
+
+
+def test_private_sources_never_credited_on_the_site():
+    from shroomy import config
+    from shroomy.export.web import public_credits
+    names = [c["name"] for c in public_credits(config.load("sources"))]
+    assert not any("Department of Meteorology" in n or "Soil Water Index" in n for n in names)
+    assert any("EFFIS" in n for n in names)

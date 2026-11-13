@@ -96,6 +96,7 @@ species:
     notes:
       - "Morels are patchy and often follow a fire. Burned forest counts here for the first two springs after a fire (fires since 2018, from EFFIS satellite maps)."
       - "\"Other broadleaf\" mixes deciduous and evergreen trees. Our map cannot tell them apart."   # [DRAFT]
+      - "This filter covers almost all forest (94% of the forest squares, measured 13 Nov 2026). For morels the map shows when conditions fit, not where: too few Cyprus finds are known to narrow it."   # audit fix 8, TODO S16
     inat: ["Morchella esculenta", "Morchella elata"]
 
   - code: slu
