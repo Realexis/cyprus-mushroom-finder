@@ -22,7 +22,7 @@ import requests
 from rasterio import features
 from pyproj import Transformer
 
-from .. import config
+from .. import config, shelf
 from ..grid import habitat_grid
 
 FILE = config.CONFIG_DIR / "effis_burned_areas.geojson"
@@ -43,12 +43,20 @@ def fetch():
     out = []
     for y in years:
         n0 = len(out)
-        r = requests.get(WFS, params={"SERVICE": "WFS", "VERSION": "1.1.0", "REQUEST": "GetFeature",
-                                      "TYPENAME": f"ms:modis.ba.poly.{y}", "BBOX": BBOX,
-                                      "OUTPUTFORMAT": "application/json; subtype=geojson"},
-                         headers=HEADERS, timeout=120)
-        r.raise_for_status()
-        for f in r.json()["features"]:
+        params = {"SERVICE": "WFS", "VERSION": "1.1.0", "REQUEST": "GetFeature",
+                  "TYPENAME": f"ms:modis.ba.poly.{y}", "BBOX": BBOX,
+                  "OUTPUTFORMAT": "application/json; subtype=geojson"}
+        # This year's fires change, so that reply is labelled by today's date; closed years are not.
+        day = date.today().isoformat() if y == "season" else None
+        local = config.RAW / "effis" / (f"wfs_season_{day}.geojson" if day else f"wfs_{y}.geojson")
+
+        def download(params=params, local=local):
+            r = requests.get(WFS, params=params, headers=HEADERS, timeout=120)
+            r.raise_for_status()
+            local.parent.mkdir(parents=True, exist_ok=True)
+            local.write_bytes(r.content)
+        shelf.cached_get("effis", WFS, params, local, download, day=day)   # this copy -> shelf -> download
+        for f in json.loads(local.read_text())["features"]:
             p = f["properties"]
             if p.get("COUNTRY") != "CY":
                 continue

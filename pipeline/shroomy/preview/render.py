@@ -17,7 +17,7 @@ from matplotlib.colors import LinearSegmentedColormap
 from matplotlib.patches import Patch
 from pyproj import Transformer
 
-from .. import config
+from .. import config, shelf
 
 # ---------------------------------------------------------------- design tokens (dark)
 INK = "#E9EFE6"          # main text
@@ -46,14 +46,16 @@ def _font():
 def _places():
     """City/town labels from OpenStreetMap (cached)."""
     p = config.RAW / "osm_places.json"
-    if not p.exists():
-        q = ('[out:json][timeout:90];area["ISO3166-1"="CY"]->.a;'
-             '(node["place"~"^(city|town)$"](area.a);'
-             'node["natural"="peak"]["name:en"~"Olympus|Olympos"](area.a););out;')
-        r = requests.post("https://overpass-api.de/api/interpreter", data={"data": q},
-                          headers={"User-Agent": "shroomy-preview/0.1"}, timeout=120)
+    url = "https://overpass-api.de/api/interpreter"
+    q = ('[out:json][timeout:90];area["ISO3166-1"="CY"]->.a;'
+         '(node["place"~"^(city|town)$"](area.a);'
+         'node["natural"="peak"]["name:en"~"Olympus|Olympos"](area.a););out;')
+
+    def download():
+        r = requests.post(url, data={"data": q}, headers={"User-Agent": "shroomy-preview/0.1"}, timeout=120)
         r.raise_for_status()
         p.write_text(r.text)
+    shelf.cached_get("overpass", url, {"data": q}, p, download)     # this copy -> shared shelf -> download
     els = json.loads(p.read_text())["elements"]
     out = []
     for e in els:

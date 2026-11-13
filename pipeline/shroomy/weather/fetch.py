@@ -54,7 +54,8 @@ def fetch_main(run_day: date | None = None, past_days: int | None = None, out_na
         s = slice(b * per, (b + 1) * per)
         print(f" - batch {b + 1}/{math.ceil(n / per)}")
         results += openmeteo.fetch(cfg["forecast_url"], pts["lat"][s], pts["lon"][s], params,
-                                   n_vars, n_days, budget, raw_dir / f"main_p{past}_b{b:03d}.json")
+                                   n_vars, n_days, budget, raw_dir / f"main_p{past}_b{b:03d}.json",
+                                   day=run_day.isoformat())
 
     dates = results[0]["daily"]["time"]
     arr = {v: np.full((n, len(dates)), np.nan, "float32") for v in cfg["daily"]}

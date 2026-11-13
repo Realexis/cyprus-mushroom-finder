@@ -39,6 +39,14 @@ Public data includes the 250 m forest squares (`cells.pmtiles` + details), made 
 no tippecanoe needed). The 50 m shade is a fixed island-wide file built once:
 `uv run python -m shroomy.export.shade50` → `web/public/tiles/shade50.pmtiles` (goes in the `static-v1` release).
 
+## Shared download shelf (Mac only)
+
+All project copies on this Mac share one shelf of raw downloads and ONE Open-Meteo call counter:
+`../shroomy-shared/` (or `$SHROOMY_SHELF`). Every reply is labelled by its exact request, so a
+copy never downloads what another already has. `uv run python -m shroomy.shelf_seed` fills it
+from the copies' saved files (no downloads); `--status` reports it. The GitHub robot has no
+shelf and works as before.
+
 ## Where things are
 - `config/` — every weight, threshold, source and credit
 - `pipeline/` — Python data pipeline

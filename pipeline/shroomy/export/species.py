@@ -15,7 +15,7 @@ import time
 
 import requests
 
-from .. import config
+from .. import config, shelf
 from ..score import species as SP
 
 API = "https://api.inaturalist.org/v1"
@@ -27,28 +27,31 @@ ALLOWED = {"cc0": "CC0", "cc-by": "CC BY", "cc-by-sa": "CC BY-SA", "cc-by-nc": "
 HEADERS = {"User-Agent": "cyprus-mushroom-finder/0.1 (non-commercial, static site)"}
 
 
+def _download(url, params, f, pause):
+    def go():
+        time.sleep(pause)
+        r = requests.get(url, params=params, headers=HEADERS, timeout=30)
+        r.raise_for_status()
+        f.parent.mkdir(parents=True, exist_ok=True)
+        f.write_text(r.text)
+    return go
+
+
+def _cached(source, url, params, f, pause, refresh):
+    """This copy's cache -> the shared shelf (same exact request) -> download."""
+    if refresh:
+        _download(url, params, f, pause)()
+    shelf.cached_get(source, url, params, f, _download(url, params, f, pause))
+    return json.loads(f.read_text())
+
+
 def _get(path, params, cache_name, refresh):
-    f = CACHE / f"{cache_name}.json"
-    if f.exists() and not refresh:
-        return json.loads(f.read_text())
-    time.sleep(1.1)                                   # stay well under iNaturalist's ~60/min
-    r = requests.get(f"{API}/{path}", params=params, headers=HEADERS, timeout=30)
-    r.raise_for_status()
-    CACHE.mkdir(parents=True, exist_ok=True)
-    f.write_text(r.text)
-    return r.json()
+    # 1.1 s pause: stay well under iNaturalist's ~60/min
+    return _cached("inaturalist", f"{API}/{path}", params, CACHE / f"{cache_name}.json", 1.1, refresh)
 
 
 def _gbif(path, params, cache_name, refresh):
-    f = config.RAW / "gbif" / f"{cache_name}.json"
-    if f.exists() and not refresh:
-        return json.loads(f.read_text())
-    time.sleep(0.3)
-    r = requests.get(f"{GBIF}/{path}", params=params, headers=HEADERS, timeout=30)
-    r.raise_for_status()
-    f.parent.mkdir(parents=True, exist_ok=True)
-    f.write_text(r.text)
-    return r.json()
+    return _cached("gbif", f"{GBIF}/{path}", params, config.RAW / "gbif" / f"{cache_name}.json", 0.3, refresh)
 
 
 def cyprus_records(names, refresh=False):
