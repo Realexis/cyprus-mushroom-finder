@@ -1,0 +1,72 @@
+# Robot TEST (audit fix 7): the daily robot's exact steps on this branch, but it NEVER deploys.
+# It builds the site and keeps the result as a 3-day download, then stops.
+# Starts only when .github/robot-test changes on the v5 branch (edit the date in that file and push).
+# Weather is fetched from GitHub's computers: it does not use the Mac's Open-Meteo budget.
+name: Robot test (no deploy)
+
+on:
+  push:
+    branches: [v5]
+    paths: [".github/robot-test"]
+
+permissions:
+  contents: read           # read only: this run cannot push or deploy anything
+
+concurrency:
+  group: robot-test
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90          # a full 31-day fetch can take ~30 min
+    steps:
+      - uses: actions/checkout@v7.0.1
+
+      - uses: astral-sh/setup-uv@v10.3.3
+        with:
+          python-version: "3.12"
+          enable-cache: true
+          cache-dependency-glob: pipeline/uv.lock
+
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Restore weather history
+        uses: actions/cache/restore@v5.1.0
+        with:
+          path: data/processed/weather/history.npz
+          key: weather-history-${{ github.run_id }}
+          restore-keys: weather-history-
+
+      - name: Download fixed data (habitat layer is encrypted)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          STATIC_KEY: ${{ secrets.STATIC_KEY }}
+        run: |
+          gh release download static-v1 --dir /tmp/static
+          openssl enc -d -aes-256-cbc -pbkdf2 -iter 200000 -pass env:STATIC_KEY \
+            -in /tmp/static/static.tar.gz.enc | tar -xz
+          mkdir -p web/public/tiles
+          mv /tmp/static/*.pmtiles web/public/tiles/
+
+      - name: Fetch weather, score 8 days, export public data
+        working-directory: pipeline
+        run: uv run python -m shroomy.daily --public
+
+      - name: Build the site (no deploy)
+        run: |
+          (cd web && npm ci && npm run build)
+          ls -la web/dist | head -20
+
+      - name: Keep the built site for 3 days (download from the run page)
+        uses: actions/upload-artifact@v4
+        with:
+          name: robot-test-site
+          path: |
+            web/public/data/meta.json
+            web/public/data/summary.json
+          retention-days: 3
