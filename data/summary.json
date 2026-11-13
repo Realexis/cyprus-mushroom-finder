@@ -1,0 +1,2244 @@
+{
+ "title": "Cyprus Mushroom Finder — growing conditions summary",
+ "safety": "Conditions only. Never eat a wild mushroom based on this map, an app or an AI.",
+ "how_to_read": "Scores 0-100 = how good GROWING CONDITIONS are (rain, temperature, soil moisture, season for the altitude, shade) in ~2 km forest zones. It never says a mushroom is there, and never says anything about eating one. Nature reserves are closed and never listed. Confidence: high = days 0-2, medium = 3-4, low = 5+ (forecast). Picking rules: no rakes or tools; pick by hand or knife; put the leaf litter back.",
+ "emergency": "Poisoning: call 112. Cyprus Poison Centre: 1401. Do not wait for symptoms.",
+ "weather_run": "2026-11-13",
+ "generated_utc": "2026-11-13T12:27+00:00",
+ "site": "https://realexis.github.io/cyprus-mushroom-finder/",
+ "days": [
+  {
+   "date": "2026-11-13",
+   "weekday": "Friday",
+   "confidence": "high",
+   "island": {
+    "median_score": 74,
+    "zones_70_plus": 400,
+    "zones_total": 724
+   },
+   "top_zones": [
+    {
+     "rank": 1,
+     "where": "15 km NE of Rizokarpaso",
+     "spot": 34,
+     "lat": 35.6582,
+     "lon": 34.5286,
+     "score": 89,
+     "why": "Good: 81 mm rain in 30 days; 32 mm soaking rain 7-20 days ago; soil wetter than 100% of last season; 19 °C average this week. Weak: shady slopes and valleys.",
+     "mushroom_clock": "Soaking rain 15 days ago. Window OPEN — about 5 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.99
+     },
+     "altitude_m": [
+      25,
+      150
+     ],
+     "inputs": {
+      "rain_30d_mm": 80.8,
+      "pulse_mm": 31.5,
+      "t7_mean_c": 18.8,
+      "soil_percentile": 100.0,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 1.0,
+      "rain_pulse": 1.0,
+      "temperature": 0.87,
+      "soil_moisture": 1.0,
+      "season_altitude": 1.0,
+      "shade": 0.28
+     }
+    },
+    {
+     "rank": 2,
+     "where": "3 km NE of Lagoudera",
+     "spot": 675,
+     "lat": 34.9777,
+     "lon": 33.0376,
+     "score": 87,
+     "why": "Good: 10 °C average this week; soil wetter than 95% of last season; 72 mm rain in 30 days; 21 mm soaking rain 7-20 days ago.",
+     "mushroom_clock": "Last soaking rain was 28 days ago. Fruiting window has closed.",
+     "trees": {
+      "Calabrian pine (likely)": 0.87,
+      "Golden oak (likely)": 0.11
+     },
+     "altitude_m": [
+      671,
+      1221
+     ],
+     "inputs": {
+      "rain_30d_mm": 72.1,
+      "pulse_mm": 21.0,
+      "t7_mean_c": 10.3,
+      "soil_percentile": 94.9,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.87,
+      "rain_pulse": 0.73,
+      "temperature": 1.0,
+      "soil_moisture": 1.0,
+      "season_altitude": 1.0,
+      "shade": 0.4
+     }
+    },
+    {
+     "rank": 3,
+     "where": "1 km S of Agios Theodoros Soleas",
+     "spot": 612,
+     "lat": 35.0309,
+     "lon": 32.93,
+     "score": 86,
+     "why": "Good: 13 °C average this week; soil wetter than 94% of last season; 76 mm rain in 30 days. Weak: shady slopes and valleys.",
+     "mushroom_clock": "Last soaking rain was 28 days ago. Fruiting window has closed.",
+     "trees": {
+      "Calabrian pine (likely)": 0.99
+     },
+     "altitude_m": [
+      456,
+      818
+     ],
+     "inputs": {
+      "rain_30d_mm": 76.4,
+      "pulse_mm": 18.1,
+      "t7_mean_c": 12.7,
+      "soil_percentile": 94.3,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.94,
+      "rain_pulse": 0.54,
+      "temperature": 1.0,
+      "soil_moisture": 1.0,
+      "season_altitude": 1.0,
+      "shade": 0.38
+     }
+    },
+    {
+     "rank": 4,
+     "where": "4 km S of Tsakistra",
+     "spot": 387,
+     "lat": 34.9942,
+     "lon": 32.7083,
+     "score": 85,
+     "why": "Good: 10 °C average this week; soil wetter than 88% of last season; shady slopes and valleys; 60 mm rain in 30 days; 20 mm soaking rain 7-20 days ago.",
+     "mushroom_clock": "Last soaking rain was 27 days ago. Fruiting window has closed.",
+     "trees": {
+      "Calabrian pine (likely)": 0.1,
+      "Golden oak (likely)": 0.9
+     },
+     "altitude_m": [
+      771,
+      983
+     ],
+     "inputs": {
+      "rain_30d_mm": 59.6,
+      "pulse_mm": 19.7,
+      "t7_mean_c": 10.2,
+      "soil_percentile": 87.9,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.66,
+      "rain_pulse": 0.65,
+      "temperature": 1.0,
+      "soil_moisture": 1.0,
+      "season_altitude": 1.0,
+      "shade": 0.68
+     }
+    },
+    {
+     "rank": 5,
+     "where": "2 km SW of Pentalia",
+     "spot": 439,
+     "lat": 34.8418,
+     "lon": 32.5999,
+     "score": 85,
+     "why": "Good: 14 °C average this week; 26 mm soaking rain 7-20 days ago; soil wetter than 77% of last season. Weak: shady slopes and valleys.",
+     "mushroom_clock": "Soaking rain 15 days ago. Window OPEN — about 5 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.44,
+      "Other broadleaf": 0.56
+     },
+     "altitude_m": [
+      378,
+      497
+     ],
+     "inputs": {
+      "rain_30d_mm": 54.6,
+      "pulse_mm": 25.6,
+      "t7_mean_c": 13.8,
+      "soil_percentile": 77.4,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.58,
+      "rain_pulse": 0.98,
+      "temperature": 1.0,
+      "soil_moisture": 0.96,
+      "season_altitude": 1.0,
+      "shade": 0.39
+     }
+    }
+   ],
+   "species": {
+    "lde": {
+     "label": "good conditions for Lactarius deliciosus (red pine mushroom) habitat",
+     "in_season": true,
+     "season": "Oct-Jan",
+     "top_zones": [
+      {
+       "where": "15 km NE of Rizokarpaso",
+       "spot": 34,
+       "lat": 35.6582,
+       "lon": 34.5286,
+       "score": 89
+      },
+      {
+       "where": "3 km NE of Lagoudera",
+       "spot": 675,
+       "lat": 34.9777,
+       "lon": 33.0376,
+       "score": 87
+      },
+      {
+       "where": "1 km S of Agios Theodoros Soleas",
+       "spot": 612,
+       "lat": 35.0309,
+       "lon": 32.93,
+       "score": 86
+      }
+     ]
+    },
+    "lsa": {
+     "label": "good conditions for Lactarius sanguifluus (bloody milk cap) habitat",
+     "in_season": false,
+     "season": "Sep-Oct",
+     "top_zones": []
+    },
+    "rde": {
+     "label": "good conditions for Russula delica (milk-white brittlegill) habitat",
+     "in_season": false,
+     "season": "Sep-Oct",
+     "top_zones": []
+    },
+    "tca": {
+     "label": "good conditions for Tricholoma caligatum (matsutake) habitat",
+     "in_season": true,
+     "season": "Nov-Jan",
+     "top_zones": [
+      {
+       "where": "3 km NE of Lagoudera",
+       "spot": 675,
+       "lat": 34.9777,
+       "lon": 33.0376,
+       "score": 87
+      },
+      {
+       "where": "1 km S of Agios Theodoros Soleas",
+       "spot": 612,
+       "lat": 35.0309,
+       "lon": 32.93,
+       "score": 85
+      },
+      {
+       "where": "4 km S of Tsakistra",
+       "spot": 387,
+       "lat": 34.9942,
+       "lon": 32.7083,
+       "score": 85
+      }
+     ]
+    },
+    "mor": {
+     "label": "good conditions for Morchella esculenta / elata (morels) habitat",
+     "in_season": false,
+     "season": "Mar-Apr",
+     "top_zones": []
+    },
+    "slu": {
+     "label": "good conditions for Suillus luteus (slippery Jack) habitat",
+     "in_season": true,
+     "season": "Oct-Jan",
+     "top_zones": [
+      {
+       "where": "15 km NE of Rizokarpaso",
+       "spot": 34,
+       "lat": 35.6582,
+       "lon": 34.5286,
+       "score": 89
+      },
+      {
+       "where": "3 km NE of Lagoudera",
+       "spot": 675,
+       "lat": 34.9777,
+       "lon": 33.0376,
+       "score": 87
+      },
+      {
+       "where": "1 km S of Agios Theodoros Soleas",
+       "spot": 612,
+       "lat": 35.0309,
+       "lon": 32.93,
+       "score": 86
+      }
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-11-14",
+   "weekday": "Saturday",
+   "confidence": "high",
+   "island": {
+    "median_score": 70,
+    "zones_70_plus": 372,
+    "zones_total": 724
+   },
+   "top_zones": [
+    {
+     "rank": 1,
+     "where": "2 km E of Louvaras",
+     "spot": 496,
+     "lat": 34.8315,
+     "lon": 33.0593,
+     "score": 88,
+     "why": "Good: 25 mm soaking rain 7-20 days ago; 11 °C average this week; soil wetter than 88% of last season; 62 mm rain in 30 days. Weak: shady slopes and valleys.",
+     "mushroom_clock": "Soaking rain 7 days ago. Window OPEN — about 13 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.94
+     },
+     "altitude_m": [
+      547,
+      964
+     ],
+     "inputs": {
+      "rain_30d_mm": 62.2,
+      "pulse_mm": 25.3,
+      "t7_mean_c": 11.0,
+      "soil_percentile": 87.9,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.7,
+      "rain_pulse": 1.0,
+      "temperature": 1.0,
+      "soil_moisture": 1.0,
+      "season_altitude": 1.0,
+      "shade": 0.4
+     }
+    },
+    {
+     "rank": 2,
+     "where": "2 km N of Lagoudera",
+     "spot": 622,
+     "lat": 34.9809,
+     "lon": 33.0092,
+     "score": 84,
+     "why": "Good: 10 °C average this week; soil wetter than 88% of last season; 23 mm soaking rain 7-20 days ago.",
+     "mushroom_clock": "Soaking rain 7 days ago. Window OPEN — about 13 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.95
+     },
+     "altitude_m": [
+      715,
+      1161
+     ],
+     "inputs": {
+      "rain_30d_mm": 54.3,
+      "pulse_mm": 22.8,
+      "t7_mean_c": 10.2,
+      "soil_percentile": 87.5,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.57,
+      "rain_pulse": 0.86,
+      "temperature": 1.0,
+      "soil_moisture": 1.0,
+      "season_altitude": 1.0,
+      "shade": 0.43
+     }
+    },
+    {
+     "rank": 3,
+     "where": "15 km NE of Rizokarpaso",
+     "spot": 34,
+     "lat": 35.6582,
+     "lon": 34.5286,
+     "score": 83,
+     "why": "Good: 32 mm soaking rain 7-20 days ago; soil wetter than 100% of last season; 19 °C average this week; 62 mm rain in 30 days. Weak: shady slopes and valleys.",
+     "mushroom_clock": "Soaking rain 16 days ago. Window OPEN — about 4 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.99
+     },
+     "altitude_m": [
+      25,
+      150
+     ],
+     "inputs": {
+      "rain_30d_mm": 61.6,
+      "pulse_mm": 31.5,
+      "t7_mean_c": 18.9,
+      "soil_percentile": 100.0,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.69,
+      "rain_pulse": 1.0,
+      "temperature": 0.84,
+      "soil_moisture": 1.0,
+      "season_altitude": 1.0,
+      "shade": 0.28
+     }
+    },
+    {
+     "rank": 4,
+     "where": "1 km N of Omodos",
+     "spot": 717,
+     "lat": 34.8602,
+     "lon": 32.8043,
+     "score": 81,
+     "why": "Good: 12 °C average this week; soil wetter than 78% of last season; 23 mm soaking rain 7-20 days ago. Weak: 44 mm rain in 30 days.",
+     "mushroom_clock": "Soaking rain 14 days ago. Window OPEN — about 6 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.18,
+      "Golden oak (likely)": 0.18,
+      "Other broadleaf": 0.65
+     },
+     "altitude_m": [
+      830,
+      990
+     ],
+     "inputs": {
+      "rain_30d_mm": 43.8,
+      "pulse_mm": 23.3,
+      "t7_mean_c": 11.7,
+      "soil_percentile": 78.2,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.4,
+      "rain_pulse": 0.88,
+      "temperature": 1.0,
+      "soil_moisture": 0.97,
+      "season_altitude": 1.0,
+      "shade": 0.5
+     }
+    },
+    {
+     "rank": 5,
+     "where": "4 km E of Statos-Agios Photios",
+     "spot": 432,
+     "lat": 34.876,
+     "lon": 32.6625,
+     "score": 80,
+     "why": "Good: 14 °C average this week; 26 mm soaking rain 7-20 days ago; soil wetter than 78% of last season. Weak: 42 mm rain in 30 days; shady slopes and valleys.",
+     "mushroom_clock": "Soaking rain 16 days ago. Window OPEN — about 4 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.58,
+      "Other broadleaf": 0.42
+     },
+     "altitude_m": [
+      277,
+      533
+     ],
+     "inputs": {
+      "rain_30d_mm": 42.4,
+      "pulse_mm": 25.8,
+      "t7_mean_c": 14.2,
+      "soil_percentile": 77.8,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.37,
+      "rain_pulse": 0.98,
+      "temperature": 1.0,
+      "soil_moisture": 0.96,
+      "season_altitude": 1.0,
+      "shade": 0.37
+     }
+    }
+   ],
+   "species": {
+    "lde": {
+     "label": "good conditions for Lactarius deliciosus (red pine mushroom) habitat",
+     "in_season": true,
+     "season": "Oct-Jan",
+     "top_zones": [
+      {
+       "where": "2 km E of Louvaras",
+       "spot": 496,
+       "lat": 34.8315,
+       "lon": 33.0593,
+       "score": 88
+      },
+      {
+       "where": "2 km N of Lagoudera",
+       "spot": 622,
+       "lat": 34.9809,
+       "lon": 33.0092,
+       "score": 84
+      },
+      {
+       "where": "15 km NE of Rizokarpaso",
+       "spot": 34,
+       "lat": 35.6582,
+       "lon": 34.5286,
+       "score": 83
+      }
+     ]
+    },
+    "lsa": {
+     "label": "good conditions for Lactarius sanguifluus (bloody milk cap) habitat",
+     "in_season": false,
+     "season": "Sep-Oct",
+     "top_zones": []
+    },
+    "rde": {
+     "label": "good conditions for Russula delica (milk-white brittlegill) habitat",
+     "in_season": false,
+     "season": "Sep-Oct",
+     "top_zones": []
+    },
+    "tca": {
+     "label": "good conditions for Tricholoma caligatum (matsutake) habitat",
+     "in_season": true,
+     "season": "Nov-Jan",
+     "top_zones": [
+      {
+       "where": "2 km E of Louvaras",
+       "spot": 496,
+       "lat": 34.8315,
+       "lon": 33.0593,
+       "score": 88
+      },
+      {
+       "where": "2 km N of Lagoudera",
+       "spot": 622,
+       "lat": 34.9809,
+       "lon": 33.0092,
+       "score": 84
+      },
+      {
+       "where": "1 km N of Omodos",
+       "spot": 717,
+       "lat": 34.8602,
+       "lon": 32.8043,
+       "score": 81
+      }
+     ]
+    },
+    "mor": {
+     "label": "good conditions for Morchella esculenta / elata (morels) habitat",
+     "in_season": false,
+     "season": "Mar-Apr",
+     "top_zones": []
+    },
+    "slu": {
+     "label": "good conditions for Suillus luteus (slippery Jack) habitat",
+     "in_season": true,
+     "season": "Oct-Jan",
+     "top_zones": [
+      {
+       "where": "2 km E of Louvaras",
+       "spot": 496,
+       "lat": 34.8315,
+       "lon": 33.0593,
+       "score": 88
+      },
+      {
+       "where": "2 km N of Lagoudera",
+       "spot": 622,
+       "lat": 34.9809,
+       "lon": 33.0092,
+       "score": 84
+      },
+      {
+       "where": "15 km NE of Rizokarpaso",
+       "spot": 34,
+       "lat": 35.6582,
+       "lon": 34.5286,
+       "score": 83
+      }
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-11-15",
+   "weekday": "Sunday",
+   "confidence": "high",
+   "island": {
+    "median_score": 69,
+    "zones_70_plus": 354,
+    "zones_total": 724
+   },
+   "top_zones": [
+    {
+     "rank": 1,
+     "where": "2 km E of Louvaras",
+     "spot": 496,
+     "lat": 34.8315,
+     "lon": 33.0593,
+     "score": 88,
+     "why": "Good: 25 mm soaking rain 7-20 days ago; 12 °C average this week; soil wetter than 84% of last season; 62 mm rain in 30 days. Weak: shady slopes and valleys.",
+     "mushroom_clock": "Soaking rain 8 days ago. Window OPEN — about 12 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.94
+     },
+     "altitude_m": [
+      547,
+      964
+     ],
+     "inputs": {
+      "rain_30d_mm": 61.9,
+      "pulse_mm": 25.3,
+      "t7_mean_c": 11.6,
+      "soil_percentile": 84.2,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.7,
+      "rain_pulse": 1.0,
+      "temperature": 1.0,
+      "soil_moisture": 1.0,
+      "season_altitude": 1.0,
+      "shade": 0.4
+     }
+    },
+    {
+     "rank": 2,
+     "where": "2 km N of Lagoudera",
+     "spot": 622,
+     "lat": 34.9809,
+     "lon": 33.0092,
+     "score": 83,
+     "why": "Good: 11 °C average this week; soil wetter than 86% of last season; 23 mm soaking rain 7-20 days ago.",
+     "mushroom_clock": "Soaking rain 8 days ago. Window OPEN — about 12 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.95
+     },
+     "altitude_m": [
+      715,
+      1161
+     ],
+     "inputs": {
+      "rain_30d_mm": 52.0,
+      "pulse_mm": 22.8,
+      "t7_mean_c": 11.0,
+      "soil_percentile": 86.1,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.53,
+      "rain_pulse": 0.86,
+      "temperature": 1.0,
+      "soil_moisture": 0.99,
+      "season_altitude": 1.0,
+      "shade": 0.43
+     }
+    },
+    {
+     "rank": 3,
+     "where": "4 km E of Statos-Agios Photios",
+     "spot": 432,
+     "lat": 34.876,
+     "lon": 32.6625,
+     "score": 80,
+     "why": "Good: 15 °C average this week; 26 mm soaking rain 7-20 days ago; soil wetter than 77% of last season. Weak: 42 mm rain in 30 days; shady slopes and valleys.",
+     "mushroom_clock": "Soaking rain 17 days ago. Window OPEN — about 3 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.58,
+      "Other broadleaf": 0.42
+     },
+     "altitude_m": [
+      277,
+      533
+     ],
+     "inputs": {
+      "rain_30d_mm": 41.9,
+      "pulse_mm": 25.8,
+      "t7_mean_c": 14.5,
+      "soil_percentile": 76.7,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.36,
+      "rain_pulse": 0.98,
+      "temperature": 1.0,
+      "soil_moisture": 0.95,
+      "season_altitude": 1.0,
+      "shade": 0.37
+     }
+    },
+    {
+     "rank": 4,
+     "where": "1 km N of Omodos",
+     "spot": 717,
+     "lat": 34.8602,
+     "lon": 32.8043,
+     "score": 80,
+     "why": "Good: 12 °C average this week; soil wetter than 76% of last season; 23 mm soaking rain 7-20 days ago. Weak: 42 mm rain in 30 days.",
+     "mushroom_clock": "Soaking rain 15 days ago. Window OPEN — about 5 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.18,
+      "Golden oak (likely)": 0.18,
+      "Other broadleaf": 0.65
+     },
+     "altitude_m": [
+      830,
+      990
+     ],
+     "inputs": {
+      "rain_30d_mm": 42.5,
+      "pulse_mm": 23.3,
+      "t7_mean_c": 12.3,
+      "soil_percentile": 76.0,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.37,
+      "rain_pulse": 0.88,
+      "temperature": 1.0,
+      "soil_moisture": 0.93,
+      "season_altitude": 1.0,
+      "shade": 0.5
+     }
+    },
+    {
+     "rank": 5,
+     "where": "15 km NE of Rizokarpaso",
+     "spot": 34,
+     "lat": 35.6582,
+     "lon": 34.5286,
+     "score": 79,
+     "why": "Good: 32 mm soaking rain 7-20 days ago; soil wetter than 100% of last season; 19 °C average this week; 57 mm rain in 30 days. Weak: shady slopes and valleys.",
+     "mushroom_clock": "Soaking rain 17 days ago. Window OPEN — about 3 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.99
+     },
+     "altitude_m": [
+      25,
+      150
+     ],
+     "inputs": {
+      "rain_30d_mm": 57.3,
+      "pulse_mm": 31.5,
+      "t7_mean_c": 19.4,
+      "soil_percentile": 100.0,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.62,
+      "rain_pulse": 1.0,
+      "temperature": 0.77,
+      "soil_moisture": 1.0,
+      "season_altitude": 1.0,
+      "shade": 0.28
+     }
+    }
+   ],
+   "species": {
+    "lde": {
+     "label": "good conditions for Lactarius deliciosus (red pine mushroom) habitat",
+     "in_season": true,
+     "season": "Oct-Jan",
+     "top_zones": [
+      {
+       "where": "2 km E of Louvaras",
+       "spot": 496,
+       "lat": 34.8315,
+       "lon": 33.0593,
+       "score": 88
+      },
+      {
+       "where": "2 km N of Lagoudera",
+       "spot": 622,
+       "lat": 34.9809,
+       "lon": 33.0092,
+       "score": 83
+      },
+      {
+       "where": "4 km E of Statos-Agios Photios",
+       "spot": 432,
+       "lat": 34.876,
+       "lon": 32.6625,
+       "score": 80
+      }
+     ]
+    },
+    "lsa": {
+     "label": "good conditions for Lactarius sanguifluus (bloody milk cap) habitat",
+     "in_season": false,
+     "season": "Sep-Oct",
+     "top_zones": []
+    },
+    "rde": {
+     "label": "good conditions for Russula delica (milk-white brittlegill) habitat",
+     "in_season": false,
+     "season": "Sep-Oct",
+     "top_zones": []
+    },
+    "tca": {
+     "label": "good conditions for Tricholoma caligatum (matsutake) habitat",
+     "in_season": true,
+     "season": "Nov-Jan",
+     "top_zones": [
+      {
+       "where": "2 km E of Louvaras",
+       "spot": 496,
+       "lat": 34.8315,
+       "lon": 33.0593,
+       "score": 88
+      },
+      {
+       "where": "2 km N of Lagoudera",
+       "spot": 622,
+       "lat": 34.9809,
+       "lon": 33.0092,
+       "score": 83
+      },
+      {
+       "where": "3 km S of Prastio",
+       "spot": 608,
+       "lat": 34.7814,
+       "lon": 33.1382,
+       "score": 81
+      }
+     ]
+    },
+    "mor": {
+     "label": "good conditions for Morchella esculenta / elata (morels) habitat",
+     "in_season": false,
+     "season": "Mar-Apr",
+     "top_zones": []
+    },
+    "slu": {
+     "label": "good conditions for Suillus luteus (slippery Jack) habitat",
+     "in_season": true,
+     "season": "Oct-Jan",
+     "top_zones": [
+      {
+       "where": "2 km E of Louvaras",
+       "spot": 496,
+       "lat": 34.8315,
+       "lon": 33.0593,
+       "score": 88
+      },
+      {
+       "where": "2 km N of Lagoudera",
+       "spot": 622,
+       "lat": 34.9809,
+       "lon": 33.0092,
+       "score": 83
+      },
+      {
+       "where": "4 km E of Statos-Agios Photios",
+       "spot": 432,
+       "lat": 34.876,
+       "lon": 32.6625,
+       "score": 80
+      }
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-11-16",
+   "weekday": "Monday",
+   "confidence": "medium",
+   "island": {
+    "median_score": 69,
+    "zones_70_plus": 345,
+    "zones_total": 724
+   },
+   "top_zones": [
+    {
+     "rank": 1,
+     "where": "2 km E of Louvaras",
+     "spot": 496,
+     "lat": 34.8315,
+     "lon": 33.0593,
+     "score": 88,
+     "why": "Good: 25 mm soaking rain 7-20 days ago; 12 °C average this week; soil wetter than 81% of last season; 61 mm rain in 30 days. Weak: shady slopes and valleys.",
+     "mushroom_clock": "Soaking rain 9 days ago. Window OPEN — about 11 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.94
+     },
+     "altitude_m": [
+      547,
+      964
+     ],
+     "inputs": {
+      "rain_30d_mm": 61.0,
+      "pulse_mm": 25.3,
+      "t7_mean_c": 12.2,
+      "soil_percentile": 81.0,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.68,
+      "rain_pulse": 1.0,
+      "temperature": 1.0,
+      "soil_moisture": 1.0,
+      "season_altitude": 1.0,
+      "shade": 0.4
+     }
+    },
+    {
+     "rank": 2,
+     "where": "2 km N of Lagoudera",
+     "spot": 622,
+     "lat": 34.9809,
+     "lon": 33.0092,
+     "score": 83,
+     "why": "Good: 12 °C average this week; soil wetter than 86% of last season; 23 mm soaking rain 7-20 days ago.",
+     "mushroom_clock": "Soaking rain 9 days ago. Window OPEN — about 11 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.95
+     },
+     "altitude_m": [
+      715,
+      1161
+     ],
+     "inputs": {
+      "rain_30d_mm": 53.5,
+      "pulse_mm": 22.8,
+      "t7_mean_c": 11.7,
+      "soil_percentile": 85.9,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.56,
+      "rain_pulse": 0.86,
+      "temperature": 1.0,
+      "soil_moisture": 0.99,
+      "season_altitude": 1.0,
+      "shade": 0.43
+     }
+    },
+    {
+     "rank": 3,
+     "where": "4 km E of Statos-Agios Photios",
+     "spot": 432,
+     "lat": 34.876,
+     "lon": 32.6625,
+     "score": 79,
+     "why": "Good: 15 °C average this week; 26 mm soaking rain 7-20 days ago; soil wetter than 75% of last season. Weak: 39 mm rain in 30 days; shady slopes and valleys.",
+     "mushroom_clock": "Soaking rain 18 days ago. Window OPEN — about 2 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.58,
+      "Other broadleaf": 0.42
+     },
+     "altitude_m": [
+      277,
+      533
+     ],
+     "inputs": {
+      "rain_30d_mm": 38.5,
+      "pulse_mm": 25.8,
+      "t7_mean_c": 14.9,
+      "soil_percentile": 75.4,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.31,
+      "rain_pulse": 0.98,
+      "temperature": 1.0,
+      "soil_moisture": 0.92,
+      "season_altitude": 1.0,
+      "shade": 0.37
+     }
+    },
+    {
+     "rank": 4,
+     "where": "2 km W of Alassa",
+     "spot": 589,
+     "lat": 34.7667,
+     "lon": 32.9059,
+     "score": 78,
+     "why": "Good: 26 mm soaking rain 7-20 days ago; 15 °C average this week; soil wetter than 74% of last season. Weak: 38 mm rain in 30 days; shady slopes and valleys.",
+     "mushroom_clock": "Soaking rain 18 days ago. Window OPEN — about 2 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.12,
+      "Other broadleaf": 0.88
+     },
+     "altitude_m": [
+      242,
+      441
+     ],
+     "inputs": {
+      "rain_30d_mm": 37.6,
+      "pulse_mm": 26.0,
+      "t7_mean_c": 15.1,
+      "soil_percentile": 73.9,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.29,
+      "rain_pulse": 1.0,
+      "temperature": 1.0,
+      "soil_moisture": 0.9,
+      "season_altitude": 1.0,
+      "shade": 0.37
+     }
+    },
+    {
+     "rank": 5,
+     "where": "1 km N of Omodos",
+     "spot": 717,
+     "lat": 34.8602,
+     "lon": 32.8043,
+     "score": 78,
+     "why": "Good: 13 °C average this week; soil wetter than 74% of last season; 23 mm soaking rain 7-20 days ago. Weak: 39 mm rain in 30 days.",
+     "mushroom_clock": "Soaking rain 16 days ago. Window OPEN — about 4 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.18,
+      "Golden oak (likely)": 0.18,
+      "Other broadleaf": 0.65
+     },
+     "altitude_m": [
+      830,
+      990
+     ],
+     "inputs": {
+      "rain_30d_mm": 38.5,
+      "pulse_mm": 23.3,
+      "t7_mean_c": 12.8,
+      "soil_percentile": 73.9,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.31,
+      "rain_pulse": 0.88,
+      "temperature": 1.0,
+      "soil_moisture": 0.9,
+      "season_altitude": 1.0,
+      "shade": 0.5
+     }
+    }
+   ],
+   "species": {
+    "lde": {
+     "label": "good conditions for Lactarius deliciosus (red pine mushroom) habitat",
+     "in_season": true,
+     "season": "Oct-Jan",
+     "top_zones": [
+      {
+       "where": "2 km E of Louvaras",
+       "spot": 496,
+       "lat": 34.8315,
+       "lon": 33.0593,
+       "score": 88
+      },
+      {
+       "where": "2 km N of Lagoudera",
+       "spot": 622,
+       "lat": 34.9809,
+       "lon": 33.0092,
+       "score": 83
+      },
+      {
+       "where": "4 km E of Statos-Agios Photios",
+       "spot": 432,
+       "lat": 34.876,
+       "lon": 32.6625,
+       "score": 79
+      }
+     ]
+    },
+    "lsa": {
+     "label": "good conditions for Lactarius sanguifluus (bloody milk cap) habitat",
+     "in_season": false,
+     "season": "Sep-Oct",
+     "top_zones": []
+    },
+    "rde": {
+     "label": "good conditions for Russula delica (milk-white brittlegill) habitat",
+     "in_season": false,
+     "season": "Sep-Oct",
+     "top_zones": []
+    },
+    "tca": {
+     "label": "good conditions for Tricholoma caligatum (matsutake) habitat",
+     "in_season": true,
+     "season": "Nov-Jan",
+     "top_zones": [
+      {
+       "where": "2 km E of Louvaras",
+       "spot": 496,
+       "lat": 34.8315,
+       "lon": 33.0593,
+       "score": 88
+      },
+      {
+       "where": "2 km N of Lagoudera",
+       "spot": 622,
+       "lat": 34.9809,
+       "lon": 33.0092,
+       "score": 83
+      },
+      {
+       "where": "3 km S of Prastio",
+       "spot": 608,
+       "lat": 34.7814,
+       "lon": 33.1382,
+       "score": 81
+      }
+     ]
+    },
+    "mor": {
+     "label": "good conditions for Morchella esculenta / elata (morels) habitat",
+     "in_season": false,
+     "season": "Mar-Apr",
+     "top_zones": []
+    },
+    "slu": {
+     "label": "good conditions for Suillus luteus (slippery Jack) habitat",
+     "in_season": true,
+     "season": "Oct-Jan",
+     "top_zones": [
+      {
+       "where": "2 km E of Louvaras",
+       "spot": 496,
+       "lat": 34.8315,
+       "lon": 33.0593,
+       "score": 88
+      },
+      {
+       "where": "2 km N of Lagoudera",
+       "spot": 622,
+       "lat": 34.9809,
+       "lon": 33.0092,
+       "score": 83
+      },
+      {
+       "where": "4 km E of Statos-Agios Photios",
+       "spot": 432,
+       "lat": 34.876,
+       "lon": 32.6625,
+       "score": 79
+      }
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-11-17",
+   "weekday": "Tuesday",
+   "confidence": "medium",
+   "island": {
+    "median_score": 68,
+    "zones_70_plus": 326,
+    "zones_total": 724
+   },
+   "top_zones": [
+    {
+     "rank": 1,
+     "where": "2 km E of Louvaras",
+     "spot": 496,
+     "lat": 34.8315,
+     "lon": 33.0593,
+     "score": 88,
+     "why": "Good: 25 mm soaking rain 7-20 days ago; 13 °C average this week; soil wetter than 79% of last season; 62 mm rain in 30 days. Weak: shady slopes and valleys.",
+     "mushroom_clock": "Soaking rain 10 days ago. Window OPEN — about 10 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.94
+     },
+     "altitude_m": [
+      547,
+      964
+     ],
+     "inputs": {
+      "rain_30d_mm": 61.9,
+      "pulse_mm": 25.3,
+      "t7_mean_c": 12.8,
+      "soil_percentile": 79.5,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.7,
+      "rain_pulse": 1.0,
+      "temperature": 1.0,
+      "soil_moisture": 0.99,
+      "season_altitude": 1.0,
+      "shade": 0.4
+     }
+    },
+    {
+     "rank": 2,
+     "where": "2 km N of Lagoudera",
+     "spot": 622,
+     "lat": 34.9809,
+     "lon": 33.0092,
+     "score": 83,
+     "why": "Good: 12 °C average this week; soil wetter than 86% of last season; 22 mm soaking rain 7-20 days ago.",
+     "mushroom_clock": "Soaking rain 10 days ago. Window OPEN — about 10 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.95
+     },
+     "altitude_m": [
+      715,
+      1161
+     ],
+     "inputs": {
+      "rain_30d_mm": 53.8,
+      "pulse_mm": 22.2,
+      "t7_mean_c": 12.2,
+      "soil_percentile": 85.5,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.56,
+      "rain_pulse": 0.82,
+      "temperature": 1.0,
+      "soil_moisture": 0.99,
+      "season_altitude": 1.0,
+      "shade": 0.43
+     }
+    },
+    {
+     "rank": 3,
+     "where": "4 km E of Statos-Agios Photios",
+     "spot": 432,
+     "lat": 34.876,
+     "lon": 32.6625,
+     "score": 78,
+     "why": "Good: 15 °C average this week; 26 mm soaking rain 7-20 days ago; soil wetter than 75% of last season. Weak: 39 mm rain in 30 days; shady slopes and valleys.",
+     "mushroom_clock": "Soaking rain 19 days ago. Window OPEN — about 1 more day.",
+     "trees": {
+      "Calabrian pine (likely)": 0.58,
+      "Other broadleaf": 0.42
+     },
+     "altitude_m": [
+      277,
+      533
+     ],
+     "inputs": {
+      "rain_30d_mm": 38.6,
+      "pulse_mm": 25.7,
+      "t7_mean_c": 15.3,
+      "soil_percentile": 74.9,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.31,
+      "rain_pulse": 0.98,
+      "temperature": 1.0,
+      "soil_moisture": 0.92,
+      "season_altitude": 1.0,
+      "shade": 0.37
+     }
+    },
+    {
+     "rank": 4,
+     "where": "1 km N of Omodos",
+     "spot": 717,
+     "lat": 34.8602,
+     "lon": 32.8043,
+     "score": 78,
+     "why": "Good: 13 °C average this week; 23 mm soaking rain 7-20 days ago; soil wetter than 73% of last season. Weak: 39 mm rain in 30 days.",
+     "mushroom_clock": "Soaking rain 17 days ago. Window OPEN — about 3 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.18,
+      "Golden oak (likely)": 0.18,
+      "Other broadleaf": 0.65
+     },
+     "altitude_m": [
+      830,
+      990
+     ],
+     "inputs": {
+      "rain_30d_mm": 39.3,
+      "pulse_mm": 23.3,
+      "t7_mean_c": 13.2,
+      "soil_percentile": 72.9,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.32,
+      "rain_pulse": 0.88,
+      "temperature": 1.0,
+      "soil_moisture": 0.88,
+      "season_altitude": 1.0,
+      "shade": 0.5
+     }
+    },
+    {
+     "rank": 5,
+     "where": "1 km NW of Karvounas",
+     "spot": 635,
+     "lat": 34.9501,
+     "lon": 32.9182,
+     "score": 78,
+     "why": "Good: 11 °C average this week; soil wetter than 72% of last season; 19 mm soaking rain 7-20 days ago.",
+     "mushroom_clock": "No soaking rain (20 mm+) in the last month. Fruiting window closed.",
+     "trees": {
+      "Calabrian pine (likely)": 0.42,
+      "Troodos black pine (likely)": 0.57
+     },
+     "altitude_m": [
+      954,
+      1644
+     ],
+     "inputs": {
+      "rain_30d_mm": 51.9,
+      "pulse_mm": 19.3,
+      "t7_mean_c": 10.9,
+      "soil_percentile": 72.1,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.53,
+      "rain_pulse": 0.62,
+      "temperature": 1.0,
+      "soil_moisture": 0.87,
+      "season_altitude": 1.0,
+      "shade": 0.49
+     }
+    }
+   ],
+   "species": {
+    "lde": {
+     "label": "good conditions for Lactarius deliciosus (red pine mushroom) habitat",
+     "in_season": true,
+     "season": "Oct-Jan",
+     "top_zones": [
+      {
+       "where": "2 km E of Louvaras",
+       "spot": 496,
+       "lat": 34.8315,
+       "lon": 33.0593,
+       "score": 88
+      },
+      {
+       "where": "2 km N of Lagoudera",
+       "spot": 622,
+       "lat": 34.9809,
+       "lon": 33.0092,
+       "score": 83
+      },
+      {
+       "where": "4 km E of Statos-Agios Photios",
+       "spot": 432,
+       "lat": 34.876,
+       "lon": 32.6625,
+       "score": 78
+      }
+     ]
+    },
+    "lsa": {
+     "label": "good conditions for Lactarius sanguifluus (bloody milk cap) habitat",
+     "in_season": false,
+     "season": "Sep-Oct",
+     "top_zones": []
+    },
+    "rde": {
+     "label": "good conditions for Russula delica (milk-white brittlegill) habitat",
+     "in_season": false,
+     "season": "Sep-Oct",
+     "top_zones": []
+    },
+    "tca": {
+     "label": "good conditions for Tricholoma caligatum (matsutake) habitat",
+     "in_season": true,
+     "season": "Nov-Jan",
+     "top_zones": [
+      {
+       "where": "2 km E of Louvaras",
+       "spot": 496,
+       "lat": 34.8315,
+       "lon": 33.0593,
+       "score": 88
+      },
+      {
+       "where": "2 km N of Lagoudera",
+       "spot": 622,
+       "lat": 34.9809,
+       "lon": 33.0092,
+       "score": 83
+      },
+      {
+       "where": "3 km S of Prastio",
+       "spot": 608,
+       "lat": 34.7814,
+       "lon": 33.1382,
+       "score": 81
+      }
+     ]
+    },
+    "mor": {
+     "label": "good conditions for Morchella esculenta / elata (morels) habitat",
+     "in_season": false,
+     "season": "Mar-Apr",
+     "top_zones": []
+    },
+    "slu": {
+     "label": "good conditions for Suillus luteus (slippery Jack) habitat",
+     "in_season": true,
+     "season": "Oct-Jan",
+     "top_zones": [
+      {
+       "where": "2 km E of Louvaras",
+       "spot": 496,
+       "lat": 34.8315,
+       "lon": 33.0593,
+       "score": 88
+      },
+      {
+       "where": "2 km N of Lagoudera",
+       "spot": 622,
+       "lat": 34.9809,
+       "lon": 33.0092,
+       "score": 83
+      },
+      {
+       "where": "4 km E of Statos-Agios Photios",
+       "spot": 432,
+       "lat": 34.876,
+       "lon": 32.6625,
+       "score": 78
+      }
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-11-18",
+   "weekday": "Wednesday",
+   "confidence": "low",
+   "island": {
+    "median_score": 67,
+    "zones_70_plus": 279,
+    "zones_total": 724
+   },
+   "top_zones": [
+    {
+     "rank": 1,
+     "where": "2 km W of Dierona",
+     "spot": 497,
+     "lat": 34.8282,
+     "lon": 33.0876,
+     "score": 88,
+     "why": "Good: 25 mm soaking rain 7-20 days ago; 13 °C average this week; soil wetter than 79% of last season; 62 mm rain in 30 days. Weak: shady slopes and valleys.",
+     "mushroom_clock": "Soaking rain 11 days ago. Window OPEN — about 9 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.97
+     },
+     "altitude_m": [
+      469,
+      852
+     ],
+     "inputs": {
+      "rain_30d_mm": 62.2,
+      "pulse_mm": 25.3,
+      "t7_mean_c": 13.3,
+      "soil_percentile": 79.4,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.7,
+      "rain_pulse": 1.0,
+      "temperature": 1.0,
+      "soil_moisture": 0.98,
+      "season_altitude": 1.0,
+      "shade": 0.39
+     }
+    },
+    {
+     "rank": 2,
+     "where": "2 km N of Lagoudera",
+     "spot": 622,
+     "lat": 34.9809,
+     "lon": 33.0092,
+     "score": 83,
+     "why": "Good: 12 °C average this week; soil wetter than 85% of last season; 22 mm soaking rain 7-20 days ago.",
+     "mushroom_clock": "Soaking rain 11 days ago. Window OPEN — about 9 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.95
+     },
+     "altitude_m": [
+      715,
+      1161
+     ],
+     "inputs": {
+      "rain_30d_mm": 54.7,
+      "pulse_mm": 22.2,
+      "t7_mean_c": 12.3,
+      "soil_percentile": 84.9,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.58,
+      "rain_pulse": 0.81,
+      "temperature": 1.0,
+      "soil_moisture": 0.98,
+      "season_altitude": 1.0,
+      "shade": 0.43
+     }
+    },
+    {
+     "rank": 3,
+     "where": "1 km NW of Karvounas",
+     "spot": 635,
+     "lat": 34.9501,
+     "lon": 32.9182,
+     "score": 78,
+     "why": "Good: 11 °C average this week; soil wetter than 73% of last season; 19 mm soaking rain 7-20 days ago.",
+     "mushroom_clock": "No soaking rain (20 mm+) in the last month. Fruiting window closed.",
+     "trees": {
+      "Calabrian pine (likely)": 0.42,
+      "Troodos black pine (likely)": 0.57
+     },
+     "altitude_m": [
+      954,
+      1644
+     ],
+     "inputs": {
+      "rain_30d_mm": 53.0,
+      "pulse_mm": 19.2,
+      "t7_mean_c": 11.1,
+      "soil_percentile": 72.7,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.55,
+      "rain_pulse": 0.61,
+      "temperature": 1.0,
+      "soil_moisture": 0.88,
+      "season_altitude": 1.0,
+      "shade": 0.49
+     }
+    },
+    {
+     "rank": 4,
+     "where": "1 km N of Omodos",
+     "spot": 717,
+     "lat": 34.8602,
+     "lon": 32.8043,
+     "score": 77,
+     "why": "Good: 13 °C average this week; soil wetter than 73% of last season; 23 mm soaking rain 7-20 days ago. Weak: 40 mm rain in 30 days.",
+     "mushroom_clock": "Soaking rain 18 days ago. Window OPEN — about 2 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.18,
+      "Golden oak (likely)": 0.18,
+      "Other broadleaf": 0.65
+     },
+     "altitude_m": [
+      830,
+      990
+     ],
+     "inputs": {
+      "rain_30d_mm": 39.6,
+      "pulse_mm": 22.7,
+      "t7_mean_c": 13.4,
+      "soil_percentile": 72.8,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.33,
+      "rain_pulse": 0.85,
+      "temperature": 1.0,
+      "soil_moisture": 0.88,
+      "season_altitude": 1.0,
+      "shade": 0.5
+     }
+    },
+    {
+     "rank": 5,
+     "where": "2 km E of Kinousa",
+     "spot": 346,
+     "lat": 35.0348,
+     "lon": 32.5263,
+     "score": 77,
+     "why": "Good: 16 °C average this week; soil wetter than 90% of last season; 22 mm soaking rain 7-20 days ago. Weak: 39 mm rain in 30 days; shady slopes and valleys.",
+     "mushroom_clock": "Soaking rain 18 days ago. Window OPEN — about 2 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 1.0
+     },
+     "altitude_m": [
+      133,
+      527
+     ],
+     "inputs": {
+      "rain_30d_mm": 38.6,
+      "pulse_mm": 21.9,
+      "t7_mean_c": 15.8,
+      "soil_percentile": 90.2,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.31,
+      "rain_pulse": 0.79,
+      "temperature": 1.0,
+      "soil_moisture": 1.0,
+      "season_altitude": 1.0,
+      "shade": 0.4
+     }
+    }
+   ],
+   "species": {
+    "lde": {
+     "label": "good conditions for Lactarius deliciosus (red pine mushroom) habitat",
+     "in_season": true,
+     "season": "Oct-Jan",
+     "top_zones": [
+      {
+       "where": "2 km W of Dierona",
+       "spot": 497,
+       "lat": 34.8282,
+       "lon": 33.0876,
+       "score": 88
+      },
+      {
+       "where": "2 km N of Lagoudera",
+       "spot": 622,
+       "lat": 34.9809,
+       "lon": 33.0092,
+       "score": 83
+      },
+      {
+       "where": "1 km NW of Karvounas",
+       "spot": 635,
+       "lat": 34.9501,
+       "lon": 32.9182,
+       "score": 78
+      }
+     ]
+    },
+    "lsa": {
+     "label": "good conditions for Lactarius sanguifluus (bloody milk cap) habitat",
+     "in_season": false,
+     "season": "Sep-Oct",
+     "top_zones": []
+    },
+    "rde": {
+     "label": "good conditions for Russula delica (milk-white brittlegill) habitat",
+     "in_season": false,
+     "season": "Sep-Oct",
+     "top_zones": []
+    },
+    "tca": {
+     "label": "good conditions for Tricholoma caligatum (matsutake) habitat",
+     "in_season": true,
+     "season": "Nov-Jan",
+     "top_zones": [
+      {
+       "where": "2 km E of Louvaras",
+       "spot": 496,
+       "lat": 34.8315,
+       "lon": 33.0593,
+       "score": 87
+      },
+      {
+       "where": "2 km N of Lagoudera",
+       "spot": 622,
+       "lat": 34.9809,
+       "lon": 33.0092,
+       "score": 83
+      },
+      {
+       "where": "3 km S of Prastio",
+       "spot": 608,
+       "lat": 34.7814,
+       "lon": 33.1382,
+       "score": 81
+      }
+     ]
+    },
+    "mor": {
+     "label": "good conditions for Morchella esculenta / elata (morels) habitat",
+     "in_season": false,
+     "season": "Mar-Apr",
+     "top_zones": []
+    },
+    "slu": {
+     "label": "good conditions for Suillus luteus (slippery Jack) habitat",
+     "in_season": true,
+     "season": "Oct-Jan",
+     "top_zones": [
+      {
+       "where": "2 km W of Dierona",
+       "spot": 497,
+       "lat": 34.8282,
+       "lon": 33.0876,
+       "score": 88
+      },
+      {
+       "where": "2 km N of Lagoudera",
+       "spot": 622,
+       "lat": 34.9809,
+       "lon": 33.0092,
+       "score": 83
+      },
+      {
+       "where": "1 km NW of Karvounas",
+       "spot": 635,
+       "lat": 34.9501,
+       "lon": 32.9182,
+       "score": 78
+      }
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-11-19",
+   "weekday": "Thursday",
+   "confidence": "low",
+   "island": {
+    "median_score": 65,
+    "zones_70_plus": 147,
+    "zones_total": 724
+   },
+   "top_zones": [
+    {
+     "rank": 1,
+     "where": "2 km E of Louvaras",
+     "spot": 496,
+     "lat": 34.8315,
+     "lon": 33.0593,
+     "score": 92,
+     "why": "Good: 25 mm soaking rain 7-20 days ago; 13 °C average this week; soil wetter than 93% of last season; 74 mm rain in 30 days. Weak: shady slopes and valleys.",
+     "mushroom_clock": "Soaking rain 12 days ago. Window OPEN — about 8 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.94
+     },
+     "altitude_m": [
+      547,
+      964
+     ],
+     "inputs": {
+      "rain_30d_mm": 74.2,
+      "pulse_mm": 25.3,
+      "t7_mean_c": 13.0,
+      "soil_percentile": 92.6,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.9,
+      "rain_pulse": 1.0,
+      "temperature": 1.0,
+      "soil_moisture": 1.0,
+      "season_altitude": 1.0,
+      "shade": 0.4
+     }
+    },
+    {
+     "rank": 2,
+     "where": "Kannavia",
+     "spot": 621,
+     "lat": 34.9841,
+     "lon": 32.9809,
+     "score": 85,
+     "why": "Good: 13 °C average this week; soil wetter than 85% of last season; 21 mm soaking rain 7-20 days ago; 62 mm rain in 30 days.",
+     "mushroom_clock": "No soaking rain (20 mm+) in the last month. Fruiting window closed.",
+     "trees": {
+      "Calabrian pine (likely)": 0.79,
+      "Golden oak (likely)": 0.21
+     },
+     "altitude_m": [
+      689,
+      961
+     ],
+     "inputs": {
+      "rain_30d_mm": 62.4,
+      "pulse_mm": 20.9,
+      "t7_mean_c": 13.3,
+      "soil_percentile": 85.0,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.71,
+      "rain_pulse": 0.73,
+      "temperature": 1.0,
+      "soil_moisture": 1.0,
+      "season_altitude": 1.0,
+      "shade": 0.47
+     }
+    },
+    {
+     "rank": 3,
+     "where": "3 km S of Prastio",
+     "spot": 608,
+     "lat": 34.7814,
+     "lon": 33.1382,
+     "score": 81,
+     "why": "Good: 15 °C average this week; soil wetter than 85% of last season; 62 mm rain in 30 days; 19 mm soaking rain 7-20 days ago. Weak: shady slopes and valleys.",
+     "mushroom_clock": "No soaking rain (20 mm+) in the last month. Fruiting window closed.",
+     "trees": {
+      "Calabrian pine (likely)": 1.0
+     },
+     "altitude_m": [
+      271,
+      662
+     ],
+     "inputs": {
+      "rain_30d_mm": 61.7,
+      "pulse_mm": 19.2,
+      "t7_mean_c": 14.9,
+      "soil_percentile": 84.6,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.7,
+      "rain_pulse": 0.62,
+      "temperature": 1.0,
+      "soil_moisture": 1.0,
+      "season_altitude": 1.0,
+      "shade": 0.34
+     }
+    },
+    {
+     "rank": 4,
+     "where": "1 km NE of Fterikoudi",
+     "spot": 672,
+     "lat": 34.9526,
+     "lon": 33.0771,
+     "score": 80,
+     "why": "Good: 13 °C average this week; soil wetter than 76% of last season; 58 mm rain in 30 days.",
+     "mushroom_clock": "Soaking rain 12 days ago. Window OPEN — about 8 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.81,
+      "Golden oak (likely)": 0.19
+     },
+     "altitude_m": [
+      675,
+      1061
+     ],
+     "inputs": {
+      "rain_30d_mm": 58.4,
+      "pulse_mm": 18.9,
+      "t7_mean_c": 12.9,
+      "soil_percentile": 75.8,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.64,
+      "rain_pulse": 0.59,
+      "temperature": 1.0,
+      "soil_moisture": 0.92,
+      "season_altitude": 1.0,
+      "shade": 0.46
+     }
+    },
+    {
+     "rank": 5,
+     "where": "Melini",
+     "spot": 581,
+     "lat": 34.8622,
+     "lon": 33.1502,
+     "score": 79,
+     "why": "Good: 14 °C average this week; soil wetter than 73% of last season; 63 mm rain in 30 days. Weak: shady slopes and valleys.",
+     "mushroom_clock": "No soaking rain (20 mm+) in the last month. Fruiting window closed.",
+     "trees": {
+      "Calabrian pine (likely)": 0.99
+     },
+     "altitude_m": [
+      491,
+      814
+     ],
+     "inputs": {
+      "rain_30d_mm": 62.9,
+      "pulse_mm": 18.9,
+      "t7_mean_c": 14.2,
+      "soil_percentile": 73.5,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.72,
+      "rain_pulse": 0.59,
+      "temperature": 1.0,
+      "soil_moisture": 0.88,
+      "season_altitude": 1.0,
+      "shade": 0.29
+     }
+    }
+   ],
+   "species": {
+    "lde": {
+     "label": "good conditions for Lactarius deliciosus (red pine mushroom) habitat",
+     "in_season": true,
+     "season": "Oct-Jan",
+     "top_zones": [
+      {
+       "where": "2 km E of Louvaras",
+       "spot": 496,
+       "lat": 34.8315,
+       "lon": 33.0593,
+       "score": 92
+      },
+      {
+       "where": "Kannavia",
+       "spot": 621,
+       "lat": 34.9841,
+       "lon": 32.9809,
+       "score": 85
+      },
+      {
+       "where": "3 km S of Prastio",
+       "spot": 608,
+       "lat": 34.7814,
+       "lon": 33.1382,
+       "score": 81
+      }
+     ]
+    },
+    "lsa": {
+     "label": "good conditions for Lactarius sanguifluus (bloody milk cap) habitat",
+     "in_season": false,
+     "season": "Sep-Oct",
+     "top_zones": []
+    },
+    "rde": {
+     "label": "good conditions for Russula delica (milk-white brittlegill) habitat",
+     "in_season": false,
+     "season": "Sep-Oct",
+     "top_zones": []
+    },
+    "tca": {
+     "label": "good conditions for Tricholoma caligatum (matsutake) habitat",
+     "in_season": true,
+     "season": "Nov-Jan",
+     "top_zones": [
+      {
+       "where": "2 km E of Louvaras",
+       "spot": 496,
+       "lat": 34.8315,
+       "lon": 33.0593,
+       "score": 92
+      },
+      {
+       "where": "Kannavia",
+       "spot": 621,
+       "lat": 34.9841,
+       "lon": 32.9809,
+       "score": 85
+      },
+      {
+       "where": "3 km S of Prastio",
+       "spot": 608,
+       "lat": 34.7814,
+       "lon": 33.1382,
+       "score": 84
+      }
+     ]
+    },
+    "mor": {
+     "label": "good conditions for Morchella esculenta / elata (morels) habitat",
+     "in_season": false,
+     "season": "Mar-Apr",
+     "top_zones": []
+    },
+    "slu": {
+     "label": "good conditions for Suillus luteus (slippery Jack) habitat",
+     "in_season": true,
+     "season": "Oct-Jan",
+     "top_zones": [
+      {
+       "where": "2 km E of Louvaras",
+       "spot": 496,
+       "lat": 34.8315,
+       "lon": 33.0593,
+       "score": 92
+      },
+      {
+       "where": "Kannavia",
+       "spot": 621,
+       "lat": 34.9841,
+       "lon": 32.9809,
+       "score": 84
+      },
+      {
+       "where": "3 km S of Prastio",
+       "spot": 608,
+       "lat": 34.7814,
+       "lon": 33.1382,
+       "score": 81
+      }
+     ]
+    }
+   }
+  },
+  {
+   "date": "2026-11-20",
+   "weekday": "Friday",
+   "confidence": "low",
+   "island": {
+    "median_score": 66,
+    "zones_70_plus": 176,
+    "zones_total": 724
+   },
+   "top_zones": [
+    {
+     "rank": 1,
+     "where": "2 km E of Louvaras",
+     "spot": 496,
+     "lat": 34.8315,
+     "lon": 33.0593,
+     "score": 92,
+     "why": "Good: 25 mm soaking rain 7-20 days ago; 13 °C average this week; soil wetter than 95% of last season; 74 mm rain in 30 days. Weak: shady slopes and valleys.",
+     "mushroom_clock": "Soaking rain 13 days ago. Window OPEN — about 7 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.94
+     },
+     "altitude_m": [
+      547,
+      964
+     ],
+     "inputs": {
+      "rain_30d_mm": 73.7,
+      "pulse_mm": 25.3,
+      "t7_mean_c": 12.9,
+      "soil_percentile": 95.0,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.89,
+      "rain_pulse": 1.0,
+      "temperature": 1.0,
+      "soil_moisture": 1.0,
+      "season_altitude": 1.0,
+      "shade": 0.4
+     }
+    },
+    {
+     "rank": 2,
+     "where": "Kannavia",
+     "spot": 621,
+     "lat": 34.9841,
+     "lon": 32.9809,
+     "score": 85,
+     "why": "Good: 13 °C average this week; soil wetter than 90% of last season; 21 mm soaking rain 7-20 days ago; 62 mm rain in 30 days.",
+     "mushroom_clock": "No soaking rain (20 mm+) in the last month. Fruiting window closed.",
+     "trees": {
+      "Calabrian pine (likely)": 0.79,
+      "Golden oak (likely)": 0.21
+     },
+     "altitude_m": [
+      689,
+      961
+     ],
+     "inputs": {
+      "rain_30d_mm": 62.4,
+      "pulse_mm": 20.9,
+      "t7_mean_c": 13.1,
+      "soil_percentile": 89.7,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.71,
+      "rain_pulse": 0.73,
+      "temperature": 1.0,
+      "soil_moisture": 1.0,
+      "season_altitude": 1.0,
+      "shade": 0.47
+     }
+    },
+    {
+     "rank": 3,
+     "where": "2 km SE of Prastio",
+     "spot": 553,
+     "lat": 34.7999,
+     "lon": 33.1554,
+     "score": 82,
+     "why": "Good: 14 °C average this week; soil wetter than 87% of last season; 63 mm rain in 30 days; 20 mm soaking rain 7-20 days ago. Weak: shady slopes and valleys.",
+     "mushroom_clock": "No soaking rain (20 mm+) in the last month. Fruiting window closed.",
+     "trees": {
+      "Calabrian pine (likely)": 0.98
+     },
+     "altitude_m": [
+      369,
+      696
+     ],
+     "inputs": {
+      "rain_30d_mm": 63.5,
+      "pulse_mm": 19.8,
+      "t7_mean_c": 14.5,
+      "soil_percentile": 86.8,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.72,
+      "rain_pulse": 0.65,
+      "temperature": 1.0,
+      "soil_moisture": 1.0,
+      "season_altitude": 1.0,
+      "shade": 0.28
+     }
+    },
+    {
+     "rank": 4,
+     "where": "1 km NE of Fterikoudi",
+     "spot": 672,
+     "lat": 34.9526,
+     "lon": 33.0771,
+     "score": 81,
+     "why": "Good: 13 °C average this week; soil wetter than 82% of last season; 58 mm rain in 30 days.",
+     "mushroom_clock": "Soaking rain 13 days ago. Window OPEN — about 7 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.81,
+      "Golden oak (likely)": 0.19
+     },
+     "altitude_m": [
+      675,
+      1061
+     ],
+     "inputs": {
+      "rain_30d_mm": 58.4,
+      "pulse_mm": 18.9,
+      "t7_mean_c": 12.8,
+      "soil_percentile": 81.5,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.64,
+      "rain_pulse": 0.59,
+      "temperature": 1.0,
+      "soil_moisture": 0.97,
+      "season_altitude": 1.0,
+      "shade": 0.46
+     }
+    },
+    {
+     "rank": 5,
+     "where": "2 km E of Gourri",
+     "spot": 664,
+     "lat": 34.9615,
+     "lon": 33.1793,
+     "score": 78,
+     "why": "Good: 13 °C average this week; soil wetter than 90% of last season; 19 mm soaking rain 7-20 days ago. Weak: shady slopes and valleys.",
+     "mushroom_clock": "Soaking rain 13 days ago. Window OPEN — about 7 more days.",
+     "trees": {
+      "Calabrian pine (likely)": 0.91
+     },
+     "altitude_m": [
+      729,
+      1084
+     ],
+     "inputs": {
+      "rain_30d_mm": 50.6,
+      "pulse_mm": 19.3,
+      "t7_mean_c": 13.0,
+      "soil_percentile": 90.3,
+      "frost_days": 0.0
+     },
+     "factors_0_to_1": {
+      "rain_total": 0.51,
+      "rain_pulse": 0.62,
+      "temperature": 1.0,
+      "soil_moisture": 1.0,
+      "season_altitude": 1.0,
+      "shade": 0.38
+     }
+    }
+   ],
+   "species": {
+    "lde": {
+     "label": "good conditions for Lactarius deliciosus (red pine mushroom) habitat",
+     "in_season": true,
+     "season": "Oct-Jan",
+     "top_zones": [
+      {
+       "where": "2 km E of Louvaras",
+       "spot": 496,
+       "lat": 34.8315,
+       "lon": 33.0593,
+       "score": 92
+      },
+      {
+       "where": "Kannavia",
+       "spot": 621,
+       "lat": 34.9841,
+       "lon": 32.9809,
+       "score": 85
+      },
+      {
+       "where": "2 km SE of Prastio",
+       "spot": 553,
+       "lat": 34.7999,
+       "lon": 33.1554,
+       "score": 82
+      }
+     ]
+    },
+    "lsa": {
+     "label": "good conditions for Lactarius sanguifluus (bloody milk cap) habitat",
+     "in_season": false,
+     "season": "Sep-Oct",
+     "top_zones": []
+    },
+    "rde": {
+     "label": "good conditions for Russula delica (milk-white brittlegill) habitat",
+     "in_season": false,
+     "season": "Sep-Oct",
+     "top_zones": []
+    },
+    "tca": {
+     "label": "good conditions for Tricholoma caligatum (matsutake) habitat",
+     "in_season": true,
+     "season": "Nov-Jan",
+     "top_zones": [
+      {
+       "where": "2 km E of Louvaras",
+       "spot": 496,
+       "lat": 34.8315,
+       "lon": 33.0593,
+       "score": 92
+      },
+      {
+       "where": "Kannavia",
+       "spot": 621,
+       "lat": 34.9841,
+       "lon": 32.9809,
+       "score": 85
+      },
+      {
+       "where": "3 km S of Prastio",
+       "spot": 608,
+       "lat": 34.7814,
+       "lon": 33.1382,
+       "score": 84
+      }
+     ]
+    },
+    "mor": {
+     "label": "good conditions for Morchella esculenta / elata (morels) habitat",
+     "in_season": false,
+     "season": "Mar-Apr",
+     "top_zones": []
+    },
+    "slu": {
+     "label": "good conditions for Suillus luteus (slippery Jack) habitat",
+     "in_season": true,
+     "season": "Oct-Jan",
+     "top_zones": [
+      {
+       "where": "2 km E of Louvaras",
+       "spot": 496,
+       "lat": 34.8315,
+       "lon": 33.0593,
+       "score": 92
+      },
+      {
+       "where": "Kannavia",
+       "spot": 621,
+       "lat": 34.9841,
+       "lon": 32.9809,
+       "score": 84
+      },
+      {
+       "where": "2 km SE of Prastio",
+       "spot": 553,
+       "lat": 34.7999,
+       "lon": 33.1554,
+       "score": 82
+      }
+     ]
+    }
+   }
+  }
+ ],
+ "species_note": "Species scores change only the habitat filter (trees, altitude) and the season window. They say 'good conditions for [species] habitat', never that the species is there. Out of season = no score."
+}
