@@ -12,7 +12,7 @@ Update it with `DEPLOY_REMOTE=https://github.com/Realexis/cyprus-mushroom-finder
 
 ## How it updates
 
-GitHub Actions runs `.github/workflows/daily.yml` every day at **04:00 UTC** (06:00 Cyprus winter time):
+GitHub Actions runs `.github/workflows/daily.yml` every day at **04:17 UTC** (06:17 Cyprus winter time):
 fetch weather → score today + 7 days → export public data → deploy.
 Run it by hand from the repo's **Actions** tab → *Daily conditions update* → *Run workflow*.
 

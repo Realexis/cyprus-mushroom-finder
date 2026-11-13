@@ -1,4 +1,4 @@
-# Daily conditions update: 04:00 UTC = 06:00 Cyprus winter time (07:00 in summer).
+# Daily conditions update: 04:17 UTC = 06:17 Cyprus winter time (07:17 in summer).
 # Fetch weather -> score today + 7 days -> export PUBLIC data -> deploy to GitHub Pages.
 # If the weather source is down, the run fails before deploying, so the site keeps
 # yesterday's data and shows "Data delayed" by itself.
@@ -6,7 +6,7 @@ name: Daily conditions update
 
 on:
   schedule:
-    - cron: "0 4 * * *"
+    - cron: "17 4 * * *"       # odd minute: GitHub often delays or skips jobs set exactly on the hour
   workflow_dispatch:
     inputs:
       full:
