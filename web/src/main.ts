@@ -17,6 +17,7 @@ import { mountEmergency } from "./ui/safety";
 import { applyTheme, systemTheme } from "./ui/theme";
 import { hideMapTip as hideTip, mountTips, showAt } from "./ui/tips";
 import { renderLegend } from "./ui/legend";
+import { mountSpecies } from "./ui/species";
 import { FullMap, readUrlView, trackMapReady } from "./ui/fullmap";
 
 const abs = (p: string) => new URL(p, document.baseURI).href;
@@ -123,6 +124,7 @@ async function main() {
   };
 
   const legendEl = document.getElementById("map-legend")!;
+  const openSpecies = mountSpecies(() => Number(meta.days[day].date.slice(5, 7)));
   const panel: Panel = new Panel(sheet, meta, day, {
     onMode: (p) => { mapBusy(); applyView(map, p.view); renderLegend(legendEl, p.view); },
     onFrame: (p) => setReplayFrame(map, p.view),
@@ -137,6 +139,7 @@ async function main() {
       return sum.map((x) => (rain.features.length ? x / rain.features.length : 0));
     },
     onCardClosed: () => { picked = null; applySelection(); },
+    openSpecies,
   });
   renderLegend(legendEl, panel.view);
 

@@ -11,6 +11,7 @@ export interface PanelHooks {
   onFrame: (p: Panel) => void;             // a new replay day
   loadRain: () => Promise<number[]>;       // island-average rain per day (loads the rain file once)
   onCardClosed: () => void;
+  openSpecies: (code?: string) => void;    // the mushroom cards (lookalikes first)
 }
 
 export class Panel {
@@ -30,7 +31,9 @@ export class Panel {
     });
     this.el.addEventListener("click", (e) => {
       const t = e.target as Element;
-      if (t.closest("[data-card-close]")) this.closeCard();
+      const sp = t.closest<HTMLElement>("[data-open-card]");
+      if (sp) this.hooks.openSpecies(sp.dataset.openCard || undefined);
+      else if (t.closest("[data-card-close]")) this.closeCard();
       else if (t.closest("#rating") && this.card) { this.card.open = !this.card.open; this.render(); }
       else if (t.closest("#replay-btn")) this.setMode("replay");
       else if (t.closest("#replay-back")) this.setMode("conditions");
@@ -161,6 +164,9 @@ export class Panel {
     this.el.innerHTML = `
       <div class="start-row">
         <p class="today"><b>Today</b> · ${fmtDay(d.date, { weekday: "short", day: "numeric", month: "short" })}</p>
+      </div>
+      <div class="start-btns">
+        <button type="button" class="chip-btn" data-open-card="" data-tip="Photos, season, trees and the deadly lookalikes for each mushroom.">🍄 Mushroom cards</button>
         <button type="button" class="chip-btn" id="replay-btn" data-tip="Watch the last 30 days of rain move over the island, day by day.">🌧 Rain replay</button>
       </div>
       <p class="hint"><b>Double tap</b> the map to zoom in. <b>Tap a square</b> to see its conditions.</p>

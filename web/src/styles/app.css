@@ -235,3 +235,14 @@ dialog.emergency::backdrop { background: rgba(0, 0, 0, 0.6); }
   .sos { padding: 0 10px; font-size: 0.95rem; gap: 4px; }
   .sos svg { width: 14px; height: 14px; }
 }
+
+/* ---------------------------------------------------------------- mushroom cards: ways in */
+.start-btns { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+.start-btns .chip-btn { flex: 1 1 auto; }
+.sp-open { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 8px; text-align: left; cursor: pointer;
+  min-height: 48px; padding: 6px 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface-2); font-size: var(--fs-1); }
+.sp-open:hover { border-color: var(--accent); }
+.sp-open-go { flex: none; font-size: 1.4rem; color: var(--ink-soft); }
+.sp-list { gap: 6px; }
+.page details { margin: 8px 0; }
+.page summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; font-weight: 700; }

@@ -214,8 +214,10 @@ export function cardHTML(c: CardInput, meta: Meta, day: number): string {
   // 2. Mushrooms in season here (this square's trees and altitude, this month).
   const sp = inSeasonHere(Number(p.tree), Number(p.band), month);
   const season = `<h3 class="card-h">In season here in ${monthName}</h3>
-    ${sp.length ? `<ul class="sp-list">${sp.map((s) => `<li><i>${esc(s.latin)}</i> <span class="muted">· ${esc(s.common)} · ${esc(s.season_text)}</span></li>`).join("")}</ul>
-      <p class="muted small">Their trees, altitude and month fit this square. It does not mean they are here.</p>`
+    ${sp.length ? `<ul class="sp-list">${sp.map((s) => `<li><button type="button" class="sp-open" data-open-card="${s.code}"
+        data-tip="Open the mushroom card: photos, what to look for, and its deadly lookalikes."><span><i>${esc(s.latin)}</i>
+        <span class="muted">· ${esc(s.common)} · ${esc(s.season_text)}</span></span><span class="sp-open-go" aria-hidden="true">›</span></button></li>`).join("")}</ul>
+      <p class="muted small">Their trees, altitude and month fit this square. It does not mean they are here. Tap one for its card and its deadly lookalikes.</p>`
       : `<p class="muted small">None of our target mushrooms is in season for these trees and this altitude in ${monthName}.</p>`}`;
 
   // 3. Place facts.
