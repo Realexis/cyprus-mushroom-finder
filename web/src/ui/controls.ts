@@ -45,6 +45,11 @@ export class Panel {
   playing = false;
   private timer = 0;
   private spot: SpotData | null = null;
+  /** Phone panel size: "min" (just a bar), "peek" (days, or the top of a zone), "full" (everything). */
+  sheet: "min" | "peek" | "full" = matchMedia("(max-width: 899px)").matches ? "peek" : "full";
+  /** Phone: is the "Top spots" list open? */
+  bestOpen = false;
+  private setSheet(s: "min" | "peek" | "full") { this.sheet = s; this.render(); }
   /** Best zone per day (set by main.ts from summary.json). */
   best: (day: number, species: string | null) => Best | null = () => null;
   refresh() { this.render(); }
@@ -100,6 +105,10 @@ export class Panel {
   }
 
   showSpot(s: SpotData | null, scroll = true) {
+    if (s && this.sheet === "min") {                     // tapped the map with the panel hidden: show the short panel
+      this.spot = s; this.sheet = "peek"; this.render();
+      return;
+    }
     this.spot = s;
     this.renderSpot();
     if (s && scroll) this.el.querySelector("#spot")?.scrollIntoView({ block: "nearest" });
@@ -194,14 +203,29 @@ export class Panel {
           <b>${new Date(2000, sp.months[0] - 1, 1).toLocaleDateString("en-GB", { month: "long" })}</b>. For now, pick an in-season species.</p>`) : "";
 
     this.el.innerHTML = `
-      <button class="grip-btn" id="grip" type="button" aria-label="Show more or less" data-tip="Tap to show more or fewer controls."><div class="grip"></div></button>
+      <div class="sheet-top">
+        ${this.sheet === "min" ? `<span class="sheet-top-label">Days · Top spots</span>` : `<button type="button" class="sheet-chip" id="sheet-size" aria-expanded="${this.sheet === "full"}"
+          data-tip="${this.sheet === "full" ? "Make the panel smaller." : "Show everything: details, species, rain and settings."}">${this.sheet === "full" ? "▾ Less" : "▴ More"}</button>`}
+        <button class="grip-btn" id="grip" type="button" aria-label="${this.sheet === "full" ? "Show less" : "Show more"}"><div class="grip"></div></button>
+        <button type="button" class="sheet-chip" id="sheet-hide" aria-expanded="${this.sheet !== "min"}"
+          data-tip="${this.sheet === "min" ? "Show the panel again." : "Hide the panel to see more map."}">${this.sheet === "min" ? "▴ Show panel" : "▾ Hide"}</button>
+      </div>
       <div class="spot" id="spot" hidden></div>
+      <div class="days-block">
       <h2 id="days-h">Day</h2>
       <div class="days" role="group" aria-labelledby="days-h">${days}</div>
       <p class="conf-line">${fmtDay(cur.date, { weekday: "long", day: "numeric", month: "long" })}
         ${(() => { const b = this.best(this.day, this.species); return b ? `· best zone <b>${b.score}</b>, ${esc(b.where)}` : ""; })()}
         · Forecast: <b>${CONF_WORD[cur.confidence]}</b></p>
-      ${this.mode === "conditions" ? this.best3HTML() : ""}
+      ${(() => {
+        const b3 = this.mode === "conditions" ? this.best3HTML() : "";
+        if (!b3) return "";
+        const d = this.meta.days[this.day];
+        return `<button type="button" class="best-toggle" id="best-toggle" aria-expanded="${this.bestOpen}"
+            data-tip="Show or hide the three best zones of this day.">
+            ${this.bestOpen ? "▾" : "▸"} Top spots ${d.offset === 0 ? "today" : fmtDay(d.date, { weekday: "long" })}</button>${b3}`;
+      })()}
+      </div>
       <div class="sheet-more">
       <h2 id="sp-h"><label for="species">Conditions for</label></h2>
       <div class="sp-row">
@@ -269,7 +293,13 @@ export class Panel {
       this.replayIndex = Math.max(0, Math.min(REPLAY_DAYS - 1, Math.floor(((e.clientX - r.left) / r.width) * REPLAY_DAYS)));
       this.updateReplay(); this.onFrame(this);
     });
-    this.el.querySelector("#grip")?.addEventListener("click", () => this.el.classList.toggle("collapsed"));
+    // Phone panel size controls
+    this.el.dataset.sheet = this.sheet;
+    this.el.classList.toggle("best-open", this.bestOpen);
+    this.el.querySelector("#grip")?.addEventListener("click", () => this.setSheet(this.sheet === "full" ? "peek" : "full"));
+    this.el.querySelector("#sheet-size")?.addEventListener("click", () => this.setSheet(this.sheet === "full" ? "peek" : "full"));
+    this.el.querySelector("#sheet-hide")?.addEventListener("click", () => this.setSheet(this.sheet === "min" ? "peek" : "min"));
+    this.el.querySelector("#best-toggle")?.addEventListener("click", () => { this.bestOpen = !this.bestOpen; this.render(); });
     this.el.querySelector("#theme-btn")?.addEventListener("click", () => document.dispatchEvent(new Event("toggle-theme")));
     this.el.querySelector("#guide-btn")?.addEventListener("click", () => document.dispatchEvent(new Event("open-guide")));
     if (this.mode === "replay") this.updateReplay();
@@ -334,6 +364,9 @@ export class Panel {
     el.querySelectorAll<HTMLButtonElement>("[data-open-card]").forEach((b) =>
       b.addEventListener("click", () => this.openSpecies(b.dataset.openCard!)));
     el.querySelector("#spot-close")?.addEventListener("click", () => this.closeSpot(true));
+    el.querySelector("#spot-more")?.addEventListener("click", () => this.setSheet(this.sheet === "full" ? "peek" : "full"));
+    const more = el.querySelector<HTMLButtonElement>("#spot-more");
+    if (more) { more.textContent = this.sheet === "full" ? "▴ Fewer details" : "▾ More details"; more.setAttribute("aria-expanded", String(this.sheet === "full")); }
     el.querySelector("[data-spot-close]")?.addEventListener("click", () => this.closeSpot(true));
     el.querySelector("[data-spot-back]")?.addEventListener("click", () => this.closeSpot(true));
     // Phones: swipe down (from the top of the panel) to close it.

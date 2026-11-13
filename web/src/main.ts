@@ -212,7 +212,6 @@ async function main() {
 
   const sheet = document.getElementById("sheet")!;
   const phone = matchMedia("(max-width: 899px)");
-  if (phone.matches) sheet.classList.add("collapsed");
 
   // ------------------------------------------------------------ the tapped spot
   type Pick = { f: MapGeoJSONFeature; lngLat: maplibregl.LngLat };
