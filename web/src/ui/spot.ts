@@ -264,6 +264,8 @@ export function spotHTML(s: SpotData, ctx: SpotContext): string {
     ${s.where ? `<p class="muted">${esc(s.where)}</p>` : ""}
     ${s.note ? `<p class="muted small">${s.note}</p>` : ""}
     ${mapsLinks(s)}
+    <button type="button" class="spot-more-btn" id="spot-more" data-tip="Show or hide the rest: mushroom clock, why this score, the 8 days, species and trees."></button>
+    <div class="spot-rest">
     ${clk ? `<p class="clock ${clk.open ? "open" : ""}" data-tip="Counts the days since the last soaking rain (${ctx.meta.clock.soak_mm} mm or more). The fruiting window opens about ${ctx.meta.clock.opens} days after it and closes about ${ctx.meta.clock.closes} days after it."><span aria-hidden="true">⏱</span> <b>Mushroom clock:</b> ${clk.text}</p>` : ""}
     ${showScore ? whyBars(s, ctx) : ""}
     ${forecast(s, ctx)}
@@ -272,7 +274,8 @@ export function spotHTML(s: SpotData, ctx: SpotContext): string {
       : speciesHere(s, ctx)}
     ${facts ? `<ul class="facts">${facts}</ul>` : ""}
     <p class="no-rakes" data-tip="Cyprus law: rakes and tools are banned in the forest (up to 1 year in prison, up to €5,000 fine, or both). No fires in or within 2 km of forests."><b>No rakes.</b> Pick by hand or knife. Put the leaf litter back.</p>
-    <p class="muted small">Growing conditions only. <button class="link-btn" id="spot-close" type="button" data-tip="Close this panel.">Close</button></p>`;
+    <p class="muted small">Growing conditions only. <button class="link-btn" id="spot-close" type="button" data-tip="Close this panel.">Close</button></p>
+    </div>`;
 }
 
 function hotHTML(s: SpotData): string {
