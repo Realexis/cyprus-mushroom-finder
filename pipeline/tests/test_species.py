@@ -68,10 +68,17 @@ def test_months_text():
 
 def test_every_species_uses_known_trees_bands_months():
     for s in config.load("species")["species"]:
-        assert set(s["trees"]) <= {1, 2, 3, 4}, s["code"]
+        assert set(s["trees"]) <= {1, 2, 3, 4, 6}, s["code"]     # 6 = recently burned (habitat/burns.py)
         assert set(s["bands"]) <= {1, 2, 3}, s["code"]
         assert set(s["months"]) <= set(range(1, 13)), s["code"]
         assert s["trees"] and s["bands"] and s["months"], s["code"]
+
+
+def test_only_morels_use_burned_forest():
+    """Burned forest (6, 7) is no partner tree; recent burns count for morels only [LAR16]."""
+    for s in config.load("species")["species"]:
+        assert (6 in s["trees"]) == (s["code"] == "mor") and 7 not in s["trees"], s["code"]
+    assert not {6, 7} & set(config.load("scoring")["score"]["general_map_trees"])
 
 
 def test_only_morels_use_other_broadleaf():

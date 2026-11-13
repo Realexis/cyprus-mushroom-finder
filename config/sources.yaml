@@ -73,3 +73,11 @@ gbif:
   licence_status: verified
   credit: "Record counts from GBIF.org (Global Biodiversity Information Facility) and iNaturalist."
   use: The "Public records in Cyprus" part of each species card. Never used for the score or the map.
+
+burned_areas:
+  name: EFFIS burnt areas (MODIS/Sentinel-2 mapped fires), Cyprus, 2018 onwards
+  url: https://maps.effis.emergency.copernicus.eu/effis (WFS layer modis.ba.poly.<year>)
+  licence: Copernicus full, free and open data policy (Regulation (EU) 2021/696)
+  licence_status: to_verify   # EFFIS is a Copernicus EMS service; its own data page not yet read
+  credit: "Burnt areas © European Union, European Forest Fire Information System (EFFIS), Copernicus Emergency Management Service"
+  use: Forest burned since the 2018 forest map stops counting as habitat; recent burns count for morels.

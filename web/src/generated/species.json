@@ -329,9 +329,10 @@
    "trees": [
     1,
     3,
-    4
+    4,
+    6
    ],
-   "trees_text": "Calabrian pine, golden oak and other broadleaf trees; often after a fire",
+   "trees_text": "Calabrian pine, golden oak and other broadleaf trees; recently burned forest",
    "bands": [
     1,
     2,
@@ -344,7 +345,7 @@
     4
    ],
    "notes": [
-    "Morels are patchy and often follow a fire. This map does not know about recent fires yet.",
+    "Morels are patchy and often follow a fire. Burned forest counts here for the first two springs after a fire (fires since 2018, from EFFIS satellite maps).",
     "\"Other broadleaf\" mixes deciduous and evergreen trees. Our map cannot tell them apart."
    ],
    "season_text": "Feb-Apr",

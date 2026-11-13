@@ -15,6 +15,7 @@ export interface Spots { factors: string[]; inputs: string[]; spots: SpotInfo[];
 export const TREES: Record<number, string> = {
   1: "Calabrian pine (likely)", 2: "Troodos black pine (likely)", 3: "Golden oak (likely)",
   4: "Other broadleaf", 5: "Tripylos cedar zone (closed)",
+  6: "Burned forest (recent fire)", 7: "Burned forest (fire since 2018)",
 };
 const BANDS: Record<number, string> = { 1: "low", 2: "mid", 3: "high (above 1,200 m)" };
 const FACTOR_LABEL: Record<string, string> = {

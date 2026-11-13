@@ -12,6 +12,7 @@
 # Tree codes (pipeline habitat layer):
 #   1 Calabrian pine (likely)   2 Troodos black pine (likely)
 #   3 Golden oak (likely)       4 Other broadleaf   (5 cedar = closed reserve)
+#   6 Burned forest, recent fire (first two springs)   7 Burned forest (habitat/burns.py)
 # Altitude bands: 1 low, 2 mid, 3 high (>1,200 m)
 #
 # Words on the site: "good conditions for [species] habitat", never "find X here".
@@ -86,13 +87,14 @@ species:
     # Cistus, olive and Calabrian pine, and with strawberry tree on Troodos [LOI16, LOI16m].
     # "Other broadleaf above 600 m" (the old rule) had no source. [S7] morels keep Other broadleaf.
     # This makes the morel map wider and less sharp: that is what we know.
-    trees: [1, 3, 4]                                # [LOI16] Calabrian pine; Troodos broadleaf zone; other broadleaf
-    trees_text: "Calabrian pine, golden oak and other broadleaf trees; often after a fire"
+    # Step 8: 6 = forest more than half burned, in the first two springs after the fire [LAR16].
+    trees: [1, 3, 4, 6]                             # [LOI16] Calabrian pine; Troodos broadleaf zone; other broadleaf
+    trees_text: "Calabrian pine, golden oak and other broadleaf trees; recently burned forest"
     bands: [1, 2, 3]                                # [LOI16] finds at 500-600 m and on Troodos
     altitude_text: "All altitudes"
     months: [2, 3, 4]                               # [BRIEF] Mar-Apr, + Feb: GBIF Feb 2, Mar 13, Apr 24; finds 14-24 Feb [LOI16]
     notes:
-      - "Morels are patchy and often follow a fire. This map does not know about recent fires yet."
+      - "Morels are patchy and often follow a fire. Burned forest counts here for the first two springs after a fire (fires since 2018, from EFFIS satellite maps)."
       - "\"Other broadleaf\" mixes deciduous and evergreen trees. Our map cannot tell them apart."   # [DRAFT]
     inat: ["Morchella esculenta", "Morchella elata"]
 

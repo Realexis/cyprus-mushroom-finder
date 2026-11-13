@@ -22,9 +22,12 @@ from .species import general_habitat
 OUT = config.PROCESSED / "scores"
 
 
-def load_habitat():
+def load_habitat(on: date | None = None):
+    """The fixed 250 m habitat layers, with burned forest marked as of day `on` (default today)."""
+    from ..habitat import burns
     with rasterio.open(config.PROCESSED / "habitat_250m.tif") as src:
-        return {src.descriptions[i]: src.read(i + 1) for i in range(src.count)}
+        hab = {src.descriptions[i]: src.read(i + 1) for i in range(src.count)}
+    return burns.apply(hab, on or date.today())
 
 
 def day_factors(S, w, t, interp, elev, band, shade, month, clim=None):
@@ -95,7 +98,7 @@ def score_day(run_file, day_offset=0):
     day = date.fromisoformat(dates[t])
 
     g = habitat_grid()
-    hab = load_habitat()
+    hab = load_habitat(date.fromisoformat(str(w["today"])))
     land = hab["land_fraction"] > 0.5
     rows, cols = np.nonzero(land)                         # score all land (rain layer too)
     cx = g.west + (cols + 0.5) * g.res

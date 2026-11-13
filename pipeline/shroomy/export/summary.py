@@ -14,7 +14,8 @@ from ..score import clock
 from ..score import species as SP
 
 TREE_NAMES = ["Calabrian pine (likely)", "Troodos black pine (likely)", "Golden oak (likely)",
-              "Other broadleaf", "Tripylos cedar zone (closed)"]
+              "Other broadleaf", "Tripylos cedar zone (closed)",
+              "Burned forest, recent fire", "Burned forest"]          # 6, 7: habitat/burns.py
 TOP_N = 5
 MIN_GAP_KM = 8          # spread the top zones out over the island
 

@@ -137,7 +137,7 @@ def build(run, private=True):            # `private` is kept for old callers; ev
 
     print("Scoring 8 days")
     days = [_read(score_day(run, off)) for off in range(N_DAYS)]
-    hab = load_habitat()
+    hab = load_habitat(today)
     g = habitat_grid()
     to_ll = Transformer.from_crs(g.crs, "EPSG:4326", always_xy=True)
     clk_pt, opn_pt = clock_days(w, t0)
@@ -200,7 +200,8 @@ def build(run, private=True):            # `private` is kept for old callers; ev
         fm = {k: _nanmean(fac[k][sel]) for k in FACTORS}
         im = {k: _nanmean(inp[k][sel]) for k in INPUTS}
         clat, clon = h3.cell_to_latlng(hx)
-        counts = np.bincount(tree[m], minlength=6)[1:5]
+        counts = np.bincount(tree[m], minlength=8)[1:8]
+        counts[4] = 0                                    # 5 = cedar zone: closed reserve, not listed
         alt = (float(np.nanmin(elev[m])), float(np.nanmax(elev[m])))
         spots.append({
             "where": summary.near(clat, clon, places),
@@ -214,7 +215,7 @@ def build(run, private=True):            # `private` is kept for old callers; ev
             "hex": hx, "lat": clat, "lon": clon, "score": gen_score,
             "species": sp_mean,
             "factors": fm, "inputs": im, "clock": clk_pt[ip], "clock_opens": opn_pt[ip],
-            "trees": np.bincount(tree[m], minlength=6)[1:] / len(m), "alt": alt,
+            "trees": np.bincount(tree[m], minlength=8)[1:8] / len(m), "alt": alt,
             "where": spots[-1]["where"],
             "spot": len(spots) - 1,                           # index into spots.json (zone details)
         })

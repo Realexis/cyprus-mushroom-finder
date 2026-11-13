@@ -86,7 +86,7 @@ def run(label: str, ref: str | None):
     dates = [str(d) for d in w["dates"]]
     first_t = S["rain_total"]["days"]              # first day with 30 days of rain before it
     g = habitat_grid()
-    hab = load_habitat()
+    hab = load_habitat(date.fromisoformat(dates[-1]))
     rows, cols = np.nonzero(hab["habitat_filter"] > 0)       # open forest (not in reserves)
     cx = g.west + (cols + 0.5) * g.res
     cy = g.north - (rows + 0.5) * g.res

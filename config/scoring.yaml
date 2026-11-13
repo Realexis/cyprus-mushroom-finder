@@ -68,6 +68,17 @@ habitat:
     cast_shadows: true                 # mountains shade their neighbours
     shadow_max_distance_m: 6000        # [DRAFT] how far a ridge can cast shade
 
+  # Burned forest (V3 Fable feedback step 8, audit GAPS G9). The forest map is from 2018, so
+  # forest burned since then still looked like habitat (23 July 2025 Limassol fire: 120.7 km² [ERA25]).
+  # Fires come from the EFFIS burnt-area maps (pipeline/shroomy/habitat/burns.py ->
+  # config/effis_burned_areas.geojson). A square more than half burned stops counting as its tree.
+  burned:
+    enabled: true                      # false = ignore fires (the old map)
+    since_year: 2018                   # the forest map's year (Copernicus HRL Forest Type 2018)
+    min_fraction: 0.5                  # [LAR16] burn morels did not appear where < 50% burned. Used for the
+                                       # partner-tree cut too: [GUESS], no source gives a number for that.
+    morel_springs: 2                   # [LAR16] burn morels fruit in the first one or two springs after a fire
+
 # ---------------------------------------------------------------------
 # DAILY SCORE (Phase 2) — all from the brief unless tagged.
 # score = habitat_filter (0/1) x weighted sum x 100
