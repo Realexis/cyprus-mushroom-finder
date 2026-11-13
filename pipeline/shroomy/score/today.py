@@ -81,12 +81,19 @@ def day_factors(S, w, t, interp, elev, band, shade, month, clim=None):
     return f, inputs
 
 
-def water_gate(S, precip, t, interp):
-    """Per cell: (gate 0..1, biggest 3-day rain in the last 30 days in mm). Gate = 1 when off."""
+def water_gate(S, cell_precip, t):
+    """Per square: (gate 0..1, biggest 3-day rain of the last 30 days in mm, days since it ended).
+
+    cell_precip = daily rain already blended to the squares (squares x days), the SAME series
+    the mushroom clock uses, with the same "ends on a wet day" rule, so the two agree.
+    Rain fades out between 20 and 30 days old (score.water_gate.full_until_days). Gate = 1 when off.
+    """
     g = S.get("water_gate") or {}
-    big = interp(F.max_window_rain(precip, t, g.get("days", 30), S["rain_pulse"]["window_days"]))
-    gate = F.water_gate(big, g["full_at_mm"]) if g.get("enabled") else np.ones_like(big)
-    return gate, big
+    mc = S["mushroom_clock"]
+    faded, raw, age = F.recent_soak(cell_precip, t, g.get("days", 30), S["rain_pulse"]["window_days"],
+                                    mc["wet_day_mm"], g.get("full_until_days", g.get("days", 30)))
+    gate = F.water_gate(faded, g["full_at_mm"]) if g.get("enabled") else np.ones_like(faded)
+    return gate, raw, age
 
 
 def score_day(run_file, day_offset=0):
@@ -113,14 +120,15 @@ def score_day(run_file, day_offset=0):
     t7, frost, soil_pct = inputs["t7_mean_c"], inputs["frost_days"], inputs["soil_percentile"]
     # [S7] general map: open forest with a partner tree only (not "Other broadleaf").
     general = general_habitat(hab["habitat_filter"], hab["likely_tree"], S["general_map_trees"])
-    gate, rain3_max = water_gate(S, w["precip"], t, interp)
+    gate, rain3_max, rain3_age = water_gate(S, interp(w["precip"][:, : t + 1]), t)
     score = F.combine(f, S["weights"], general[rows, cols]) * gate
 
     # --- write a raster with named bands
     layers = {"score": score, **{f"f_{k}": v for k, v in f.items()},
               "rain_30d_mm": rain30, "rain_7d_mm": rain7, "pulse_mm": pulse,
               "t7_mean_c": t7, "frost_days": frost, "soil_percentile": soil_pct,
-              "water_gate": gate, "rain3_max_mm": rain3_max}
+              "water_gate": gate, "rain3_max_mm": rain3_max,
+              "gate_pct": gate * 100.0, "rain3_age_d": rain3_age}
     OUT.mkdir(parents=True, exist_ok=True)
     tif = OUT / f"score_{day.isoformat()}.tif"
     prof = dict(driver="GTiff", width=g.width, height=g.height, count=len(layers), dtype="float32",

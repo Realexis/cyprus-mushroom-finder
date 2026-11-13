@@ -24,8 +24,21 @@ These values are **not in the brief**. The code runs with a **[DRAFT]** placehol
 | S5 | Russula delica "warm spells" rule | none yet |
 | S6 | Soaking event must end on a wet day (≥ 1 mm) | 1 mm (standard wet-day definition) |
 | S7 | ~~Should "Other broadleaf" count as habitat in the general map?~~ | **Answered 2026-11-12: no, except for morels.** `score.general_map_trees: [1, 2, 3]` |
-| S8 | Soil "normal" uses only ONE season (Oct 2025-Jan 2026) | add 2 more seasons, one per day |
+| S8 | Soil "normal" uses TWO seasons now (2024-25, 2025-26), both dry. 2023-24 still to add (~1,200 calls) | 2 seasons |
 | S9 | *Russula delica* is "all forest" in the brief. Should "Other broadleaf" count for it? (S7 answer kept it out) | not counted |
+
+## New guesses from the V3 Fable feedback (2026-11-13)
+Each is tagged `[GUESS]` in `config/*.yaml`. No source gives a number. Source tags: `docs/SOURCES.md`.
+
+| # | What | Guess now | Where |
+|---|---|---|---|
+| G1 | Water gate below 20 mm: a straight line (10 mm = half the score) | straight line | `scoring.yaml` `score.water_gate` |
+| G2 | Fade of old rain in the gate: full until 20 days old, straight down to 0 at 30 days | 20 → 30 days | `scoring.yaml` `water_gate.full_until_days` |
+| G3 | The fruiting window closes 20 days after the **latest** soaking rain (with one rain, the first window is open only days 18-20) | 20 days | `scoring.yaml` `mushroom_clock` |
+| G4 | Season floor: no month September-April below 0.5 (the 0.5 itself) | 0.5 | `scoring.yaml` `season_altitude` |
+| G5 | Burned forest: the cut at more than 50 % burned, for **partner-tree** species (LAR16 gives 50 % for morels only) | 50 % | `scoring.yaml` `habitat.burned` |
+| G6 | Burned forest **never comes back** as partner-tree habitat on this map (no regrowth rule) | never | `pipeline/shroomy/habitat/burns.py` |
+| G7 | The clock's rain memory starts on the first day of saved history (12 Oct 2026), not 1 September, until the history reaches back | from 12 Oct | `pipeline/shroomy/export/web.py` `clock_grid` |
 
 ## Species and lookalikes (Phase 5)
 | # | What | Draft value now | Where |

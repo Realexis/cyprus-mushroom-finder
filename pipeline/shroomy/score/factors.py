@@ -108,6 +108,33 @@ def max_window_rain(precip, t, days, window):
     return best
 
 
+def recent_soak(precip, t, days, window, wet_mm, full_until):
+    """The rain behind the water gate, per row (one square or one weather point).
+
+    Looks at every `window`-day rain sum that ENDS on a wet day (>= wet_mm, the same rule as
+    the mushroom clock) and at most `days` days before day t.
+      faded = biggest sum x its weight: 1 up to `full_until` days old, then a straight line
+              down to 0 at `days` days old [GUESS: the shape], so an old rain fades out over
+              10 days instead of vanishing overnight (feedback round 2, fix 2).
+      raw   = the rain behind `faded` (its unweighted sum) and age = how many days ago it
+              ended (-1 = none), so the site can name the rain that sets the gate.
+    """
+    precip = np.asarray(precip, "float64")
+    shape = precip.shape[:-1]
+    faded, raw, age_of = np.zeros(shape), np.zeros(shape), np.full(shape, -1)
+    for end in range(max(0, t - days), t + 1):
+        s = np.nansum(precip[..., max(0, end - window + 1): end + 1], axis=-1)
+        s = np.where(precip[..., end] >= wet_mm, s, 0.0)
+        age = t - end
+        wgt = 1.0 if age <= full_until else max(0.0, (days - age) / (days - full_until))
+        v = s * wgt
+        better = (v >= faded) & (s > 0)                    # ties: the newer rain
+        faded = np.where(better, v, faded)
+        raw = np.where(better, s, raw)
+        age_of = np.where(better, age, age_of)
+    return faded, raw, age_of
+
+
 def water_gate(big_rain_mm, full_at_mm):
     """0..1: biggest 3-day rain of the last month / the soaking amount, never above 1.
     No soaking rain = the score is cut; one soaking rain (20 mm+) = no cut."""

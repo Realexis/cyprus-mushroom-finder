@@ -8,7 +8,9 @@ export interface DayInfo { offset: number; date: string; confidence: "high" | "m
 export interface Meta {
   weather_run: string; generated_utc: string; model: string; days: DayInfo[]; credits: unknown[];
   rain_days: string[];
-  clock: { opens: number; closes: number; soak_mm: number; later_opens?: number | null };
+  clock: { opens: number; closes: number; soak_mm: number; later_opens?: number | null;
+    /** First day of rain the clock can see, when later than 1 September. */
+    counted_from?: string | null };
   weights: Record<string, number>; season_share: number; general_map_trees: number[];
   /** Score x (biggest 3-day rain in the last `days` days / full_at_mm, never above 1). */
   water_gate?: { enabled: boolean; full_at_mm: number; days: number };

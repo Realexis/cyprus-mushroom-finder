@@ -33,6 +33,7 @@ On each find's date: the score at the nearest forest square, and the best within
 | + clock 18 / 2 days (step 4) | 9.1 | 0.2% | pass | 75.7 | 79 | 82 | 88% | **65%** |
 | + season to April, morels (steps 5-7) | 9.4 | 0.2% | pass | 77.3 | 79 | 82 | 88% | 65% |
 | + burned forest (step 8) | 9.5 | 0.2% | pass | 77.4 | 79 | 82 | 88% | 65% |
+| + round 2: same rain per square for gate and clock, rain fades 20 → 30 days | 7.5 | 0% | pass | 77.1 | 79 | 82 | 88% | 59% |
 
 ## What it means
 
@@ -46,6 +47,11 @@ On each find's date: the score at the nearest forest square, and the best within
 - **The new clock fits the records better.** The first window now opens 24-28 December.
   The *Russula* (25 Dec) and two *Suillus* (27 Dec) finds come right after.
 - **Morels and *Suillus* on 28 February** now score 75 and 80 (were "no habitat" and "out of season").
+
+- **Round 2 (same rain per square, fade).** The clock now uses each square's own blended rain and
+  the "ends on a wet day" rule, the same as the gate. It is a little stricter, so the clock is open on
+  59% of find days (was 65%). On 13-20 Nov 2026 no square says "rain: yes" with "no soaking rain yet",
+  and no square drops more than 10 points in one dry, frost-free day (was 18% of squares).
 
 ## Honest limits
 

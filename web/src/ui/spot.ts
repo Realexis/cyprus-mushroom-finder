@@ -146,17 +146,22 @@ function factorText(name: string, inp: number[] | null, f: number, ctx: SpotCont
   return "";
 }
 
-/** The water gate in plain words: one text line under the six parts (scoring.yaml score.water_gate). */
+/** The water gate in plain words: one text line under the six parts (scoring.yaml score.water_gate).
+ *  Inputs (meta order): [5] biggest 3-day rain of the last month in mm, [6] gate in %, [7] days since it ended. */
 function gateRow(inp: number[] | null, ctx: SpotContext): string {
   const g = ctx.meta.water_gate;
   if (!g?.enabled || !inp || inp.length < 6) return "";
   const mm = inp[5];
-  const cut = Math.max(0, Math.min(1, mm / g.full_at_mm));
-  const word = cut >= 1 ? "yes" : mm < 2 ? "no" : "partly";
-  const val = cut >= 1
-    ? `${Math.round(mm)} mm in 3 days. No cut.`
-    : `${mm < 1 ? "Under 1" : Math.round(mm)} mm in 3 days (${g.full_at_mm} mm needed), so the score is cut to ${Math.round(cut * 100)}%.`;
-  const tip = `Mushrooms need a soaking rain. The score is multiplied by the biggest 3-day rain of the last ${g.days} days, divided by ${g.full_at_mm} mm. ${g.full_at_mm} mm or more = no cut. No rain = almost no score.`;
+  const pct = inp.length >= 8 ? Math.round(inp[6]) : Math.round(Math.max(0, Math.min(1, mm / g.full_at_mm)) * 100);
+  const age = inp.length >= 8 ? Math.round(inp[7]) : -1;
+  const ago = age > 0 ? `, ${age} day${age === 1 ? "" : "s"} ago` : age === 0 ? ", today" : "";
+  const word = pct >= 100 ? "yes" : mm < 2 ? "no" : "partly";
+  let val: string;
+  if (pct >= 100) val = `${Math.round(mm)} mm in 3 days${ago}. No cut.`;
+  else if (mm < 2) val = `No rain worth counting in the last month, so the score is cut to ${pct}%.`;
+  else if (mm >= g.full_at_mm) val = `${Math.round(mm)} mm in 3 days${ago}. Older rain counts less each day, so the score is cut to ${pct}%.`;
+  else val = `${Math.round(mm)} mm in 3 days${ago} (${g.full_at_mm} mm needed), so the score is cut to ${pct}%.`;
+  const tip = `Mushrooms need a soaking rain. The score is multiplied by the biggest 3-day rain of the last ${g.days} days, divided by ${g.full_at_mm} mm. ${g.full_at_mm} mm or more = no cut. Rain older than 20 days counts a little less each day, and not at all after ${g.days} days.`;
   return `<li class="why-row" data-tip="${esc(tip)}">
       <div class="why-top"><span>Soaking rain in the last month: <b>${word}</b></span></div>
       <div class="why-val">${esc(val)}</div></li>`;
@@ -294,7 +299,7 @@ export function spotHTML(s: SpotData, ctx: SpotContext): string {
     ${mapsLinks(s)}
     <button type="button" class="spot-more-btn" id="spot-more" data-tip="Show or hide the rest: mushroom clock, why this score, the 8 days, species and trees."></button>
     <div class="spot-rest">
-    ${clk ? `<p class="clock ${clk.open ? "open" : ""}" data-tip="${esc(clockTip(ctx.meta.clock))}"><span aria-hidden="true">⏱</span> <b>Mushroom clock:</b> ${clk.text}</p>` : ""}
+    ${clk ? `<p class="clock ${clk.open ? "open" : ""}" data-tip="${esc(clockTip(ctx.meta.clock))}"><span aria-hidden="true">⏱</span> <b>Mushroom clock:</b> ${clk.text}${ctx.meta.clock.counted_from ? ` <span class="muted">(rain counted from ${esc(fmtDay(ctx.meta.clock.counted_from, { day: "numeric", month: "long" }))})</span>` : ""}</p>` : ""}
     ${showScore ? whyBars(s, ctx) : ""}
     ${forecast(s, ctx)}
     ${ctx.species ? (s.speciesBase ? `<p><button type="button" class="link-btn" data-pick-species=""
