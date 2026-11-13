@@ -139,9 +139,16 @@ score:
     high_max_day: 2
     medium_max_day: 4                  # day 5+ = low
 
+  # The clock (V3 Fable feedback step 4, audit GAPS G2, G3, A8). Text on the site only:
+  # it does not change the score.
   mushroom_clock:
-    window_opens_days_after_pulse: 7   # [BRIEF]
-    window_closes_days_after_pulse: 20 # [BRIEF]
+    first_window_opens_days: 18        # [LOI19] first flush 18-20 days after the season's first 20 mm rain
+                                       # (KAR16, Spain: rain acts with about a month's delay). Was 7 [BRIEF].
+    later_window_opens_days: 2         # [LOI19] after the first flush, fruiting follows each new rain in 1-2 days
+    window_opens_days_after_pulse: 18  # = first_window_opens_days (older code reads this name)
+    window_closes_days_after_pulse: 20 # [BRIEF] number, counted from the LATEST soaking rain. [GUESS]: no
+                                       # outside source backs it.
+    season_starts: "09-01"             # "first of the season" counts from 1 September [LOI16: season Sep-Apr]
     high_cool_shift_days: 0            # [DRAFT] brief: "earlier for high/cool cells", no number
     wet_day_mm: 1.0                    # a soaking event must END on a wet day (WMO wet-day = 1 mm)
 

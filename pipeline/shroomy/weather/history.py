@@ -13,7 +13,7 @@ from .. import config
 STORE = config.PROCESSED / "weather" / "history.npz"
 VARS = ["precip", "tmean", "tmin", "tmax", "rh", "soil"]
 POINT_KEYS = ["lon", "lat", "x", "y", "elev_om"]
-KEEP_DAYS = 75
+KEEP_DAYS = 240                  # back to 1 September, for the clock's "first soaking rain" (no extra calls)
 
 
 def _load(path):

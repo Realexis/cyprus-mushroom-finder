@@ -51,11 +51,13 @@ export function words(v: number) {
   return "Poor";
 }
 
-/** The mushroom clock in plain words (same rules as pipeline/shroomy/score/clock.py). */
-export function clockSentence(daysSince: number, c: Meta["clock"]): { text: string; open: boolean } {
-  if (daysSince < 0) return { text: `No soaking rain (${c.soak_mm} mm+) in the last month. Fruiting window closed.`, open: false };
-  if (daysSince < c.opens) {
-    const k = c.opens - daysSince;
+/** The mushroom clock in plain words (same rules as pipeline/shroomy/score/clock.py).
+ *  opens = days after this soaking rain the window opens (18 for the season's first rain,
+ *  2 for a later one, negative when the window is already open). */
+export function clockSentence(daysSince: number, c: Meta["clock"], opens = c.opens): { text: string; open: boolean } {
+  if (daysSince < 0) return { text: `No soaking rain (${c.soak_mm} mm+) yet this season. Fruiting window closed.`, open: false };
+  if (daysSince < opens) {
+    const k = opens - daysSince;
     return { text: `Soaking rain ${daysSince} days ago. Window opens in ${k} day${k === 1 ? "" : "s"}.`, open: false };
   }
   if (daysSince <= c.closes) {
@@ -63,6 +65,13 @@ export function clockSentence(daysSince: number, c: Meta["clock"]): { text: stri
     return { text: `Soaking rain ${daysSince} days ago. Window OPEN, about ${k} more day${k === 1 ? "" : "s"}.`, open: true };
   }
   return { text: `Last soaking rain was ${daysSince} days ago. Fruiting window has closed.`, open: false };
+}
+
+/** Tooltip for the clock line. */
+function clockTip(c: Meta["clock"]): string {
+  return c.later_opens == null
+    ? `Counts the days since the last soaking rain (${c.soak_mm} mm or more). The fruiting window opens about ${c.opens} days after it and closes about ${c.closes} days after it.`
+    : `Counts the days since the last soaking rain (${c.soak_mm} mm or more). The season's first window opens about ${c.opens} days after the first soaking rain. After that, each new soaking rain opens it again after about ${c.later_opens} days. It closes about ${c.closes} days after the latest one.`;
 }
 
 /** What the panel needs to know about the current filter, per day. */
@@ -81,6 +90,8 @@ export interface SpotData {
   kind: "hex" | "cell" | "hot";
   score: (day: number) => number | null;       // null = not habitat for this filter
   clock?: (day: number) => number;
+  /** Days after the latest soaking rain that the window opens (see clockSentence). */
+  clockOpens?: (day: number) => number | undefined;
   factors?: (day: number) => number[] | null;  // 0..1, in meta factor order
   inputs?: (day: number) => number[] | null;
   where?: string; trees?: string; altitude?: string; road?: string; note?: string;
@@ -269,7 +280,7 @@ export function spotHTML(s: SpotData, ctx: SpotContext): string {
     head = sp ? `<b>${words(v)} conditions for <i>${esc(sp.latin)}</i> habitat</b>` : `<b>${words(v)} growing conditions</b>`;
   }
   const showScore = v !== null && !(sp && !ctx.inSeason(ctx.day));
-  const clk = s.clock ? clockSentence(s.clock(ctx.day), ctx.meta.clock) : null;
+  const clk = s.clock ? clockSentence(s.clock(ctx.day), ctx.meta.clock, s.clockOpens?.(ctx.day) ?? ctx.meta.clock.opens) : null;
   const facts = [
     s.trees ? `<li data-tip="The likely trees, worked out from satellite forest maps, height and rock type. Not a tree survey."><span aria-hidden="true">🌲</span> <b>Trees:</b> ${s.trees}</li>` : "",
     s.altitude ? `<li data-tip="Height above sea level. Higher forest is cooler and its season starts earlier."><span aria-hidden="true">⛰</span> <b>Altitude:</b> ${s.altitude}</li>` : "",
@@ -282,7 +293,7 @@ export function spotHTML(s: SpotData, ctx: SpotContext): string {
     ${mapsLinks(s)}
     <button type="button" class="spot-more-btn" id="spot-more" data-tip="Show or hide the rest: mushroom clock, why this score, the 8 days, species and trees."></button>
     <div class="spot-rest">
-    ${clk ? `<p class="clock ${clk.open ? "open" : ""}" data-tip="Counts the days since the last soaking rain (${ctx.meta.clock.soak_mm} mm or more). The fruiting window opens about ${ctx.meta.clock.opens} days after it and closes about ${ctx.meta.clock.closes} days after it."><span aria-hidden="true">⏱</span> <b>Mushroom clock:</b> ${clk.text}</p>` : ""}
+    ${clk ? `<p class="clock ${clk.open ? "open" : ""}" data-tip="${esc(clockTip(ctx.meta.clock))}"><span aria-hidden="true">⏱</span> <b>Mushroom clock:</b> ${clk.text}</p>` : ""}
     ${showScore ? whyBars(s, ctx) : ""}
     ${forecast(s, ctx)}
     ${ctx.species ? (s.speciesBase ? `<p><button type="button" class="link-btn" data-pick-species=""
@@ -325,6 +336,7 @@ export function hexSpot(props: Record<string, number>, info: SpotInfo | undefine
     speciesBase: (sp, d) => (props[`${sp.code}${d}`] === undefined ? null : Number(props[`${sp.code}${d}`])),
     score: (d) => (props[prop(d)] === undefined ? null : Number(props[prop(d)])),
     clock: (d) => Number(props[`p${d}`]),
+    clockOpens: (d) => (props[`o${d}`] === undefined ? undefined : Number(props[`o${d}`])),
     factors: (d) => (info ? info.f[d].map((x) => x / 100) : null),
     inputs: (d) => (info ? info.in[d] : null),
     where: info ? `${info.where} · zone of about 2 km` : "Zone of about 2 km",
@@ -380,6 +392,7 @@ export function cellSpot(props: Record<string, number>, info: CellInfo | null, s
     speciesBase: (sp, d) => (sp.trees.includes(Number(props.tree)) && sp.bands.includes(Number(props.band)) && !props.closed
       ? Number(props[`b${d}`]) : null),               // b = species score when in season
     clock: (d) => Number(props[`p${d}`]),
+    clockOpens: (d) => (props[`o${d}`] === undefined ? undefined : Number(props[`o${d}`])),
     factors: (d) => info?.factors(i, d) ?? null,
     inputs: (d) => info?.inputs(i, d) ?? null,
     where: `250 m square · ${lngLat.lat.toFixed(4)}, ${lngLat.lng.toFixed(4)}`,

@@ -90,13 +90,30 @@ def _nanmean(a, axis=0):
             return np.nanmean(a, axis=axis)
 
 
+def season_weather(w):
+    """Rain for the clock: the weather history before this run (back to 1 September when the
+    history is that long), then the run itself. Returns (precip, dates, index of the run's day 0)."""
+    from ..weather.history import STORE
+    p, dates = w["precip"], [str(d) for d in w["dates"]]
+    if STORE.exists():
+        with np.load(STORE) as h:
+            if len(h["lon"]) == len(w["lon"]) and np.allclose(h["lon"], w["lon"]) and np.allclose(h["lat"], w["lat"]):
+                hd = [str(d) for d in h["dates"]]
+                keep = [i for i, d in enumerate(hd) if d < dates[0]]
+                if keep:
+                    p = np.concatenate([h["precip"][:, keep], p], axis=1)
+                    dates = [hd[i] for i in keep] + dates
+    return p, dates, len(dates) - len(w["dates"])
+
+
 def clock_days(w, t0):
-    """Days since the last soaking rain at each weather point, for day offsets 0..7."""
+    """Per weather point, for day offsets 0..7: (days since the latest soaking rain,
+    days after it that the window opens). See score/clock.py window()."""
     S = config.load("scoring")["score"]
-    rp, mc = S["rain_pulse"], S["mushroom_clock"]
-    return np.stack([clock.days_since_soak(w["precip"], t0 + k, rp["window_days"],
-                                           rp["soaking_event_mm"], mc["wet_day_mm"])
-                     for k in range(N_DAYS)], axis=1)                      # (points, 8)
+    p, dates, off = season_weather(w)
+    out = [clock.window(p, off + t0 + k, S, dates) for k in range(N_DAYS)]
+    return (np.stack([o[1] for o in out], axis=1),                     # (points, 8)
+            np.stack([o[2] for o in out], axis=1))
 
 
 def species_scores(base, months, specs, share, gate=1.0):
@@ -123,7 +140,7 @@ def build(run, private=True):            # `private` is kept for old callers; ev
     hab = load_habitat()
     g = habitat_grid()
     to_ll = Transformer.from_crs(g.crs, "EPSG:4326", always_xy=True)
-    clk_pt = clock_days(w, t0)
+    clk_pt, opn_pt = clock_days(w, t0)
     pt_tree = cKDTree(np.c_[w["x"], w["y"]])
     rd = roads.load()
 
@@ -167,7 +184,8 @@ def build(run, private=True):            # `private` is kept for old callers; ev
         _, ip = pt_tree.query([cx[m].mean(), cy[m].mean()])
         ring = [[lo, la] for la, lo in h3.cell_to_boundary(hx)]
         ring.append(ring[0])
-        props = {"h": len(spots), **{f"p{i}": int(clk_pt[ip, i]) for i in range(N_DAYS)}}
+        props = {"h": len(spots), **{f"p{i}": int(clk_pt[ip, i]) for i in range(N_DAYS)},
+                 **{f"o{i}": int(opn_pt[ip, i]) for i in range(N_DAYS)}}
         zone_of[rows[m], cols[m]] = len(spots)
         gen_score = _nanmean(score[mg]) if has_gen else None
         if has_gen:
@@ -195,7 +213,7 @@ def build(run, private=True):            # `private` is kept for old callers; ev
         zones.append({
             "hex": hx, "lat": clat, "lon": clon, "score": gen_score,
             "species": sp_mean,
-            "factors": fm, "inputs": im, "clock": clk_pt[ip],
+            "factors": fm, "inputs": im, "clock": clk_pt[ip], "clock_opens": opn_pt[ip],
             "trees": np.bincount(tree[m], minlength=6)[1:] / len(m), "alt": alt,
             "where": spots[-1]["where"],
             "spot": len(spots) - 1,                           # index into spots.json (zone details)
@@ -233,7 +251,9 @@ def build(run, private=True):            # `private` is kept for old callers; ev
         "weather_run": today.isoformat(), "model": str(w["model"]),
         "days": day_info, "rain_days": dates[t0 - 29: t0 + N_DAYS],
         "public_hexagon_resolution": pv["h3_resolution"],
-        "clock": {"opens": mc["window_opens_days_after_pulse"], "closes": mc["window_closes_days_after_pulse"],
+        "clock": {"opens": mc.get("first_window_opens_days", mc["window_opens_days_after_pulse"]),
+                  "later_opens": mc.get("later_window_opens_days"),
+                  "closes": mc["window_closes_days_after_pulse"],
                   "soak_mm": S["score"]["rain_pulse"]["soaking_event_mm"]},
         "weights": {k: round(W[k] / tot_w, 4) for k in FACTORS},
         "season_share": round(share, 3),
@@ -251,13 +271,14 @@ def build(run, private=True):            # `private` is kept for old callers; ev
     (PUBLIC / "summary.json").write_text(json.dumps(summ, indent=1, ensure_ascii=False))
     print(f" - summary.json: top {len(summ['days'][0]['top_zones'])} zones per day + species")
 
-    export_cells(days, hab, g, to_ll, clk_pt, pt_tree, rd, W, zone_of)
+    export_cells(days, hab, g, to_ll, (clk_pt, opn_pt), pt_tree, rd, W, zone_of)
     from . import hotspots
     hotspots.build(summ, g)
 
 
-def export_cells(days, hab, g, to_ll, clk_pt, pt_tree, rd, W, zone_of):
+def export_cells(days, hab, g, to_ll, clk, pt_tree, rd, W, zone_of):
     """Every 250 m forest square -> PMTiles + details files (public)."""
+    clk_pt, opn_pt = clk
     OUT = PUBLIC
     S = config.load("scoring")["score"]
     rows, cols = np.nonzero(hab["forest_type"] > 0)
@@ -305,6 +326,7 @@ def export_cells(days, hab, g, to_ll, clk_pt, pt_tree, rd, W, zone_of):
                  for i, d in enumerate(days)}
         props.update({f"b{i}": int(round(sp_in[n, i])) for i in range(N_DAYS)})   # species score in season
         props.update({f"p{i}": int(clk_pt[near_pt[n], i]) for i in range(N_DAYS)})
+        props.update({f"o{i}": int(opn_pt[near_pt[n], i]) for i in range(N_DAYS)})
         props.update({"i": n, "tree": int(tree[n]), "band": int(band[n]), "g": int(gen[n]),
                       "elev": int(round(float(np.nan_to_num(hab["elevation_m"][r, c])))),
                       "closed": int(not open_[n])})
