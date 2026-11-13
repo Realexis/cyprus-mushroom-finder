@@ -16,7 +16,9 @@ export function applyTheme(t: Theme) {
 }
 
 export function toggleTheme(): Theme {
-  const t: Theme = currentTheme() === "dark" ? "light" : "dark";
+  // Flip what is shown (it can come from the web address, ?theme=), not only what is saved.
+  const shown = document.documentElement.dataset.theme;
+  const t: Theme = (shown === "dark" || shown === "light" ? shown : currentTheme()) === "dark" ? "light" : "dark";
   try { localStorage.setItem(KEY, t); } catch { /* ignore */ }
   applyTheme(t);
   return t;

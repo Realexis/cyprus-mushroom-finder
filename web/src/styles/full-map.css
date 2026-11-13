@@ -1,0 +1,71 @@
+/* Full map mode (ui/fullmap.ts): the map on the whole window, plus a slim safety line, the colour
+   key, the map credits and an "Exit full map" button. Everything else is hidden. */
+
+/* The "Full map" button in the map buttons (outside full map). */
+.maplibregl-ctrl-group button.ctrl-full {
+  width: auto !important; min-width: 40px; padding: 0 10px; display: inline-flex; align-items: center; gap: 6px;
+  font: 700 0.85rem/1 inherit; font-family: inherit; color: var(--ink); white-space: nowrap;
+}
+.ctrl-full svg { flex: none; }
+
+.full-safety, .full-exit { display: none; }
+
+:root.full-map .app { grid-template-rows: 1fr; }
+:root.full-map .topbar,
+:root.full-map .app > .safety,
+:root.full-map #sheet,
+:root.full-map .map-note,
+:root.full-map .delayed,
+:root.full-map .loading,
+:root.full-map .tip,
+:root.full-map .pick-pin,
+:root.full-map .maplibregl-ctrl-top-right,
+:root.full-map .maplibregl-popup { display: none !important; }
+
+/* One slim safety line along the bottom edge (the brief: on every screen). */
+:root.full-map .full-safety {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  position: absolute; z-index: 6; left: 0; right: 0; bottom: 0; min-height: 28px; padding: 4px 12px;
+  background: var(--safety-bg); color: var(--safety-ink);
+  font-size: 0.85rem; font-weight: 700; line-height: 1.25; text-align: center;
+}
+:root.full-map .full-safety svg { width: 16px; height: 16px; flex: none; }
+
+/* Small colour key, bottom-left, above the safety line. */
+:root.full-map .map-legend {
+  left: 10px; right: auto; top: auto; bottom: 40px; width: 180px; padding: 6px 10px 7px; font-size: 0.8rem;
+}
+:root.full-map .ml-bar { height: 10px; }
+
+/* Map credits stay (licences), compact, bottom-right above the safety line. */
+:root.full-map .maplibregl-ctrl-bottom-right,
+:root.full-map .maplibregl-ctrl-bottom-left { bottom: 30px !important; }
+:root.full-map .maplibregl-ctrl-attrib { font-size: 11px; max-width: calc(100vw - 220px); }
+
+/* Written out, never folded into the (i) button (also when MapLibre folds it on its own). */
+:root.full-map .maplibregl-ctrl-attrib.maplibregl-compact .maplibregl-ctrl-attrib-inner { display: block !important; }
+:root.full-map .maplibregl-ctrl-attrib.maplibregl-compact { padding: 2px 8px !important; min-height: 0; }
+:root.full-map .maplibregl-ctrl-attrib-button { display: none !important; }
+
+/* Small exit button, top-right. Esc also exits. */
+:root.full-map .full-exit {
+  display: inline-flex; align-items: center; gap: 6px;
+  position: absolute; z-index: 6; top: 10px; right: 10px; min-height: 36px; padding: 0 12px;
+  background: color-mix(in srgb, var(--surface) 92%, transparent); color: var(--ink);
+  border: 1px solid var(--line); border-radius: 999px; box-shadow: var(--shadow);
+  font: 700 0.85rem/1 inherit; font-family: inherit; cursor: pointer;
+}
+:root.full-map .full-exit:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+@media (max-width: 899px) {
+  :root.full-map .full-safety { font-size: 0.75rem; }
+  :root.full-map .map-legend { width: 150px; bottom: 44px; }
+  /* Phones: the island is a band across the middle, so the credits go top-left (open sea),
+     clear of the colour key (bottom-left) and the exit button (top-right). */
+  :root.full-map .maplibregl-ctrl-bottom-right {
+    top: 0 !important; bottom: auto !important; left: 0; right: auto !important; width: calc(100vw - 180px);
+  }
+  :root.full-map .maplibregl-ctrl-bottom-right .maplibregl-ctrl-attrib {
+    float: left; max-width: none; font-size: 10px; margin: 10px 0 0 10px !important;
+  }
+}

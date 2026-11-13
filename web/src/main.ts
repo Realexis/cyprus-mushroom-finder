@@ -18,6 +18,7 @@ import { hideMapTip as hideTip, mountTips, showAt } from "./ui/tips";
 import { mountGuide } from "./ui/guide";
 import { renderLegend } from "./ui/legend";
 import { words } from "./ui/spot";
+import { FullMap, readUrlView, trackMapReady } from "./ui/fullmap";
 
 const abs = (p: string) => new URL(p, document.baseURI).href;
 
@@ -106,7 +107,9 @@ class TerrainControl implements maplibregl.IControl {
 }
 
 async function main() {
-  applyTheme(currentTheme());
+  // Web-address switches (?full=1&layer=<id>&day=<0-7>&theme=light|dark), for identical screenshots.
+  const urlView = readUrlView();
+  applyTheme(urlView.theme ?? currentTheme());
   // Test copies say so in the header. Set VITE_PREVIEW_LABEL when building a preview
   // (web/.env.local, not in git); the live site's robot build has no label.
   const previewLabel = import.meta.env.VITE_PREVIEW_LABEL as string | undefined;
@@ -167,7 +170,7 @@ async function main() {
     hotspotZones: hotZonesGeo,
   };
   const basemap = v(pmtiles("tiles/basemap.pmtiles"));
-  let theme: Theme = currentTheme();
+  let theme: Theme = urlView.theme ?? currentTheme();
 
   const map = new maplibregl.Map({
     container: "map",
@@ -187,6 +190,18 @@ async function main() {
   const terrainCtl = new TerrainControl((on) => set3D(map, on, theme));
   map.addControl(terrainCtl, "top-right");
   map.addControl(new maplibregl.GeolocateControl({ positionOptions: { enableHighAccuracy: true } }), "top-right");
+  // Full map mode (whole island, flat, north up; for screenshots) and <html data-map-ready>.
+  const mapBusy = trackMapReady(map, () => !!map.getSource("hexes"));
+  const fullMap = new FullMap(map, {
+    before: () => {
+      if (terrainCtl.on) { terrainCtl.on = false; terrainCtl.update(); set3D(map, false, theme); }
+      hideTip();
+    },
+    after: () => fitCyprus(),
+    busy: mapBusy,
+  });
+  map.addControl(fullMap, "top-right");
+  if (urlView.full) fullMap.set(true, false);         // ?full=1: straight into full map (framed again on load)
   // Our own tips on MapLibre's buttons (and no second, native browser tooltip).
   const ctlTips: Record<string, string> = {
     ".maplibregl-ctrl-zoom-in": "Zoom in. You can also scroll or pinch.",
@@ -243,6 +258,7 @@ async function main() {
 
   const panel: Panel = new Panel(sheet, meta, priv, islandRain(rain, 30), shade,
     (p) => {
+      mapBusy();
       if (!map.isStyleLoaded()) return;
       applyView(map, p.view);
       drawLegend();
@@ -256,6 +272,10 @@ async function main() {
     const z = code ? (d?.species?.[code]?.in_season ? d.species[code].top_zones[0] : undefined) : d?.top_zones[0];
     return z ? { score: z.score, where: z.where } : null;
   };
+  // Day and "Conditions for" from the web address (ignored if unknown). "all" = the general map.
+  if (urlView.day !== null && urlView.day < meta.days.length) panel.day = urlView.day;
+  if (urlView.layer === "all") panel.species = null;
+  else if (urlView.layer && speciesByCode(urlView.layer)) panel.species = urlView.layer;
   panel.refresh();
 
   // The colour key on the map (follows the layer, the species season and the zoom).
@@ -272,6 +292,7 @@ async function main() {
 
   // Fit Cyprus into the part of the map NOT covered by the panel.
   const fitCyprus = () => {
+    if (fullMap.on) { fullMap.frame(); return; }
     const pad = phone.matches
       ? { top: 4, right: 4, left: 4, bottom: sheet.offsetHeight + 4 }
       : { top: 24, right: 60, bottom: 24, left: sheet.offsetWidth + 40 };
@@ -318,7 +339,7 @@ async function main() {
     window.clearTimeout(slow);
     loading.classList.add("done");
     window.setTimeout(() => (loading.hidden = true), 400);
-    guide.openIfFirstVisit();
+    if (!fullMap.on && !urlView.full) guide.openIfFirstVisit();
   };
   map.once("idle", finishLoading);
   map.on("sourcedata", (e) => {
