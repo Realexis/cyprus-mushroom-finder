@@ -134,6 +134,22 @@ function factorText(name: string, inp: number[] | null, f: number, ctx: SpotCont
   return "";
 }
 
+/** The water gate in plain words: one text line under the six parts (scoring.yaml score.water_gate). */
+function gateRow(inp: number[] | null, ctx: SpotContext): string {
+  const g = ctx.meta.water_gate;
+  if (!g?.enabled || !inp || inp.length < 6) return "";
+  const mm = inp[5];
+  const cut = Math.max(0, Math.min(1, mm / g.full_at_mm));
+  const word = cut >= 1 ? "yes" : mm < 2 ? "no" : "partly";
+  const val = cut >= 1
+    ? `${Math.round(mm)} mm in 3 days. No cut.`
+    : `${mm < 1 ? "Under 1" : Math.round(mm)} mm in 3 days (${g.full_at_mm} mm needed), so the score is cut to ${Math.round(cut * 100)}%.`;
+  const tip = `Mushrooms need a soaking rain. The score is multiplied by the biggest 3-day rain of the last ${g.days} days, divided by ${g.full_at_mm} mm. ${g.full_at_mm} mm or more = no cut. No rain = almost no score.`;
+  return `<li class="why-row" data-tip="${esc(tip)}">
+      <div class="why-top"><span>Soaking rain in the last month: <b>${word}</b></span></div>
+      <div class="why-val">${esc(val)}</div></li>`;
+}
+
 function whyBars(s: SpotData, ctx: SpotContext): string {
   const fac = s.factors?.(ctx.day);
   if (!fac) return "";
@@ -151,7 +167,7 @@ function whyBars(s: SpotData, ctx: SpotContext): string {
       <div class="why-top"><span>${FACTOR_LABEL[n]}</span><span class="muted">counts ${Math.round(ctx.meta.weights[n] * 100)}%</span></div>
       <div class="why-bar" role="img" aria-label="${FACTOR_LABEL[n]}: ${pct} out of 100"><i style="width:${pct}%;background:${scoreColour(pct)}"></i></div>
       <div class="why-val">${esc(factorText(n, inp, f, ctx, d))}</div></li>`;
-  }).join("");
+  }).join("") + gateRow(inp, ctx);
   return `<details class="why" open><summary data-tip="The six things that make the score. A long bar = that thing is good right now. Tap to hide or show."><b>Why this score</b></summary><ul>${rows}</ul></details>`;
 }
 
@@ -354,7 +370,7 @@ export class CellInfo {
 }
 
 export function cellSpot(props: Record<string, number>, info: CellInfo | null, score: (d: number) => number | null,
-                         lngLat: { lng: number; lat: number }, seasonShare: number): SpotData {
+                         lngLat: { lng: number; lat: number }): SpotData {
   const i = Number(props.i);
   const m = (x: number) => (x < 0 ? "–" : x < 1000 ? `${Math.round(x / 10) * 10} m` : `${(x / 1000).toFixed(1)} km`);
   const rd = info?.road(i);
@@ -362,7 +378,7 @@ export function cellSpot(props: Record<string, number>, info: CellInfo | null, s
   return {
     kind: "cell", score,
     speciesBase: (sp, d) => (sp.trees.includes(Number(props.tree)) && sp.bands.includes(Number(props.band)) && !props.closed
-      ? Math.round(Number(props[`b${d}`]) + seasonShare) : null),
+      ? Number(props[`b${d}`]) : null),               // b = species score when in season
     clock: (d) => Number(props[`p${d}`]),
     factors: (d) => info?.factors(i, d) ?? null,
     inputs: (d) => info?.inputs(i, d) ?? null,

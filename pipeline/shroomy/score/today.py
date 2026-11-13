@@ -27,6 +27,65 @@ def load_habitat():
         return {src.descriptions[i]: src.read(i + 1) for i in range(src.count)}
 
 
+def day_factors(S, w, t, interp, elev, band, shade, month, clim=None):
+    """The six factors (0..1) and their raw inputs for every cell on day index t.
+
+    S = the "score" part of scoring.yaml. w = a weather run (points x days).
+    clim = the soil climatology, or None (no soil data: the soil factor is NaN).
+    Shared by the daily score and the backtest (backtest_v1.py), so both use the same maths.
+    """
+    lapse = S["temperature"]["lapse_rate_c_per_km"]
+
+    # --- rain (per point, then spread)
+    p = w["precip"]
+    rt = S["rain_total"]; rp = S["rain_pulse"]
+    rain30 = interp(F.rain_total(p, t, rt["days"]))
+    rain7 = interp(F.rain_total(p, t, 7))
+    pulse_pt, _ = F.rain_pulse(p, t, rp["window_days"], rp["min_days_ago"], rp["max_days_ago"])
+    pulse = interp(pulse_pt)
+
+    # --- temperature: to sea level at the points, spread, then back up to each cell's height
+    tc = S["temperature"]
+    days = slice(t - tc["days"] + 1, t + 1)
+    t0 = F.to_sea_level(w["tmean"][:, days], w["elev_om"][:, None], lapse)
+    tmin0 = F.to_sea_level(w["tmin"][:, days], w["elev_om"][:, None], lapse)
+    tmean_cells = F.from_sea_level(interp(t0), elev[:, None], lapse)
+    tmin_cells = F.from_sea_level(interp(tmin0), elev[:, None], lapse)
+    t7 = tmean_cells.mean(axis=1)
+    frost = (tmin_cells <= tc["frost_threshold_c"]).sum(axis=1)
+
+    # --- soil moisture percentile vs the nearest climatology point (same model)
+    sm = S["soil_moisture"]
+    if clim is not None and np.isfinite(w["soil"][:, t]).any():
+        _, nn = cKDTree(np.c_[clim["x"], clim["y"]]).query(np.c_[w["x"], w["y"]])
+        soil_pct_pt = F.percentile_in(w["soil"][:, t], clim["sorted_values"][nn])
+        soil_pct = interp(np.nan_to_num(soil_pct_pt, nan=np.nanmedian(soil_pct_pt)))
+        f_soil = F.ramp(soil_pct, sm["zero_at_percentile"], sm["full_at_percentile"])
+    else:
+        soil_pct = np.full(len(elev), np.nan)
+        f_soil = np.full(len(elev), np.nan)
+
+    f = {
+        "rain_total": F.ramp(rain30, rt["zero_below_mm"], rt["full_at_mm"]),
+        "rain_pulse": F.ramp(pulse, rp["zero_below_mm"], rp["full_at_mm"]),
+        "temperature": F.temperature_factor(t7, frost, tc),
+        "soil_moisture": f_soil,
+        "season_altitude": F.season_factor(month, band, S["season_altitude"]),
+        "shade": np.nan_to_num(shade, nan=0.0),
+    }
+    inputs = {"rain_30d_mm": rain30, "rain_7d_mm": rain7, "pulse_mm": pulse, "t7_mean_c": t7,
+              "frost_days": frost, "soil_percentile": soil_pct}
+    return f, inputs
+
+
+def water_gate(S, precip, t, interp):
+    """Per cell: (gate 0..1, biggest 3-day rain in the last 30 days in mm). Gate = 1 when off."""
+    g = S.get("water_gate") or {}
+    big = interp(F.max_window_rain(precip, t, g.get("days", 30), S["rain_pulse"]["window_days"]))
+    gate = F.water_gate(big, g["full_at_mm"]) if g.get("enabled") else np.ones_like(big)
+    return gate, big
+
+
 def score_day(run_file, day_offset=0):
     """Score day `today + day_offset` using the weather run in `run_file`."""
     S = config.load("scoring")["score"]
@@ -43,50 +102,22 @@ def score_day(run_file, day_offset=0):
     cy = g.north - (rows + 0.5) * g.res
     interp = Interpolator(np.c_[w["x"], w["y"]], np.c_[cx, cy])
     elev = np.nan_to_num(hab["elevation_m"][rows, cols], nan=0.0)
-    lapse = S["temperature"]["lapse_rate_c_per_km"]
 
-    # --- rain (per point, then spread)
-    p = w["precip"]
-    rt = S["rain_total"]; rp = S["rain_pulse"]
-    rain30_pt = F.rain_total(p, t, rt["days"])
-    rain7_pt = F.rain_total(p, t, 7)
-    pulse_pt, pulse_ago_pt = F.rain_pulse(p, t, rp["window_days"], rp["min_days_ago"], rp["max_days_ago"])
-    rain30, rain7, pulse = interp(rain30_pt), interp(rain7_pt), interp(pulse_pt)
-
-    # --- temperature: to sea level at the points, spread, then back up to each cell's height
-    tc = S["temperature"]
-    days = slice(t - tc["days"] + 1, t + 1)
-    t0 = F.to_sea_level(w["tmean"][:, days], w["elev_om"][:, None], lapse)
-    tmin0 = F.to_sea_level(w["tmin"][:, days], w["elev_om"][:, None], lapse)
-    tmean_cells = F.from_sea_level(interp(t0), elev[:, None], lapse)
-    tmin_cells = F.from_sea_level(interp(tmin0), elev[:, None], lapse)
-    t7 = tmean_cells.mean(axis=1)
-    frost = (tmin_cells <= tc["frost_threshold_c"]).sum(axis=1)
-
-    # --- soil moisture percentile vs the nearest climatology point (same model)
     clim = np.load(config.PROCESSED / "weather" / "soil_climatology.npz")
-    _, nn = cKDTree(np.c_[clim["x"], clim["y"]]).query(np.c_[w["x"], w["y"]])
-    soil_pct_pt = F.percentile_in(w["soil"][:, t], clim["sorted_values"][nn])
-    soil_pct = interp(np.nan_to_num(soil_pct_pt, nan=np.nanmedian(soil_pct_pt)))
-
-    sm = S["soil_moisture"]
-    f = {
-        "rain_total": F.ramp(rain30, rt["zero_below_mm"], rt["full_at_mm"]),
-        "rain_pulse": F.ramp(pulse, rp["zero_below_mm"], rp["full_at_mm"]),
-        "temperature": F.temperature_factor(t7, frost, tc),
-        "soil_moisture": F.ramp(soil_pct, sm["zero_at_percentile"], sm["full_at_percentile"]),
-        "season_altitude": F.season_factor(day.month, hab["altitude_band"][rows, cols].astype(int),
-                                           S["season_altitude"]),
-        "shade": np.nan_to_num(hab["shade_score"][rows, cols], nan=0.0),
-    }
+    f, inputs = day_factors(S, w, t, interp, elev, hab["altitude_band"][rows, cols].astype(int),
+                            hab["shade_score"][rows, cols], day.month, clim)
+    rain30, rain7, pulse = inputs["rain_30d_mm"], inputs["rain_7d_mm"], inputs["pulse_mm"]
+    t7, frost, soil_pct = inputs["t7_mean_c"], inputs["frost_days"], inputs["soil_percentile"]
     # [S7] general map: open forest with a partner tree only (not "Other broadleaf").
     general = general_habitat(hab["habitat_filter"], hab["likely_tree"], S["general_map_trees"])
-    score = F.combine(f, S["weights"], general[rows, cols])
+    gate, rain3_max = water_gate(S, w["precip"], t, interp)
+    score = F.combine(f, S["weights"], general[rows, cols]) * gate
 
     # --- write a raster with named bands
     layers = {"score": score, **{f"f_{k}": v for k, v in f.items()},
               "rain_30d_mm": rain30, "rain_7d_mm": rain7, "pulse_mm": pulse,
-              "t7_mean_c": t7, "frost_days": frost, "soil_percentile": soil_pct}
+              "t7_mean_c": t7, "frost_days": frost, "soil_percentile": soil_pct,
+              "water_gate": gate, "rain3_max_mm": rain3_max}
     OUT.mkdir(parents=True, exist_ok=True)
     tif = OUT / f"score_{day.isoformat()}.tif"
     prof = dict(driver="GTiff", width=g.width, height=g.height, count=len(layers), dtype="float32",
@@ -116,7 +147,9 @@ def score_day(run_file, day_offset=0):
                                      "pulse_mm": float(np.median(pulse[hf])),
                                      "t7_mean_c": float(np.median(t7[hf])),
                                      "frost_days": float(np.median(frost[hf])),
-                                     "soil_percentile": float(np.median(soil_pct[hf]))},
+                                     "soil_percentile": float(np.median(soil_pct[hf])),
+                                     "rain3_max_mm": float(np.median(rain3_max[hf])),
+                                     "water_gate": float(np.median(gate[hf]))},
             "island_rain_30d_mm_max": float(rain30.max())}
     (OUT / f"score_{day.isoformat()}.json").write_text(json.dumps(summ, indent=2))
     print(json.dumps(summ, indent=2))

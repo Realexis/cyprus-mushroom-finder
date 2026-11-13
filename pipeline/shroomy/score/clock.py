@@ -53,3 +53,16 @@ def sentence(days_since: int, opens: int, closes: int, shift: int = 0) -> str:
     if st == "waiting":
         return f"Soaking rain {days_since} days ago. Window opens in {k} day{'s' if k != 1 else ''}."
     return f"Soaking rain {days_since} days ago. Window OPEN — about {k} more day{'s' if k != 1 else ''}."
+
+
+def window(precip: np.ndarray, t: int, S: dict, dates=None):
+    """The fruiting window on day t, per weather point, with the rules in scoring.yaml.
+
+    Returns (state array 'open' / 'waiting' / 'none', days since the latest soaking rain,
+    days after that rain the window opens).
+    """
+    rp, mc = S["rain_pulse"], S["mushroom_clock"]
+    d = days_since_soak(precip, t, rp["window_days"], rp["soaking_event_mm"], mc["wet_day_mm"])
+    opens = np.full(len(d), mc["window_opens_days_after_pulse"])
+    st, _ = state(d, opens, mc["window_closes_days_after_pulse"])
+    return st, d, opens

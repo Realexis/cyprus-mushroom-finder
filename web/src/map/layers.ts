@@ -46,7 +46,8 @@ function hexFilter(v: View): FilterSpecification {
 function cellColor(v: View): ExpressionSpecification | string {
   if (!v.filter.code) return ramp(["to-number", ["get", `s${v.day}`], 0], SCORE_STOPS);
   if (!v.filter.inSeason) return OUT_OF_SEASON;
-  return ramp(["+", ["to-number", ["get", `b${v.day}`], 0], v.filter.seasonShare], SCORE_STOPS);
+  // b = the species score when in season (season share and water gate already in it).
+  return ramp(["to-number", ["get", `b${v.day}`], 0], SCORE_STOPS);
 }
 
 function cellFilter(v: View): FilterSpecification {

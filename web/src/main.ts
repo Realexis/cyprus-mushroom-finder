@@ -220,9 +220,9 @@ async function main() {
       const score = (d: number) => {
         if (!sp) return props[`s${d}`] === null || props[`s${d}`] === undefined ? null : Number(props[`s${d}`]);
         if (!sp.trees.includes(Number(props.tree)) || !sp.bands.includes(Number(props.band))) return null;
-        return panel.inSeason(d) ? Math.round(Number(props[`b${d}`]) + meta.season_share) : 0;
+        return panel.inSeason(d) ? Number(props[`b${d}`]) : 0;
       };
-      const s = cellSpot(props, cellInfo, score, p.lngLat, meta.season_share);
+      const s = cellSpot(props, cellInfo, score, p.lngLat);
       const zone = props.h === undefined ? undefined : spots?.spots[Number(props.h)];
       s.where = zone ? `${zone.where} · 250 m forest square` : "250 m forest square";
       s.note = cellInfo ? undefined : "Loading the details for this square…";

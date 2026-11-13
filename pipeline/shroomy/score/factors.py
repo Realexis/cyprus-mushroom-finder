@@ -97,3 +97,18 @@ def combine(factors: dict, weights: dict, habitat_filter):
     total_w = sum(weights[k] for k in FACTORS)
     s = sum(weights[k] * np.nan_to_num(factors[k], nan=0.0) for k in FACTORS) / total_w
     return (np.asarray(habitat_filter) > 0) * s * 100.0
+
+
+# ------------------------------------------------------------------ water gate
+def max_window_rain(precip, t, days, window):
+    """Biggest `window`-day rain sum that lies fully inside the `days` days ending on day t."""
+    best = np.zeros(precip.shape[:-1])
+    for end in range(t - days + window, t + 1):
+        best = np.maximum(best, np.nansum(precip[..., end - window + 1: end + 1], axis=-1))
+    return best
+
+
+def water_gate(big_rain_mm, full_at_mm):
+    """0..1: biggest 3-day rain of the last month / the soaking amount, never above 1.
+    No soaking rain = the score is cut; one soaking rain (20 mm+) = no cut."""
+    return np.clip(np.asarray(big_rain_mm, "float64") / full_at_mm, 0, 1)

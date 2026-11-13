@@ -10,6 +10,8 @@ export interface Meta {
   rain_days: string[];
   clock: { opens: number; closes: number; soak_mm: number };
   weights: Record<string, number>; season_share: number; general_map_trees: number[];
+  /** Score x (biggest 3-day rain in the last `days` days / full_at_mm, never above 1). */
+  water_gate?: { enabled: boolean; full_at_mm: number; days: number };
 }
 export interface HotZone { hex: string; where: string; lat: number; lon: number; score: number; date: string; }
 

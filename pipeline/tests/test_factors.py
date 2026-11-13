@@ -93,3 +93,15 @@ def test_combine_all_perfect_is_100_and_filter_zero_is_0():
     ones = {k: np.ones(2) for k in F.FACTORS}
     s = F.combine(ones, S["weights"], np.array([1, 0]))
     assert s.tolist() == pytest.approx([100.0, 0.0])
+
+
+def test_max_window_rain_only_inside_last_month():
+    p = np.zeros((1, 40))
+    p[0, 5:8] = 10          # 30 mm, 32-34 days before day 39: outside the 30 days
+    p[0, 30:32] = 6         # 12 mm in 2 days, inside
+    assert F.max_window_rain(p, 39, 30, 3)[0] == 12
+
+
+def test_water_gate_shape():
+    g = F.water_gate([0, 10, 20, 55], 20)
+    assert list(g) == [0, 0.5, 1, 1]

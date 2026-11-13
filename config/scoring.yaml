@@ -123,6 +123,18 @@ score:
     mid:  {jan: 0.4, feb: 0.2, mar: 0.0, apr: 0.0, may: 0.0, jun: 0.0, jul: 0.0, aug: 0.0, sep: 0.2, oct: 1.0, nov: 1.0, dec: 1.0}
     low:  {jan: 1.0, feb: 1.0, mar: 0.0, apr: 0.0, may: 0.0, jun: 0.0, jul: 0.0, aug: 0.0, sep: 0.0, oct: 0.3, nov: 1.0, dec: 1.0}
 
+  # Water gate (V3 Fable feedback, audit GAPS A1 + A3): no soaking rain = a low score.
+  # Without it, temperature, season and shade alone gave up to ~50 points in a dry month.
+  #   new score = weighted score x gate
+  #   gate      = biggest 3-day rain in the last 30 days / full_at_mm, never above 1
+  # The 3 days are rain_pulse.window_days. One soaking rain (20 mm+) in the month = no cut.
+  water_gate:
+    enabled: true                      # false = the old score, without the gate
+    days: 30                           # [BRIEF] the same 30 days as rain_total
+    full_at_mm: 20                     # [LOI19] "first substantial rainfall of the season (>20 mm)";
+                                       # = rain_pulse.soaking_event_mm [BRIEF]
+    # The straight line below 20 mm (10 mm = half the score) is a [GUESS]: no source gives the shape.
+
   forecast_confidence:                 # [BRIEF]
     high_max_day: 2
     medium_max_day: 4                  # day 5+ = low

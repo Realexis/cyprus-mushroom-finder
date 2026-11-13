@@ -34,7 +34,7 @@ from . import roads, summary
 PUBLIC = config.ROOT / "web" / "public" / "data"
 STATIC = config.DATA / "static"
 N_DAYS = 8
-INPUTS = ["rain_30d_mm", "pulse_mm", "t7_mean_c", "soil_percentile", "frost_days"]
+INPUTS = ["rain_30d_mm", "pulse_mm", "t7_mean_c", "soil_percentile", "frost_days", "rain3_max_mm"]
 
 
 def confidence(offset: int) -> str:
@@ -99,9 +99,10 @@ def clock_days(w, t0):
                      for k in range(N_DAYS)], axis=1)                      # (points, 8)
 
 
-def species_scores(base, months, specs, share):
-    """Per-cell species score for each day (habitat mask applied by the caller)."""
-    return {s["code"]: (base + share) * np.array([SP.in_season(m, s) for m in months], float)[None, :]
+def species_scores(base, months, specs, share, gate=1.0):
+    """Per-cell species score for each day (habitat mask applied by the caller).
+    gate = the water gate per cell and day (scoring.yaml score.water_gate)."""
+    return {s["code"]: (base + share) * gate * np.array([SP.in_season(m, s) for m in months], float)[None, :]
             for s in specs}
 
 
@@ -143,8 +144,9 @@ def build(run, private=True):            # `private` is kept for old callers; ev
     inp = {k: np.stack([d[k][rows, cols] for d in days], axis=1) for k in INPUTS}
     base = np.stack([SP.base_score({k: fac[k][:, i] for k in FACTORS}, W) for i in range(N_DAYS)], axis=1)
     share = SP.season_share(W)
+    gate = np.stack([d["water_gate"][rows, cols] for d in days], axis=1)
     sp_mask = {s["code"]: SP.species_habitat(np.ones_like(tree), tree, band, s) for s in specs}
-    sp_score = species_scores(base, months, specs, share)
+    sp_score = species_scores(base, months, specs, share, gate)
 
     # ---------------------------------------------------------- hexagons (public)
     hexes = np.array([h3.latlng_to_cell(la, lo, pv["h3_resolution"]) for la, lo in zip(lat, lon)])
@@ -235,6 +237,9 @@ def build(run, private=True):            # `private` is kept for old callers; ev
                   "soak_mm": S["score"]["rain_pulse"]["soaking_event_mm"]},
         "weights": {k: round(W[k] / tot_w, 4) for k in FACTORS},
         "season_share": round(share, 3),
+        "water_gate": {"enabled": bool((S["score"].get("water_gate") or {}).get("enabled")),
+                       "full_at_mm": (S["score"].get("water_gate") or {}).get("full_at_mm", 20),
+                       "days": (S["score"].get("water_gate") or {}).get("days", 30)},
         "general_map_trees": S["score"]["general_map_trees"],
         "credits": [{"name": v["name"], "credit": v["credit"], "licence": v["licence"],
                      "status": v["licence_status"], "use": v.get("use", "")}
@@ -268,6 +273,9 @@ def export_cells(days, hab, g, to_ll, clk_pt, pt_tree, rd, W, zone_of):
     inp = np.stack([np.stack([d[k][rows, cols] for k in INPUTS], axis=1) for d in days], axis=1)
     base = np.stack([SP.base_score({k: fac[:, i, j] for j, k in enumerate(FACTORS)}, W)
                      for i in range(N_DAYS)], axis=1)
+    # Species score when in season = (base + season share) x water gate. The site uses it as is.
+    gate = np.stack([d["water_gate"][rows, cols] for d in days], axis=1)
+    sp_in = (base + SP.season_share(W)) * np.nan_to_num(gate, nan=1.0)
 
     # Details file: int16 [cells, 8 days, 6 factors x100 + 5 inputs x10] + [track m, road m]
     info = np.full((len(rows), N_DAYS * (len(FACTORS) + len(INPUTS)) + 2), -1, "int16")
@@ -295,7 +303,7 @@ def export_cells(days, hab, g, to_ll, clk_pt, pt_tree, rd, W, zone_of):
         xs, ys = to_ll.transform([x0, x0 + g.res, x0 + g.res, x0, x0], [y1, y1, y1 - g.res, y1 - g.res, y1])
         props = {f"s{i}": (int(round(d["score"][r, c])) if np.isfinite(d["score"][r, c]) else None)
                  for i, d in enumerate(days)}
-        props.update({f"b{i}": int(round(base[n, i])) for i in range(N_DAYS)})
+        props.update({f"b{i}": int(round(sp_in[n, i])) for i in range(N_DAYS)})   # species score in season
         props.update({f"p{i}": int(clk_pt[near_pt[n], i]) for i in range(N_DAYS)})
         props.update({"i": n, "tree": int(tree[n]), "band": int(band[n]), "g": int(gen[n]),
                       "elev": int(round(float(np.nan_to_num(hab["elevation_m"][r, c])))),
