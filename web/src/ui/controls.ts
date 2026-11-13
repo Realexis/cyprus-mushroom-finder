@@ -174,7 +174,7 @@ export class Panel {
           aria-label="${label} ${num}. ${b ? `Best zone ${b.score} out of 100` : oos ? "Out of season" : "No score"}. Forecast ${word}."
           data-tip="${long}. ${scoreTip} Forecast ${word}: ${CONF_TIP[d.confidence]}">
         <span class="day-top"><b>${label}</b><span class="day-date">${num}</span></span>
-        <span class="day-score">${b ? `<i style="background:${scoreColour(b.score)}"></i>${b.score}` : "–"}</span>
+        <span class="day-score">${b ? `<i style="background:${scoreColour(b.score)}"></i><small class="day-best">best</small>${b.score}` : "–"}</span>
         <span class="day-conf"><i class="dot ${d.confidence}"></i>Forecast: ${word}</span></button>`;
     }).join("");
     const cur = this.meta.days[this.day];

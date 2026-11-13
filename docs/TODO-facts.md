@@ -39,6 +39,8 @@ Each is tagged `[GUESS]` in `config/*.yaml`. No source gives a number. Source ta
 | G5 | Burned forest: the cut at more than 50 % burned, for **partner-tree** species (LAR16 gives 50 % for morels only) | 50 % | `scoring.yaml` `habitat.burned` |
 | G6 | Burned forest **never comes back** as partner-tree habitat on this map (no regrowth rule) | never | `pipeline/shroomy/habitat/burns.py` |
 | G7 | The clock's rain memory starts on the first day of saved history (12 Oct 2026), not 1 September, until the history reaches back | from 12 Oct | `pipeline/shroomy/export/web.py` `clock_grid` |
+| G8 | **Morel filter** covers nearly all forest (Calabrian pine, golden oak, other broadleaf, recent burns, all altitudes). Fable suggests keeping only recent burns + other broadleaf. Real, 2026-11-13: no clear view yet, so unchanged | unchanged | `config/species.yaml` (morels) |
+| G9 | **EFFIS fire-map licence** not yet checked (`config/sources.yaml` `burned_areas`). Real, 2026-11-13: keep burned forest on the map meanwhile | kept | `config/sources.yaml` |
 
 ## Species and lookalikes (Phase 5)
 | # | What | Draft value now | Where |
@@ -49,7 +51,7 @@ Each is tagged `[GUESS]` in `config/*.yaml`. No source gives a number. Source ta
 | L4 | Morels = deciduous trees. Golden oak is evergreen, so only "Other broadleaf" counts; that class mixes deciduous and evergreen trees | Other broadleaf, mid + high | `config/species.yaml` |
 | F1 | **Species field notes** ("What to look for", "Where to look", "Leave it alone if") were researched from public sources on 2026-11-12 (Cyprus Dept. of Forests, KYKPEE, Wikipedia, First Nature…). User chose to show them, labelled "not checked by an expert". **Have every line checked by the Cyprus Mycological Association** | shown, labelled | `web/src/ui/species.ts` (FIELD) |
 | F2 | Woolly milk cap (*Lactarius torminosus*, poisonous, grows in Cyprus per sources) is not in the 10-lookalike list | add to `config/lookalikes.yaml`? | `config/lookalikes.yaml` |
-| F3 | Which *Suillus* is "lartias"? Cyprus Dept. of Forests lists *S. collinitus* and *S. granulatus*, not *S. luteus* | to confirm | `config/species.yaml` |
+| F3 | Which *Suillus* is "lartias"? Cyprus Dept. of Forests lists *S. collinitus* and *S. granulatus*, not *S. luteus*. **2026-11-13 (Real): the card now names the genus, "slippery Jacks (*Suillus*)".** The local name still to confirm | genus | `config/species.yaml` |
 | F4 | Cyprus morels: *M. arbutiphila* and *M. disparilis* were described from Cyprus (2016); the names *M. esculenta / elata* may need updating | to confirm | `config/species.yaml` |
 | D8 | Kermes oak map (brief: red pine mushroom also with kermes oak) | not mapped, not counted | `config/species.yaml` |
 | S10 | Species scores differ only by trees, altitude and season (brief rule), so species sharing a habitat get the same number. Species-specific rain/temperature rules? | none (not in the brief) | `config/species.yaml` |
