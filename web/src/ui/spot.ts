@@ -30,7 +30,7 @@ const FACTOR_TIP: Record<string, string> = {
   rain_pulse: "The biggest 3-day rain between 7 and 20 days ago. No points below 10 mm, full points from 25 mm.",
   temperature: "Average temperature of the last 7 days, corrected for height. Best 8-18 °C. No points at 3 °C or 24 °C. Frost days take points off.",
   soil_moisture: "How wet the top soil is now, compared with this place's normal. Wetter than most days = more points.",
-  season_altitude: "Is it the right month for this height? High Troodos starts in September, middle heights in October, low hills in November.",
+  season_altitude: "Is it the right month for this height? High Troodos starts in September, middle heights in October, low hills in November. The season runs to April.",
   shade: "North and east-facing slopes, valley bottoms and little autumn sun keep the ground moist longer.",
 };
 
