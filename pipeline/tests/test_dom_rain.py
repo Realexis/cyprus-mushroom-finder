@@ -58,3 +58,20 @@ def test_layout_change_fails_loudly(fake_pdftotext):
 def test_file_name_pattern():
     m = dom_rain.NAME.search("x Daily and Cummulative Precipitation_13112026_ENG.pdf y")
     assert m.groups() == ("13", "11", "2026")
+
+
+def test_import_from_collector(tmp_path, monkeypatch):
+    from shroomy import shelf
+    shelf_dir = tmp_path / "shelf"
+    monkeypatch.setenv("SHROOMY_SHELF", str(shelf_dir))
+    src = tmp_path / "collector" / "dom-rain" / "pdf"
+    src.mkdir(parents=True)
+    (src / "2026-11-14.pdf").write_bytes(b"%PDF-1.7 made up")
+    (src / "2026-11-15.pdf").write_bytes(b"<html>not a pdf</html>")
+    url = "https://example.org/Daily%20and%20Cummulative%20Precipitation_14112026_ENG.pdf"
+    (src.parent / "saved.csv").write_text(f"saved_utc,file,bytes,sha256,url\nx,2026-11-14.pdf,1,y,{url}\n")
+    assert dom_rain.import_from(src) == 1
+    assert (dom_rain.archive_dir() / "2026-11-14.pdf").exists()
+    assert not (dom_rain.archive_dir() / "2026-11-15.pdf").exists()
+    assert shelf.file_get("dom-rain", shelf.request_label(url, {})) is not None
+    assert dom_rain.import_from(src) == 0                  # second time: nothing new

@@ -15,6 +15,7 @@ the department.
 
 Run:  uv run python -m shroomy.sources.dom_rain            # save today's PDF + rebuild the table
       uv run python -m shroomy.sources.dom_rain --table    # rebuild the table only (no download)
+      ... --import <collector-repo>/dom-rain/pdf            # also copy days the GitHub collector saved
 """
 import csv
 import io
@@ -76,6 +77,29 @@ def save_today() -> list[Path]:
     if not out:
         print(" ! no PDF in the department's folder right now")
     return out
+
+
+def import_from(folder: Path) -> int:
+    """Copy PDFs saved by the private GitHub collector (Realexis/shroomy-collector, folder
+    dom-rain/pdf) into the archive. Each is labelled on the shelf with the address it came from
+    (the collector's saved.csv). Returns how many were new."""
+    log = folder.parent / "saved.csv"
+    urls = {r["file"]: r["url"] for r in csv.DictReader(open(log))} if log.exists() else {}
+    n = 0
+    for src in sorted(folder.glob("????-??-??.pdf")):
+        dst = archive_dir() / src.name
+        if dst.exists():
+            continue
+        if not src.read_bytes().startswith(b"%PDF"):
+            print(f" ! {src.name} is not a PDF, skipped")
+            continue
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(src, dst)
+        if src.name in urls and shelf.enabled():
+            shelf.file_put("dom-rain", shelf.request_label(urls[src.name], {}), dst, by="shroomy-collector")
+        print(f" - {src.name}: copied from the GitHub collector")
+        n += 1
+    return n
 
 
 def _num(tok: str):
@@ -148,6 +172,8 @@ def build_table() -> Path:
 
 
 if __name__ == "__main__":
+    if "--import" in sys.argv:
+        import_from(Path(sys.argv[sys.argv.index("--import") + 1]))
     if "--table" not in sys.argv:
         save_today()
     build_table()
