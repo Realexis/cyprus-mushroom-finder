@@ -3,6 +3,7 @@ soil-moisture climatology. Raw replies are cached; re-running is free.
 
 Run:  uv run python -m shroomy.weather.fetch            # today's weather
       uv run python -m shroomy.weather.fetch --clim     # soil climatology (one-off)
+      uv run python -m shroomy.weather.fetch --clim-cached   # same, from downloaded replies only
 """
 import json
 import math
@@ -79,7 +80,9 @@ def fetch_main(run_day: date | None = None, past_days: int | None = None, out_na
     return out
 
 
-def fetch_climatology():
+def fetch_climatology(cached_only: bool = False):
+    """cached_only=True: build from the replies already downloaded (no calls); missing
+    batches are skipped, so some points then have fewer seasons than others."""
     wcfg = config.load("weather")
     cfg, caps, clim = wcfg["open_meteo"], wcfg["budget"], wcfg["soil_climatology"]
     pts = soil_points()
@@ -97,6 +100,10 @@ def fetch_climatology():
                   "models": cfg["model"], "timezone": cfg["timezone"]}
         for b in range(math.ceil(n / per)):
             s = slice(b * per, (b + 1) * per)
+            cache = config.RAW / "weather" / "clim" / f"s{si}_b{b:03d}.json"
+            if cached_only and not cache.exists():
+                print(f" - season {si + 1} batch {b + 1}: not downloaded yet, skipped")
+                continue
             print(f" - season {si + 1} batch {b + 1}/{math.ceil(n / per)}")
             res = openmeteo.fetch(cfg["history_url"], pts["lat"][s], pts["lon"][s], params,
                                   1, n_days, budget,
@@ -116,7 +123,9 @@ def fetch_climatology():
 
 
 if __name__ == "__main__":
-    if "--clim" in sys.argv:
+    if "--clim-cached" in sys.argv:
+        fetch_climatology(cached_only=True)
+    elif "--clim" in sys.argv:
         fetch_climatology()
     else:
         fetch_main()

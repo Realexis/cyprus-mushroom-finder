@@ -24,6 +24,10 @@ soil_climatology:
   forest_only: true               # only blocks with forest habitat
   # Autumn-winter seasons, same model (ecmwf_ifs). Each costs ~1,200 calls,
   # so add ONE more season per day at most (cached seasons cost nothing).
-  # TODO: add [2024-10-01, 2025-01-31] and [2023-10-01, 2024-01-31] on later days.
+  # The first season alone (2025-26) was a drought, so almost any normal day looked "wet"
+  # (audit GAPS A2: the middle forest square sat at the 72nd percentile on 13 Nov 2026).
+  # Keep the order: cached replies are named by position (s0, s1, ...).
   seasons:
     - [2025-10-01, 2026-01-31]
+    - [2024-10-01, 2025-01-31]     # added 2026-11-13 (V3 Fable feedback, step 3)
+    # TODO next day: - [2023-10-01, 2024-01-31]

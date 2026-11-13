@@ -29,7 +29,7 @@ const FACTOR_TIP: Record<string, string> = {
   rain_total: "All rain in the last 30 days. No points below 20 mm, full points from 80 mm.",
   rain_pulse: "The biggest 3-day rain between 7 and 20 days ago. No points below 10 mm, full points from 25 mm.",
   temperature: "Average temperature of the last 7 days, corrected for height. Best 8-18 °C. No points at 3 °C or 24 °C. Frost days take points off.",
-  soil_moisture: "How wet the top soil is now, compared with this place's normal. Wetter than most days = more points.",
+  soil_moisture: "How wet the top soil is now, compared with the same place in the autumns and winters of 2024-25 and 2025-26. Wetter than most days = more points.",
   season_altitude: "Is it the right month for this height? High Troodos starts in September, middle heights in October, low hills in November. The season runs to April.",
   shade: "North and east-facing slopes, valley bottoms and little autumn sun keep the ground moist longer.",
 };
@@ -141,7 +141,7 @@ function factorText(name: string, inp: number[] | null, f: number, ctx: SpotCont
     case "rain_total": return `${Math.round(r30)} mm`;
     case "rain_pulse": return `${Math.round(pulse)} mm in 3 days`;
     case "temperature": return `${t7.toFixed(1)} °C average${frost >= 1 ? ` · frost on ${Math.round(frost)} day${frost >= 2 ? "s" : ""}` : ""}`;
-    case "soil_moisture": return `wetter than ${Math.round(soil)}% of last season`;
+    case "soil_moisture": return `wetter than ${Math.round(soil)}% of days in recent seasons`;
   }
   return "";
 }
