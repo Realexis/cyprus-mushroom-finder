@@ -24,6 +24,8 @@ export const RAIN1_STOPS: [number, string][] = [[0, "rgba(217,232,242,0)"], [0.5
 // Shade (50 m hotspot zoom): sunny = pale sand, deep shade = deep teal.
 export const SHADE_STOPS: [number, string][] = [[0, "#f1e3b5"], [35, "#b9c98f"], [55, "#5f9e86"], [75, "#2f6f78"], [100, "#183a5a"]];
 const OUT_OF_SEASON = "#8c928f";
+/** Draw the ~2 km top-zone hexagons on the map? Off: people read them as "mushrooms here". */
+const SHOW_ZONE_OUTLINES = false;
 
 function ramp(prop: ExpressionSpecification, stops: [number, string][]): ExpressionSpecification {
   return ["interpolate", ["linear"], prop, ...stops.flat()] as unknown as ExpressionSpecification;
@@ -148,7 +150,8 @@ export function addOverlays(map: MlMap, theme: Theme, urls: LayerUrls, v: View) 
         "fill-opacity": ["interpolate", ["linear"], ["zoom"], 11.5, 0, 12.3, 0.85], "fill-antialias": false },
     }, firstSymbol);
   }
-  if (urls.hotspotZones) {
+  // Top-zone hexagon outlines: hidden (user, 2026-11-13: the hexagons confused people).
+  if (urls.hotspotZones && SHOW_ZONE_OUTLINES) {
     map.addSource("hotzones", { type: "geojson", data: urls.hotspotZones });
     map.addLayer({
       // Top zones: a thin solid ring from far away (so you can see where to zoom), dashed up close.
