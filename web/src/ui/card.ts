@@ -185,6 +185,7 @@ const dist = (x: number) => (x < 0 ? "–" : x < 1000 ? `${Math.round(x / 10) * 
 
 export interface CardInput {
   props: Record<string, number>;       // the square's map properties (tree, band, elev, s<day>, p<day>, o<day>)
+  shade?: Record<string, number>;      // the 50 m shade square tapped, close up (sh, fa, va, ls, el)
   detail: CellDetail | null;           // null while loading
   failed?: boolean;                    // the details could not load
   open: boolean;                       // score breakdown shown?
@@ -225,7 +226,8 @@ export function cardHTML(c: CardInput, meta: Meta, day: number): string {
   const facts = `<ul class="facts">
     <li data-tip="The likely trees, worked out from satellite forest maps, height and rock type. Not a tree survey."><span aria-hidden="true">🌲</span> <b>Trees:</b> ${TREES[Number(p.tree)] ?? "Forest"}</li>
     <li data-tip="Height above sea level. Higher forest is cooler and its season starts earlier."><span aria-hidden="true">⛰</span> <b>Altitude:</b> ${Number(p.elev).toLocaleString("en-GB")} m · ${BANDS[Number(p.band)] ?? ""} band</li>
-    <li data-tip="Straight-line distance to the nearest forest track and drivable road, from OpenStreetMap. Not a driving route."><span aria-hidden="true">🚙</span> <b>Nearest:</b> ${road}</li></ul>`;
+    <li data-tip="Straight-line distance to the nearest forest track and drivable road, from OpenStreetMap. Not a driving route."><span aria-hidden="true">🚙</span> <b>Nearest:</b> ${road}</li>
+    ${c.shade ? `<li data-tip="The 50 m square you tapped: the average of three terrain parts. Faces north-east (cooler) ${c.shade.fa}/100, valley bottom ${c.shade.va}/100, little autumn sun ${c.shade.ls}/100. Shade keeps the ground moist. Terrain only: the weather is the same for the whole area."><span aria-hidden="true">🌗</span> <b>Shade here (50 m):</b> ${c.shade.sh}/100</li>` : ""}</ul>`;
 
   // 4. Google Maps link (free, no key). None for squares in or by a nature reserve.
   const maps = d?.access ? `<a class="maps-btn" href="${mapsDirectionsUrl(d.access.lat, d.access.lon)}" target="_blank" rel="noopener"

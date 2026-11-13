@@ -246,3 +246,4 @@ dialog.emergency::backdrop { background: rgba(0, 0, 0, 0.6); }
 .sp-list { gap: 6px; }
 .page details { margin: 8px 0; }
 .page summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; font-weight: 700; }
+.ml-note { margin-top: 3px; color: var(--ink-soft); }

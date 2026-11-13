@@ -1,5 +1,5 @@
 // Our data layers on top of the basemap: hill shading, today's 250 m forest squares,
-// the rain replay and the closed nature reserves. (Shroomy Lite: today only.)
+// the 50 m shade squares close up, the rain replay and the closed nature reserves. (Shroomy Lite: today only.)
 import type { ExpressionSpecification, Map as MlMap } from "maplibre-gl";
 import type { Theme } from "./style";
 
@@ -13,6 +13,11 @@ export const SCORE_STOPS: [number, string][] = [
   [0, "#23413f"], [30, "#3e6b57"], [50, "#7e9f55"], [70, "#d9b44a"], [85, "#ee8e4a"], [100, "#ff6a4d"],
 ];
 export const RAIN1_STOPS: [number, string][] = [[0, "rgba(217,232,242,0)"], [0.5, "#cfe3f0"], [3, "#9cc9e8"], [8, "#4f97d1"], [15, "#2a5fae"], [30, "#1b2f7a"]];
+
+// Shade (50 m, close up): sunny = pale sand, deep shade = deep teal (same as V5).
+export const SHADE_STOPS: [number, string][] = [[0, "#f1e3b5"], [35, "#b9c98f"], [55, "#5f9e86"], [75, "#2f6f78"], [100, "#183a5a"]];
+/** From this zoom the 50 m shade squares cover the forest (they fade in from 11.5). */
+export const SHADE_ZOOM = 12;
 
 const EMPTY: GeoJSON.FeatureCollection = { type: "FeatureCollection", features: [] };
 
@@ -35,7 +40,7 @@ function hatch(theme: Theme): ImageData {
   return g.getImageData(0, 0, s, s);
 }
 
-export interface LayerUrls { terrain: string; reserves: string; cells: string; }
+export interface LayerUrls { terrain: string; reserves: string; cells: string; shade?: string; }
 
 export function addOverlays(map: MlMap, theme: Theme, urls: LayerUrls, v: View) {
   const firstSymbol = map.getStyle().layers.find((l) => l.type === "symbol")?.id;
@@ -73,6 +78,17 @@ export function addOverlays(map: MlMap, theme: Theme, urls: LayerUrls, v: View) 
     layout: { visibility: v.mode === "conditions" ? "visible" : "none" },
     paint: { "fill-color": cellColor(v), "fill-opacity": 0.72, "fill-antialias": false },
   }, firstSymbol);
+  // 50 m shade squares (island-wide, terrain only) when zoomed in: the double tap lands here.
+  // Under the selection outline, so the tapped 250 m square still shows.
+  if (urls.shade) {
+    map.addSource("shade", { type: "vector", url: `pmtiles://${urls.shade}` });
+    map.addLayer({
+      id: "shade-fill", type: "fill", source: "shade", "source-layer": "hotspots", minzoom: 11.5,
+      layout: { visibility: v.mode === "conditions" ? "visible" : "none" },
+      paint: { "fill-color": ramp(["get", "sh"], SHADE_STOPS),
+        "fill-opacity": ["interpolate", ["linear"], ["zoom"], 11.5, 0, 12.3, 0.85], "fill-antialias": false },
+    }, firstSymbol);
+  }
   map.addLayer({ id: "cells-selected-halo", type: "line", source: "cells", "source-layer": "cells",
     filter: ["==", ["get", "i"], -1], paint: { "line-color": SEL_HALO, "line-width": selW(5, 8) } }, firstSymbol);
   map.addLayer({ id: "cells-selected", type: "line", source: "cells", "source-layer": "cells",
@@ -97,6 +113,7 @@ export function applyView(map: MlMap, v: View) {
   const replay = v.mode === "replay";
   map.setLayoutProperty("rain-fill", "visibility", replay ? "visible" : "none");
   map.setLayoutProperty("cells-fill", "visibility", replay ? "none" : "visible");
+  if (map.getLayer("shade-fill")) map.setLayoutProperty("shade-fill", "visibility", replay ? "none" : "visible");
   if (replay) map.setPaintProperty("rain-fill", "fill-color", rainColor(v));
 }
 

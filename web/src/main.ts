@@ -22,7 +22,8 @@ import { FullMap, readUrlView, trackMapReady } from "./ui/fullmap";
 
 const abs = (p: string) => new URL(p, document.baseURI).href;
 
-/** Zoom where a 250 m square is about 32 screen pixels wide: big enough to tap, with ~3 km of forest around. */
+/** The double tap lands here: the 50 m shade squares show (from zoom 12) and a 250 m square is
+ *  about 32 screen pixels wide, big enough to tap, with ~3 km of forest around. */
 const SQUARE_ZOOM = 13;
 /** Two taps closer than this (time, distance) are a double tap. */
 const DOUBLE_TAP_MS = 300;
@@ -50,9 +51,12 @@ async function main() {
   const protocol = new Protocol();
   maplibregl.addProtocol("pmtiles", protocol.tile);
 
-  const [meta, cellsIndex] = await Promise.all([
+  const [meta, cellsIndex, hasShade] = await Promise.all([
     fetch(abs("data/meta.json"), { cache: "no-cache" }).then((r) => r.json() as Promise<Meta>),
     fetch(abs("data/cells_info.json"), { cache: "no-cache" }).then((r) => (r.ok ? r.json() as Promise<CellsIndex> : null)).catch(() => null),
+    // The 50 m shade map is published? (The dev server answers missing files with the HTML page.)
+    fetch(abs(pmtiles("tiles/shade50.pmtiles")), { method: "HEAD" })
+      .then((r) => r.ok && (r.headers.get("content-type") ?? "").indexOf("html") < 0).catch(() => false),
   ]);
 
   // Today only: the day in the data that is today in Cyprus (day 0 on a normal morning).
@@ -71,7 +75,7 @@ async function main() {
   const ver = encodeURIComponent(meta.generated_utc);
   const v = (p: string) => `${abs(p)}?v=${ver}`;
   const urls = { terrain: v(pmtiles("tiles/terrain.pmtiles")), cells: v(pmtiles("data/cells.pmtiles")),
-    reserves: abs("data/reserves.geojson") };
+    reserves: abs("data/reserves.geojson"), shade: hasShade ? v(pmtiles("tiles/shade50.pmtiles")) : undefined };
 
   const map = new maplibregl.Map({
     container: "map",
@@ -126,7 +130,7 @@ async function main() {
   const legendEl = document.getElementById("map-legend")!;
   const openSpecies = mountSpecies(() => Number(meta.days[day].date.slice(5, 7)));
   const panel: Panel = new Panel(sheet, meta, day, {
-    onMode: (p) => { mapBusy(); applyView(map, p.view); renderLegend(legendEl, p.view); },
+    onMode: (p) => { mapBusy(); applyView(map, p.view); drawLegend(); },
     onFrame: (p) => setReplayFrame(map, p.view),
     loadRain: async () => {
       const rain = await fetch(abs("data/rain.geojson"), { cache: "no-cache" }).then((r) => {
@@ -141,7 +145,9 @@ async function main() {
     onCardClosed: () => { picked = null; applySelection(); },
     openSpecies,
   });
-  renderLegend(legendEl, panel.view);
+  const drawLegend = () => renderLegend(legendEl, panel.view, map.getZoom(), hasShade);
+  drawLegend();
+  map.on("zoom", drawLegend);
 
   // Keep map buttons above the bottom panel on phones.
   new ResizeObserver(() => document.documentElement.style.setProperty("--sheet-h", `${sheet.offsetHeight + 8}px`))
@@ -171,14 +177,18 @@ async function main() {
     if (!f) { panel.closeCard(); return; }
     const props = f.properties as Record<string, number>;
     const i = Number(props.i);
+    // Close up, the 50 m shade square under the finger too (terrain only).
+    const shadeF = map.getLayer("shade-fill") && map.getZoom() >= 11.5
+      ? map.queryRenderedFeatures(point, { layers: ["shade-fill"] })[0] : undefined;
+    const shade = shadeF ? (shadeF.properties as Record<string, number>) : undefined;
     picked = { i, lngLat };
     applySelection();
-    panel.showCard({ props, detail: null });
+    panel.showCard({ props, shade, detail: null });
     if (cellsIndex) {
       loadCellDetail(abs("data/"), cellsIndex, i, day)
-        .then((detail) => { if (picked?.i === i) panel.showCard({ props, detail }, true); })
-        .catch(() => { if (picked?.i === i) panel.showCard({ props, detail: null, failed: true }, true); });
-    } else panel.showCard({ props, detail: null, failed: true }, true);
+        .then((detail) => { if (picked?.i === i) panel.showCard({ props, shade, detail }, true); })
+        .catch(() => { if (picked?.i === i) panel.showCard({ props, shade, detail: null, failed: true }, true); });
+    } else panel.showCard({ props, shade, detail: null, failed: true }, true);
     // Keep the tapped square in view, above the panel on phones / beside it on computers.
     const pad = phone.matches ? { bottom: sheet.offsetHeight, top: 0, left: 0, right: 0 }
       : { left: sheet.offsetWidth + 32, top: 0, bottom: 0, right: 0 };
