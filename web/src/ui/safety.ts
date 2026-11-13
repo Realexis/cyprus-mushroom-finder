@@ -3,6 +3,10 @@
 export const SAFETY_LINE =
   "Conditions only. Never eat a wild mushroom based on this map, an app or an AI.";
 
+/** The emergency numbers, as tap-to-call links (shown on every screen). */
+export const NUMBERS_LINE =
+  `Poisoning: call <a href="tel:112">112</a> · Poison Centre <a href="tel:1401">1401</a>`;
+
 export const WARN_ICON = `<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
   <path fill="currentColor" d="M12 2 1 21h22L12 2Zm0 6c.6 0 1 .4 1 1v5a1 1 0 1 1-2 0V9c0-.6.4-1 1-1Zm0 11.2a1.3 1.3 0 1 1 0-2.6 1.3 1.3 0 0 1 0 2.6Z"/></svg>`;
 
@@ -27,17 +31,6 @@ export function emergencyHTML(): string {
     </ul>
     <form method="dialog"><button class="em-close">Close</button></form>
   </div>`;
-}
-
-/** Phones: the one-line safety bar opens to the full message on tap (and closes again). */
-export function mountSafetyToggle(): void {
-  const bar = document.querySelector<HTMLElement>(".safety");
-  const btn = bar?.querySelector<HTMLButtonElement>(".safety-short");
-  if (!bar || !btn) return;
-  btn.addEventListener("click", () => {
-    const open = bar.classList.toggle("open");
-    btn.setAttribute("aria-expanded", String(open));
-  });
 }
 
 export function mountEmergency(openers: HTMLElement[]): void {

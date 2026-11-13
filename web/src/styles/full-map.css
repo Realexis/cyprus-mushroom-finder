@@ -29,6 +29,7 @@
   background: var(--safety-bg); color: var(--safety-ink);
   font-size: 0.85rem; font-weight: 700; line-height: 1.25; text-align: center;
 }
+:root.full-map .full-safety a { color: inherit; }
 :root.full-map .full-safety svg { width: 16px; height: 16px; flex: none; }
 
 /* Small colour key, bottom-left, above the safety line. */

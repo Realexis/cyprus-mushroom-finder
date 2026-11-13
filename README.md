@@ -1,5 +1,10 @@
 # Cyprus Mushroom Finder
 
+> **Branch `lite`: Shroomy Lite.** A simplified, phone-first copy of V5 for the Mushroom Hunters Cyprus
+> group: today only, double tap to zoom to the 250 m squares, tap a square for its card, rain replay,
+> full map (`?full=1`). Same scores as V5 (the pipeline is unchanged).
+> Preview: https://realexis.github.io/cyprus-mushroom-finder-preview/lite/ (data frozen, no daily update).
+
 A map of Cyprus showing where **growing conditions** are right for wild mushrooms.
 
 > **Conditions only. Never eat a wild mushroom based on this map, an app or an AI.**

@@ -1,7 +1,0 @@
-/* ---------------------------------------------------------------- 3D view: mountain height button */
-.maplibregl-ctrl-group button.ctrl-height {
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
-  font-weight: 700; font-size: 12px; line-height: 1; color: var(--ink); background: var(--surface);
-}
-.maplibregl-ctrl-group button.ctrl-height[hidden] { display: none; }
-.ctrl-height svg { width: 16px; height: 10px; fill: currentColor; }

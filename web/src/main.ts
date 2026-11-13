@@ -1,402 +1,222 @@
+// Shroomy Lite: today's growing conditions, phone first.
+// Open the site: the whole island. Double tap: zoom in to the 250 m squares, centred on the
+// tapped spot. Tap a square: its card. Same scores as V5 (made by the pipeline, not here).
 import "@fontsource/atkinson-hyperlegible/400.css";
 import "@fontsource/atkinson-hyperlegible/700.css";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./styles/app.css";
 
 import * as maplibregl from "maplibre-gl";
-import type { MapGeoJSONFeature } from "maplibre-gl";
 import { Protocol } from "pmtiles";
 import { pmtiles } from "./map/files";
-import { addOverlays, applyView, hexProp, set3D, setReplayFrame, setSelection, type LayerUrls } from "./map/layers";
-import { baseStyle, type Theme } from "./map/style";
-import { Panel, type HotZone, type Meta } from "./ui/controls";
-import { mountEmergency, mountSafetyToggle } from "./ui/safety";
-import { mountSpecies, speciesByCode } from "./ui/species";
-import { CellInfo, cellSpot, hexSpot, type SpotData, type Spots } from "./ui/spot";
-import { applyTheme, currentTheme, toggleTheme } from "./ui/theme";
+import { addOverlays, applyView, setRainData, setReplayFrame, setSelection } from "./map/layers";
+import { baseStyle } from "./map/style";
+import { Panel } from "./ui/controls";
+import { loadCellDetail, words, type CellsIndex, type Meta } from "./ui/card";
+import { mountEmergency } from "./ui/safety";
+import { applyTheme, systemTheme } from "./ui/theme";
 import { hideMapTip as hideTip, mountTips, showAt } from "./ui/tips";
-import { mountGuide } from "./ui/guide";
 import { renderLegend } from "./ui/legend";
-import { words } from "./ui/spot";
 import { FullMap, readUrlView, trackMapReady } from "./ui/fullmap";
 
 const abs = (p: string) => new URL(p, document.baseURI).href;
 
-/** The parts of summary.json the site reads (top zones per day, overall and per species). */
-interface SummaryZone { where: string; lat: number; lon: number; score: number; spot?: number; why?: string; }
-interface Summary { days: { date: string; top_zones: SummaryZone[];
-  species?: Record<string, { in_season: boolean; top_zones: SummaryZone[] }> }[]; }
-
-/** Is this file published? (The dev server answers missing files with the HTML page.) */
-async function hasFile(path: string): Promise<boolean> {
-  try {
-    const r = await fetch(abs(path), { method: "HEAD" });
-    return r.ok && (r.headers.get("content-type") ?? "").indexOf("html") < 0;
-  } catch { return false; }
-}
-/** 250 m forest squares published? (If not, the map falls back to ~2 km zones.) */
-const hasCells = () => hasFile(pmtiles("data/cells.pmtiles"));
-
-async function getJSON<T>(url: string): Promise<T | null> {
-  try {
-    const r = await fetch(url, { cache: "no-cache" });
-    return r.ok ? ((await r.json()) as T) : null;
-  } catch { return null; }
-}
+/** Zoom where a 250 m square is about 32 screen pixels wide: big enough to tap, with ~3 km of forest around. */
+const SQUARE_ZOOM = 13;
+/** Two taps closer than this (time, distance) are a double tap. */
+const DOUBLE_TAP_MS = 300;
+const DOUBLE_TAP_PX = 40;
+const CYPRUS: [[number, number], [number, number]] = [[32.27, 34.56], [34.6, 35.7]];
 
 function cyprusToday(): string {
   return new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Nicosia" }).format(new Date());
 }
 
-/** Island-average daily rain for the replay timeline. */
-function islandRain(rain: GeoJSON.FeatureCollection | null, n: number): number[] {
-  const sum = new Array(n).fill(0);
-  const feats = rain?.features ?? [];
-  for (const f of feats) {
-    const d = (f.properties as { d: number[] }).d;
-    for (let i = 0; i < n; i++) sum[i] += d[i] ?? 0;
-  }
-  return sum.map((v) => (feats.length ? v / feats.length : 0));
-}
-
-// 3D view (kept next to its control; imports are hoisted).
-import "./styles/map-3d.css";
-import { HEIGHTS, setTerrainHeight, terrainHeight } from "./map/layers";
-
-/** The "3D" map button, and (in 3D) the "mountain height" button under it. */
-class TerrainControl implements maplibregl.IControl {
-  private btn!: HTMLButtonElement;
-  private heightBtn!: HTMLButtonElement;
-  private map?: maplibregl.Map;
-  on = false;
-  constructor(private toggle: (on: boolean) => void) {}
-  onAdd(map: maplibregl.Map) {
-    this.map = map;
-    const div = document.createElement("div");
-    div.className = "maplibregl-ctrl maplibregl-ctrl-group";
-    this.btn = document.createElement("button");
-    this.btn.type = "button";
-    this.btn.className = "ctrl-3d";
-    this.btn.addEventListener("click", () => { this.on = !this.on; this.update(); this.toggle(this.on); });
-    this.heightBtn = document.createElement("button");
-    this.heightBtn.type = "button";
-    this.heightBtn.className = "ctrl-height";
-    this.heightBtn.addEventListener("click", () => {
-      const i = HEIGHTS.indexOf(terrainHeight() as (typeof HEIGHTS)[number]);
-      setTerrainHeight(this.map!, HEIGHTS[(i + 1) % HEIGHTS.length]);
-      this.update();
-    });
-    div.append(this.btn, this.heightBtn);
-    this.update();
-    return div;
-  }
-  update() {
-    this.btn.textContent = this.on ? "2D" : "3D";
-    this.btn.setAttribute("aria-pressed", String(this.on));
-    this.btn.setAttribute("aria-label", this.on ? "Back to the flat 2D map" : "Show the map in 3D");
-    this.btn.dataset.tip = this.on
-      ? "Back to the flat map."
-      : "Tilt the map to see the mountains in 3D. Heights are stretched to show the shape of the mountains. To turn or tilt: drag with the right mouse button, or with two fingers.";
-    const h = terrainHeight();
-    this.heightBtn.hidden = !this.on;
-    this.heightBtn.innerHTML = `<svg viewBox="0 0 16 10" aria-hidden="true"><path d="M0 10 5.5 2l2.5 3.5L10.5 0 16 10z"/></svg><span>${h}×</span>`;
-    this.heightBtn.setAttribute("aria-label", `Mountain height: ${h} times taller than real. Change height`);
-    this.heightBtn.dataset.tip = `Mountain height: ${h}× taller than real. Heights are stretched to show the shape of the mountains. Tap to change (${HEIGHTS.join("×, ")}×).`;
-  }
-  onRemove() { this.btn.parentElement?.remove(); }
-}
-
 async function main() {
-  // Web-address switches (?full=1&layer=<id>&day=<0-7>&theme=light|dark), for identical screenshots.
-  const urlView = readUrlView();
-  applyTheme(urlView.theme ?? currentTheme());
-  // Test copies say so in the header. Set VITE_PREVIEW_LABEL when building a preview
-  // (web/.env.local, not in git); the live site's robot build has no label.
+  const urlView = readUrlView();                       // ?full=1 and ?theme=light|dark
+  const theme = urlView.theme ?? systemTheme();
+  applyTheme(theme);
+  // Test copies say so in the header (VITE_PREVIEW_LABEL in web/.env.local, not in git).
   const previewLabel = import.meta.env.VITE_PREVIEW_LABEL as string | undefined;
   if (previewLabel) {
     document.querySelector(".brand-sub")?.insertAdjacentHTML("afterend",
       ` <span class="ver-badge" data-tip="A test copy of the site. Not the live site.">${previewLabel.replace(/[&<>"]/g, "")}</span>`);
   }
   mountTips();
-  mountSafetyToggle();
-  const guide = mountGuide();
   mountEmergency([...document.querySelectorAll<HTMLElement>("[data-emergency]")]);
 
   maplibregl.setWorkerUrl(abs("vendor/maplibre-gl-worker.mjs"));
   const protocol = new Protocol();
   maplibregl.addProtocol("pmtiles", protocol.tile);
 
-  const [meta, priv, spots, rain, shade, summary] = await Promise.all([
+  const [meta, cellsIndex] = await Promise.all([
     fetch(abs("data/meta.json"), { cache: "no-cache" }).then((r) => r.json() as Promise<Meta>),
-    hasCells(),
-    getJSON<Spots>(abs("data/spots.json")),
-    getJSON<GeoJSON.FeatureCollection>(abs("data/rain.geojson")),
-    hasFile(pmtiles("tiles/shade50.pmtiles")),
-    getJSON<Summary>(abs("data/summary.json")),
+    fetch(abs("data/cells_info.json"), { cache: "no-cache" }).then((r) => (r.ok ? r.json() as Promise<CellsIndex> : null)).catch(() => null),
   ]);
 
-  if (meta.weather_run < cyprusToday()) {
+  // Today only: the day in the data that is today in Cyprus (day 0 on a normal morning).
+  const today = cyprusToday();
+  const found = meta.days.findIndex((d) => d.date === today);
+  const day = found >= 0 ? found : 0;
+  if (meta.weather_run < today) {
     const d = document.getElementById("delayed")!;
     d.textContent = `Data delayed · last update ${meta.weather_run}`;
-    d.dataset.tip = "Today's weather update has not arrived yet. The map shows the last good data. It usually updates at 6 am Cyprus time (7 am in summer).";
+    d.dataset.tip = "Today's weather update has not arrived yet. The map shows today from the last good update. It usually updates at 6 am Cyprus time (7 am in summer).";
     d.hidden = false;
-  }
-
-  // 250 m square details (~8 MB) load only when a square is first tapped. 50 m hotspot zoom list.
-  let cellInfo: CellInfo | null = null;
-  let cellInfoLoading: Promise<void> | null = null;
-  const ensureCellInfo = () => cellInfoLoading ??= (async () => {
-    const im = await getJSON<{ factors: string[]; inputs: string[]; days: number }>(abs("data/cells_info.json"));
-    if (im) cellInfo = await CellInfo.load(abs("data/cells_info.bin"), im).catch(() => null);
-  })();
-  // Top-zone outlines (daily). The 50 m shade itself is the fixed file tiles/shade50.pmtiles.
-  let hotZonesGeo: GeoJSON.FeatureCollection | undefined;
-  if (priv) {
-    const hz = await getJSON<{ zones: (HotZone & { ring: number[][] })[] }>(abs("data/hotspot_zones.json"));
-    if (hz) {
-      hotZonesGeo = { type: "FeatureCollection", features: hz.zones.map((z) => ({ type: "Feature",
-        properties: { where: z.where, score: z.score }, geometry: { type: "Polygon", coordinates: [z.ring] } })) };
-    }
   }
 
   // Map files get the data version in their address, so after each daily update the browser
   // fetches fresh pieces instead of mixing in old cached copies (which breaks PMTiles reads).
-  const v = (p: string) => `${abs(p)}?v=${encodeURIComponent(meta.generated_utc)}`;
-  const urls: LayerUrls = {
-    terrain: v(pmtiles("tiles/terrain.pmtiles")), hexes: abs("data/hexes.geojson"),
-    rain: abs("data/rain.geojson"), reserves: abs("data/reserves.geojson"),
-    cells: priv ? v(pmtiles("data/cells.pmtiles")) : undefined,
-    hotspots: priv && shade ? v(pmtiles("tiles/shade50.pmtiles")) : undefined,         // island-wide 50 m shade
-    hotspotZones: hotZonesGeo,
-  };
-  const basemap = v(pmtiles("tiles/basemap.pmtiles"));
-  let theme: Theme = urlView.theme ?? currentTheme();
+  const ver = encodeURIComponent(meta.generated_utc);
+  const v = (p: string) => `${abs(p)}?v=${ver}`;
+  const urls = { terrain: v(pmtiles("tiles/terrain.pmtiles")), cells: v(pmtiles("data/cells.pmtiles")),
+    reserves: abs("data/reserves.geojson") };
 
   const map = new maplibregl.Map({
     container: "map",
-    style: baseStyle(theme, basemap),
-    bounds: [[32.25, 34.55], [34.6, 35.7]],
-    fitBoundsOptions: { padding: { top: 20, bottom: 20, left: 20, right: 20 } },
+    style: baseStyle(theme, v(pmtiles("tiles/basemap.pmtiles"))),
+    bounds: CYPRUS,
+    fitBoundsOptions: { padding: 20 },
     maxBounds: [[29.0, 32.0], [37.8, 38.2]],
-    maxPitch: 75,
+    maxZoom: 16,
+    maxPitch: 0,
+    dragRotate: false,                                 // flat, north up: nothing to get lost in
+    pitchWithRotate: false,
+    doubleClickZoom: false,                            // our own double tap (below)
     attributionControl: { compact: true },
-    cooperativeGestures: false,
   });
+  map.touchZoomRotate.disableRotation();
+  map.keyboard.disableRotation();
   if (import.meta.env.DEV) {
     (window as unknown as { map: unknown }).map = map;
     map.on("error", (e) => console.error("[map]", e.error?.message ?? e));
   }
-  map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), "top-right");
-  const terrainCtl = new TerrainControl((on) => set3D(map, on, theme));
-  map.addControl(terrainCtl, "top-right");
   map.addControl(new maplibregl.GeolocateControl({ positionOptions: { enableHighAccuracy: true } }), "top-right");
-  // Full map mode (whole island, flat, north up; for screenshots) and <html data-map-ready>.
-  const mapBusy = trackMapReady(map, () => !!map.getSource("hexes"));
-  const fullMap = new FullMap(map, {
-    before: () => {
-      if (terrainCtl.on) { terrainCtl.on = false; terrainCtl.update(); set3D(map, false, theme); }
-      hideTip();
-    },
-    after: () => fitCyprus(),
-    busy: mapBusy,
-  });
-  map.addControl(fullMap, "top-right");
-  if (urlView.full) fullMap.set(true, false);         // ?full=1: straight into full map (framed again on load)
-  // Our own tips on MapLibre's buttons (and no second, native browser tooltip).
-  const ctlTips: Record<string, string> = {
-    ".maplibregl-ctrl-zoom-in": "Zoom in. You can also scroll or pinch.",
-    ".maplibregl-ctrl-zoom-out": "Zoom out.",
-    ".maplibregl-ctrl-compass": "Turn the map back to north and flat. The needle shows where north is.",
-    ".maplibregl-ctrl-geolocate": "Show where you are on the map (needs location permission). Your position stays on your phone.",
-  };
-  for (const [sel, tip] of Object.entries(ctlTips)) {
-    const b = document.querySelector<HTMLElement>(sel);
-    if (b) { b.removeAttribute("title"); b.dataset.tip = tip; }
-  }
-  // The location button shows crossed out when the browser gives no location: say why, in plain words.
   const geo = document.querySelector<HTMLButtonElement>(".maplibregl-ctrl-geolocate");
-  if (geo) {
-    const sayGeo = () => {
-      const off = geo.disabled;
-      geo.removeAttribute("title");
-      geo.dataset.tip = off
-        ? "Your location is off: this browser gives no location. Allow location for this site in your browser settings to see where you are."
-        : ctlTips[".maplibregl-ctrl-geolocate"];
-      geo.setAttribute("aria-label", off ? "Your location (off: no location permission)" : "Show your location");
-    };
-    sayGeo();
-    new MutationObserver(sayGeo).observe(geo, { attributes: true, attributeFilter: ["disabled", "title"] });
-  }
+  if (geo) { geo.removeAttribute("title"); geo.dataset.tip = "Show where you are on the map (needs location permission). Your position stays on your phone."; }
 
   const sheet = document.getElementById("sheet")!;
   const phone = matchMedia("(max-width: 899px)");
-
-  // ------------------------------------------------------------ the tapped spot
-  type Pick = { f: MapGeoJSONFeature; lngLat: maplibregl.LngLat };
-  let lastPick: Pick | null = null;
-  const buildSpot = (p: Pick): SpotData => {
-    const props = p.f.properties as Record<string, number>;
-    if (p.f.layer.id === "hot-fill") return { kind: "hot", score: () => null, hot: props };
-    if (p.f.layer.id === "cells-fill") {
-      const sp = speciesByCode(panel.species);
-      const score = (d: number) => {
-        if (!sp) return props[`s${d}`] === null || props[`s${d}`] === undefined ? null : Number(props[`s${d}`]);
-        if (!sp.trees.includes(Number(props.tree)) || !sp.bands.includes(Number(props.band))) return null;
-        return panel.inSeason(d) ? Number(props[`b${d}`]) : 0;
-      };
-      const s = cellSpot(props, cellInfo, score, p.lngLat);
-      const zone = props.h === undefined ? undefined : spots?.spots[Number(props.h)];
-      s.where = zone ? `${zone.where} · 250 m forest square` : "250 m forest square";
-      s.note = cellInfo ? undefined : "Loading the details for this square…";
-      if (!cellInfo) void ensureCellInfo().then(() => {
-        if (lastPick?.f.layer.id === "cells-fill") panel.showSpot(buildSpot(lastPick), false);
-      });
-      return s;
-    }
-    return hexSpot(props, spots?.spots[Number(props.h)], (d) => hexProp(d, panel.filter), meta.general_map_trees);
-  };
-
-  const panel: Panel = new Panel(sheet, meta, priv, islandRain(rain, 30), shade,
-    (p) => {
-      mapBusy();
-      if (!map.isStyleLoaded()) return;
-      applyView(map, p.view);
-      drawLegend();
-      if (lastPick && p.mode === "conditions") p.showSpot(buildSpot(lastPick), false);
-    },
-    (p) => { if (map.isStyleLoaded()) setReplayFrame(map, p.view); },
-    (code) => openSpecies(code));
-  // Best zone per day (and per species) for the day buttons, from summary.json.
-  panel.best = (day, code) => {
-    const d = summary?.days[day];
-    const z = code ? (d?.species?.[code]?.in_season ? d.species[code].top_zones[0] : undefined) : d?.top_zones[0];
-    return z ? { score: z.score, where: z.where } : null;
-  };
-  // Day and "Conditions for" from the web address (ignored if unknown). "all" = the general map.
-  if (urlView.day !== null && urlView.day < meta.days.length) panel.day = urlView.day;
-  if (urlView.layer === "all") panel.species = null;
-  else if (urlView.layer && speciesByCode(urlView.layer)) panel.species = urlView.layer;
-  panel.refresh();
-
-  // The colour key on the map (follows the layer, the species season and the zoom).
-  const legendEl = document.getElementById("map-legend")!;
-  function drawLegend() { renderLegend(legendEl, panel.view, map.getZoom(), shade); }
-  drawLegend();
-  map.on("zoom", drawLegend);
-
-  const openSpecies = mountSpecies(() => panel.monthOf(panel.day), (code) => panel.setSpecies(code));
-
-  // Keep map buttons above the bottom sheet on phones.
-  new ResizeObserver(() => document.documentElement.style.setProperty("--sheet-h", `${sheet.offsetHeight + 8}px`))
-    .observe(sheet);
-
   // Fit Cyprus into the part of the map NOT covered by the panel.
   const fitCyprus = () => {
     if (fullMap.on) { fullMap.frame(); return; }
     const pad = phone.matches
       ? { top: 4, right: 4, left: 4, bottom: sheet.offsetHeight + 4 }
       : { top: 24, right: 60, bottom: 24, left: sheet.offsetWidth + 40 };
-    // Phones: Cyprus is wide and flat, so its width sets the zoom; use every pixel of it.
-    map.fitBounds([[32.27, 34.56], [34.6, 35.7]], { padding: pad, duration: 0 });
+    map.fitBounds(CYPRUS, { padding: pad, duration: 0 });
   };
-  map.once("load", () => {
-    fitCyprus();
-    document.querySelector(".maplibregl-ctrl-attrib")?.classList.remove("maplibregl-compact-show");
-  });
+  // Full map mode (whole island, flat, north up; for screenshots) and <html data-map-ready>.
+  const mapBusy = trackMapReady(map, () => !!map.getLayer("cells-fill"));
+  const fullMap = new FullMap(map, { before: () => hideTip(), after: () => fitCyprus(), busy: mapBusy });
+  map.addControl(fullMap, "top-right");
+  if (urlView.full) fullMap.set(true, false);
 
-  // "You tapped here": a small ring marker, plus the zone outline.
+  // ------------------------------------------------------------ the panel and the tapped square
+  let picked: { i: number; lngLat: maplibregl.LngLat } | null = null;
   const pinEl = document.createElement("div");
   pinEl.className = "pick-pin";
   pinEl.setAttribute("aria-hidden", "true");
   const pin = new maplibregl.Marker({ element: pinEl });
   const applySelection = () => {
-    const f = lastPick?.f;
-    // Outline a ~2 km hexagon only when the map itself shows hexagons (fallback view); never over squares.
-    const hexView = !!map.getLayer("hex-fill") && map.getLayoutProperty("hex-fill", "visibility") !== "none";
-    setSelection(map, f?.layer.id === "hex-fill" && hexView ? (f.id as number) : null,
-      f?.layer.id === "cells-fill" ? Number((f.properties as Record<string, number>).i) : null);
-    if (lastPick) pin.setLngLat(lastPick.lngLat).addTo(map); else pin.remove();
+    setSelection(map, picked?.i ?? null);
+    if (picked) pin.setLngLat(picked.lngLat).addTo(map); else pin.remove();
   };
 
-  const onStyle = () => {
+  const legendEl = document.getElementById("map-legend")!;
+  const panel: Panel = new Panel(sheet, meta, day, {
+    onMode: (p) => { mapBusy(); applyView(map, p.view); renderLegend(legendEl, p.view); },
+    onFrame: (p) => setReplayFrame(map, p.view),
+    loadRain: async () => {
+      const rain = await fetch(abs("data/rain.geojson"), { cache: "no-cache" }).then((r) => {
+        if (!r.ok) throw new Error(`rain ${r.status}`);
+        return r.json() as Promise<GeoJSON.FeatureCollection>;
+      });
+      setRainData(map, rain);
+      const sum = new Array(30).fill(0);                // island-average rain per day, for the timeline
+      for (const f of rain.features) (f.properties as { d: number[] }).d.forEach((x, k) => { if (k < 30) sum[k] += x ?? 0; });
+      return sum.map((x) => (rain.features.length ? x / rain.features.length : 0));
+    },
+    onCardClosed: () => { picked = null; applySelection(); },
+  });
+  renderLegend(legendEl, panel.view);
+
+  // Keep map buttons above the bottom panel on phones.
+  new ResizeObserver(() => document.documentElement.style.setProperty("--sheet-h", `${sheet.offsetHeight + 8}px`))
+    .observe(sheet);
+
+  map.once("load", () => {
     addOverlays(map, theme, urls, panel.view);
-    if (terrainCtl.on) set3D(map, true, theme, false);
-    applySelection();
-  };
-  map.once("load", onStyle);
+    fitCyprus();
+    document.querySelector(".maplibregl-ctrl-attrib")?.classList.remove("maplibregl-compact-show");
+  });
 
   // Loading message: hide once the map has drawn its layers for the first time.
   const loading = document.getElementById("loading")!;
   const slow = window.setTimeout(() => {
     document.getElementById("loading-text")!.textContent = "Still loading… a slow connection can take a minute.";
   }, 12000);
-  // Done = our zone data is in (or the map went idle). Works even in a background tab,
-  // where the map draws no frames and "idle" can wait a long time.
-  let loaded = false;
-  const finishLoading = () => {
-    if (loaded) return;
-    loaded = true;
+  map.once("idle", () => {
     window.clearTimeout(slow);
     loading.classList.add("done");
     window.setTimeout(() => (loading.hidden = true), 400);
-    if (!fullMap.on && !urlView.full) guide.openIfFirstVisit();
-  };
-  map.once("idle", finishLoading);
-  map.on("sourcedata", (e) => {
-    if (e.sourceId === "hexes" && map.getLayer("hex-fill") && map.isSourceLoaded("hexes")) finishLoading();
-  });
-  document.addEventListener("open-guide", () => guide.open());
-
-  document.addEventListener("toggle-theme", () => {
-    theme = toggleTheme();
-    map.setStyle(baseStyle(theme, basemap), { diff: false });
-    map.once("style.load", onStyle);
   });
 
-  const pick = (e: maplibregl.MapMouseEvent) => {
-    const layersToHit = ["hot-fill", "cells-fill", "hex-fill"].filter((id) => map.getLayer(id) &&
-      map.getLayoutProperty(id, "visibility") !== "none");
-    const f: MapGeoJSONFeature | undefined = map.queryRenderedFeatures(e.point, { layers: layersToHit })[0];
-    lastPick = f ? { f, lngLat: e.lngLat } : null;
+  /** Open the card of the square under this point (or close the card if there is none). */
+  const pick = (point: maplibregl.Point, lngLat: maplibregl.LngLat) => {
+    if (panel.mode !== "conditions" || !map.getLayer("cells-fill")) return;
+    const f = map.queryRenderedFeatures(point, { layers: ["cells-fill"] })[0];
+    if (!f) { panel.closeCard(); return; }
+    const props = f.properties as Record<string, number>;
+    const i = Number(props.i);
+    picked = { i, lngLat };
     applySelection();
-    panel.showSpot(lastPick ? buildSpot(lastPick) : null);
-    // Keep the tapped spot in view, above the panel on phones / beside it on desktop.
-    if (f) {
-      const pad = phone.matches ? { bottom: sheet.offsetHeight, top: 0, left: 0, right: 0 }
-        : { left: sheet.offsetWidth + 32, top: 0, bottom: 0, right: 0 };
-      map.easeTo({ center: e.lngLat, padding: pad, duration: 400 });
+    panel.showCard({ props, detail: null });
+    if (cellsIndex) {
+      loadCellDetail(abs("data/"), cellsIndex, i, day)
+        .then((detail) => { if (picked?.i === i) panel.showCard({ props, detail }, true); })
+        .catch(() => { if (picked?.i === i) panel.showCard({ props, detail: null, failed: true }, true); });
+    } else panel.showCard({ props, detail: null, failed: true }, true);
+    // Keep the tapped square in view, above the panel on phones / beside it on computers.
+    const pad = phone.matches ? { bottom: sheet.offsetHeight, top: 0, left: 0, right: 0 }
+      : { left: sheet.offsetWidth + 32, top: 0, bottom: 0, right: 0 };
+    map.easeTo({ center: lngLat, padding: pad, duration: 400 });
+  };
+
+  /** Double tap: zoom in, centred on that exact spot, to the 250 m squares (or one step closer). */
+  const zoomTo = (lngLat: maplibregl.LngLat) => {
+    const z = map.getZoom();
+    const target = z < SQUARE_ZOOM - 0.25 ? SQUARE_ZOOM : Math.min(map.getMaxZoom(), z + 1);
+    const pad = phone.matches ? { bottom: sheet.offsetHeight, top: 0, left: 0, right: 0 }
+      : { left: sheet.offsetWidth + 32, top: 0, bottom: 0, right: 0 };
+    const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    map.easeTo({ center: lngLat, zoom: target, padding: pad, duration: still ? 0 : 700 });
+  };
+
+  // One tap waits a moment: if a second tap follows, it was a double tap (zoom), not a pick.
+  let pending: { t: number; x: number; y: number; timer: number } | null = null;
+  map.on("click", (e) => {
+    const now = performance.now();
+    if (pending && now - pending.t < DOUBLE_TAP_MS && Math.hypot(e.point.x - pending.x, e.point.y - pending.y) < DOUBLE_TAP_PX) {
+      window.clearTimeout(pending.timer);
+      pending = null;
+      zoomTo(e.lngLat);
+      return;
     }
-  };
-  map.on("click", pick);
-  document.addEventListener("spot-closed", () => {
-    lastPick = null;
-    applySelection();
+    if (pending) window.clearTimeout(pending.timer);
+    const { point, lngLat } = e;
+    pending = { t: now, x: point.x, y: point.y, timer: window.setTimeout(() => { pending = null; pick(point, lngLat); }, DOUBLE_TAP_MS) };
   });
-  for (const id of ["hex-fill", "cells-fill", "hot-fill"]) {
-    map.on("mouseenter", id, () => (map.getCanvas().style.cursor = "pointer"));
-    map.on("mouseleave", id, () => { map.getCanvas().style.cursor = ""; hideTip(); });
-  }
 
-  // Hovering the map (mouse only): a small tip with the score, so you can scan before clicking.
+  // Mouse only: a small tip with the score while hovering, so you can scan before clicking.
   map.on("mousemove", (e) => {
-    if (panel.mode !== "conditions") return;
-    const ids = ["hot-fill", "cells-fill", "hex-fill"].filter((id) => map.getLayer(id) &&
-      map.getLayoutProperty(id, "visibility") !== "none");
-    const f = map.queryRenderedFeatures(e.point, { layers: ids })[0];
-    if (!f) { hideTip(); return; }
+    if (panel.mode !== "conditions" || !map.getLayer("cells-fill")) return;
+    const f = map.queryRenderedFeatures(e.point, { layers: ["cells-fill"] })[0];
+    if (!f) { hideTip(); map.getCanvas().style.cursor = ""; return; }
+    map.getCanvas().style.cursor = "pointer";
+    const s = (f.properties as Record<string, number>)[`s${day}`];
     const r = map.getCanvas().getBoundingClientRect();
-    const p = f.properties as Record<string, number>;
-    let text: string;
-    if (f.layer.id === "hot-fill") text = `Shade ${p.sh}/100 · ${p.el} m. Click for details.`;
-    else {
-      const sp = speciesByCode(panel.species);
-      if (sp && !panel.inSeason(panel.day)) text = `Out of season for ${sp.latin} (${sp.season_text}). Click for details.`;
-      else {
-        const v = buildSpot({ f, lngLat: e.lngLat }).score(panel.day);
-        text = v === null ? "Not scored here. Click for details." : `${v}/100 · ${words(v)}. Click for details.`;
-      }
-    }
-    showAt(e.originalEvent.clientX || r.left + e.point.x, (e.originalEvent.clientY || r.top + e.point.y) - 6, text);
+    showAt(e.originalEvent.clientX || r.left + e.point.x, (e.originalEvent.clientY || r.top + e.point.y) - 6,
+      s === undefined || s === null ? "Not scored here." : `${words(Number(s))} · ${s}/100. Click for details.`);
   });
   map.on("mouseout", () => hideTip());
   map.on("movestart", () => hideTip());

@@ -10,7 +10,7 @@
     "check:words": "node scripts/check-words.mjs",
     "predev": "node scripts/copy-worker.mjs && node scripts/views.mjs",
     "prebuild": "node scripts/copy-worker.mjs",
-    "postbuild": "node scripts/zip-pmtiles-names.mjs && node scripts/views.mjs"
+    "postbuild": "node scripts/zip-pmtiles-names.mjs && node scripts/lite-prune.mjs && node scripts/views.mjs"
   },
   "dependencies": {
     "@fontsource/atkinson-hyperlegible": "5.2.8",

@@ -4,98 +4,90 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#14211b" />
-  <title>About the data · Cyprus Mushroom Finder</title>
+  <title>About · Shroomy Lite</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M4 15c0-6 5-11 12-11s12 5 12 11z' fill='%23e0b040'/%3E%3Crect x='12' y='15' width='8' height='12' rx='3' fill='%23e9efe6'/%3E%3C/svg%3E" />
 </head>
 <body>
-  <header class="topbar">
-    <a class="brand" href="./">
-      <svg width="34" height="34" viewBox="0 0 32 32" aria-hidden="true">
-        <path d="M4 15c0-6 5-11 12-11s12 5 12 11z" fill="#e0b040" />
-        <rect x="12" y="15" width="8" height="12" rx="3" fill="#e9efe6" />
-      </svg>
-      <span class="brand-text"><span class="brand-name">Cyprus Mushroom Finder</span><br />
-        <span class="brand-sub">← Back to the map</span></span>
-    </a>
-    <button class="sos" type="button" data-emergency aria-haspopup="dialog">Emergency</button>
-  </header>
-  <div class="safety" role="note">
-    <span>Conditions only. Never eat a wild mushroom based on this map, an app or an AI.</span>
+  <div class="about-top">
+    <header class="topbar">
+      <a class="brand" href="./">
+        <svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true">
+          <path d="M4 15c0-6 5-11 12-11s12 5 12 11z" fill="#e0b040" />
+          <rect x="12" y="15" width="8" height="12" rx="3" fill="#e9efe6" />
+        </svg>
+        <span class="brand-text"><span class="brand-name">Shroomy Lite</span>
+          <span class="brand-sub">← Back to the map</span></span>
+      </a>
+      <button class="sos" type="button" data-emergency aria-haspopup="dialog" aria-label="Poisoning emergency: 112 and 1401">
+        <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.6.1.3 0 .7-.2 1z"/></svg>
+        <span>112 · 1401</span></button>
+    </header>
+    <div class="safety" role="note">
+      <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2 1 21h22L12 2Zm0 6c.6 0 1 .4 1 1v5a1 1 0 1 1-2 0V9c0-.6.4-1 1-1Zm0 11.2a1.3 1.3 0 1 1 0-2.6 1.3 1.3 0 0 1 0 2.6Z"/></svg>
+      <span>Conditions only. Never eat a wild mushroom based on this map, an app or an AI.</span>
+    </div>
   </div>
 
   <main class="page">
-    <h1>About the data</h1>
-    <p>This map shows <b>growing conditions</b> in Cyprus forests: where rain, temperature, soil moisture,
-      season and shade are right for wild mushrooms to fruit. It does <b>not</b> show where mushrooms are,
-      and it says nothing about any mushroom you find.</p>
+    <h1>About this map</h1>
 
-    <h2>How the score works</h2>
-    <p>Each 250 m forest square gets a score from 0 to 100, every day. Six things count:</p>
+    <h2>What it shows</h2>
+    <p>The map shows <b>growing conditions</b> in the forests of Cyprus, <b>today</b>.
+      It colours each forest square of 250 m from poor to very good.</p>
+    <p>It <b>never</b> shows where mushrooms are. It never tells you what a mushroom is.
+      It never says a mushroom can be eaten.</p>
+    <p>Nature reserves are <b>closed</b> to picking. They are grey with lines and always score 0.</p>
+
+    <h2>What goes into the score</h2>
+    <p>Three things matter most.</p>
     <ul>
-      <li><b>Rain, last 30 days</b> (20%): 0 below 20 mm, full at 80 mm.</li>
-      <li><b>A soaking rain 7–20 days ago</b> (15%): biggest 3-day total. 0 below 10 mm, full at 25 mm.</li>
-      <li><b>Temperature, last 7 days</b> (25%): best 8–18 °C, zero at 3 °C and 24 °C. Frost lowers it.</li>
-      <li><b>Soil moisture</b> (15%): today compared with the same place in the autumns and winters of 2024-25 and 2025-26.</li>
-      <li><b>Season for the altitude</b> (15%): high Troodos starts earlier, low hills later. The season runs September to April.</li>
-      <li><b>Shade</b> (10%): north/east slopes, valley bottoms and little autumn sun.</li>
+      <li><b>Trees.</b> Our mushrooms grow with partner trees: pine and golden oak. No partner tree, no score.</li>
+      <li><b>Recent rain.</b> The ground needs a good soaking. A big rain 1 to 3 weeks ago helps most.</li>
+      <li><b>Temperature.</b> Mild days are best. Too hot or too cold, and the score drops.</li>
     </ul>
-    <p><b>No soaking rain, low score.</b> The score is then multiplied by the biggest 3-day rain of the last 30 days,
-      divided by 20 mm (never more than 1). One soaking rain of 20 mm or more: no cut. No rain: almost no score.
-      Rain older than 20 days counts a little less each day, so scores fade instead of dropping overnight.
-      The mushroom clock uses the same rain, so the two always agree.</p>
-    <p><b>Mushroom clock.</b> The season's first fruiting window opens about 18 days after the first soaking rain
-      (20 mm or more) since 1 September. After that, each new soaking rain opens it again after about 2 days.
-      It closes about 20 days after the latest soaking rain. The clock is a guide in words; it does not change the score.
-      Until our rain record reaches back to 1 September, the clock counts from the first day it has, and says so.</p>
-    <p><b>Burned forest.</b> Forest more than half burned since 2018 (EFFIS satellite fire maps) no longer counts
-      for the tree-partner species. For morels it counts in the first two springs after the fire.</p>
-    <p><b>Partner trees only.</b> The general map counts pine and golden oak forest.
-      "Other broadleaf" forest is not scored there (no partner tree for our autumn species), but it counts for morels.</p>
-    <p><b>Species filters</b> change only two things: which trees and altitudes count, and the season months.
-      They say "good conditions for [species] habitat". They never say a species is there.</p>
-    <p>Squares with no forest score 0. <b>Nature reserves are closed</b> and always score 0.
-      Temperature is corrected for height (−6.5 °C per 1,000 m).
-      Future days use the weather forecast, so confidence drops after 2 days.</p>
-    <p>The map shows every <b>250 m forest square</b>. The weather behind each square comes from a model about 9 km wide,
-      so the fine detail comes from the forest itself: trees, altitude and shade. In the top zones you can also zoom into
-      <b>50 m terrain</b> (shade only, no finer weather).</p>
-    <p>The map shows growing conditions only. It never shows where mushrooms are, and never anyone's finds.</p>
+    <p>Wet soil, the right month for the height, and shade add a little more.
+      Tap the rating word on a square to see every part.</p>
+    <p>The <b>mushroom clock</b> counts the days since the last soaking rain.
+      It tells you if the fruiting window is open.</p>
 
-    <h2>How sure is this map?</h2>
-    <p>It is a <b>best estimate, not a promise</b>.</p>
+    <h2>Where the data comes from</h2>
     <ul>
-      <li>The rain numbers come from a weather model with squares about <b>9 km</b> wide.
-        Rain in the mountains can change faster than that.</li>
-      <li>The timing rules come from <b>field practice in Cyprus</b> and <b>studies in Spain</b>.</li>
-      <li>Very few mushroom finds are recorded in Cyprus, so we tested the map on last season instead.
-        In the <b>dry autumn of 2025</b>, the old map said "Fair" or better on <b>over half</b> the forest.
-        This one stayed <b>low</b>. In the <b>wet winter</b> that followed, the two maps are the same.</li>
-      <li>We also looked at the <b>18 dated public finds</b> of that season. A test this small can catch
-        a clearly wrong map. It cannot prove a good one.</li>
+      <li><b>Weather:</b> Open-Meteo, a free weather service.</li>
+      <li><b>Trees:</b> the Copernicus forest map of Europe, from 2018.</li>
+      <li><b>Heights and slopes:</b> the Copernicus height map of Europe.</li>
+      <li><b>Golden oak zone:</b> the rock map of the Geological Survey Department of Cyprus.</li>
+      <li><b>Burned forest:</b> EFFIS satellite fire maps, since 2018.</li>
+      <li><b>Nature reserves:</b> the European list of protected areas (EEA).</li>
+      <li><b>Roads, tracks and the base map:</b> OpenStreetMap.</li>
     </ul>
-    <p>Use it to choose <b>where and when to look</b>, never <b>what to pick</b>.</p>
+    <p class="tag">Weather update used: <span id="run">…</span></p>
 
-    <h2>The law and the forest</h2>
+    <h2>The honest limits</h2>
+    <ul>
+      <li><b>The weather is coarse.</b> Each weather square is about 9 km wide.
+        Rain in the mountains can be very different a few kilometres away.</li>
+      <li><b>The trees are from a 2018 map.</b> Forests change. Some trees may be gone, or new.</li>
+      <li><b>A good square can still be empty.</b> Good conditions do not mean mushrooms are there.</li>
+    </ul>
+    <p>Use the map to choose <b>where and when to look</b>. Never to decide <b>what to pick</b>.</p>
+
+    <h2>The law in the forest</h2>
     <div class="card">
-      <p>Picking is allowed in state forests without a permit, <b>except in nature reserves</b>.</p>
-      <p><b>Rakes and tools are banned</b>: up to 1 year in prison, up to €5,000 fine, or both.</p>
+      <p>Picking is allowed in state forests without a permit, <b>but not in nature reserves</b>.</p>
+      <p><b>Rakes and tools are banned:</b> up to 1 year in prison, up to €5,000 fine, or both.</p>
       <p><b>No fires</b> in forests or within 2 km of them.</p>
       <p>Pick by hand or knife. Put the leaf litter back.</p>
     </div>
 
-    <h2>Data sources and credits</h2>
-    <div id="credits"><p>Loading…</p></div>
-    <p class="tag">Weather run: <span id="run">…</span></p>
+    <h2>Poisoning</h2>
+    <p>Call <a href="tel:112"><b>112</b></a> (ambulance) or the Cyprus Poison Centre <a href="tel:1401"><b>1401</b></a>.
+      <b>Do not wait for symptoms.</b> Bring the mushroom to the hospital.</p>
 
-    <h2>Species photos</h2>
-    <p>Every species card photo comes from <a href="https://www.inaturalist.org">iNaturalist</a>.
-      We only use photos with a CC0, CC BY, CC BY-SA or CC BY-NC licence. The author and licence of each photo:</p>
-    <ul id="photo-credits" class="photo-credits"><li>Loading…</li></ul>
-
-    <h2>Safety</h2>
-    <div class="safety-card">Conditions only. Never eat a wild mushroom based on this map, an app or an AI.</div>
-    <p>Poisoning: call <a href="tel:112"><b>112</b></a> or the Cyprus Poison Centre <a href="tel:1401"><b>1401</b></a>.
-      Do not wait for symptoms.</p>
+    <h2>Full credits and licences</h2>
+    <details>
+      <summary>Show the exact credit for each source</summary>
+      <div id="credits"><p>Loading…</p></div>
+    </details>
   </main>
   <script type="module" src="/src/about.ts"></script>
 </body>

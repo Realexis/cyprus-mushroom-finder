@@ -2,12 +2,12 @@
 // colour key, the map credits and an "Exit full map" button. For clean screenshots, built the
 // same way in every version (shroomy-shared/FULL-MAP-SPEC.md).
 //
-// Web-address switches: ?full=1 (open in full map), &layer=<id> ("Conditions for" option, see
-// data/views.json; "all" = the general map), &day=<0-7>, &theme=light|dark.
+// Web-address switches: ?full=1 (open in full map), &theme=light|dark. (Shroomy Lite shows
+// today only and has one map, so &layer= and &day= are not used; data/views.json lists "all".)
 // When the map has finished drawing, <html data-map-ready="1"> (back to "0" while it redraws).
 import type * as maplibregl from "maplibre-gl";
 import "../styles/full-map.css";
-import { SAFETY_LINE, WARN_ICON } from "./safety";
+import { NUMBERS_LINE, SAFETY_LINE, WARN_ICON } from "./safety";
 import { hideMapTip } from "./tips";
 
 /** The same frame in every version (spec). */
@@ -19,19 +19,13 @@ const EXPAND = `<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="tru
 const SHRINK = `<svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor"
   stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg>`;
 
-export interface UrlView { full: boolean; layer: string | null; day: number | null; theme: "light" | "dark" | null; }
+export interface UrlView { full: boolean; theme: "light" | "dark" | null; }
 
 /** Read the web-address switches. Unknown values are ignored. */
 export function readUrlView(search = location.search): UrlView {
   const q = new URLSearchParams(search);
-  const day = q.get("day");
   const theme = q.get("theme");
-  return {
-    full: q.get("full") === "1",
-    layer: q.get("layer"),
-    day: day !== null && /^[0-7]$/.test(day) ? Number(day) : null,
-    theme: theme === "light" || theme === "dark" ? theme : null,
-  };
+  return { full: q.get("full") === "1", theme: theme === "light" || theme === "dark" ? theme : null };
 }
 
 /** <html data-map-ready>: "0" now, "1" once the map is idle after the last change AND our forest
@@ -68,7 +62,7 @@ export class FullMap implements maplibregl.IControl {
     this.line = document.createElement("div");
     this.line.className = "full-safety";
     this.line.setAttribute("role", "note");
-    this.line.innerHTML = `${WARN_ICON}<span>${SAFETY_LINE}</span>`;
+    this.line.innerHTML = `${WARN_ICON}<span>${SAFETY_LINE} <span class="full-numbers">${NUMBERS_LINE}</span></span>`;
     this.exitBtn = document.createElement("button");
     this.exitBtn.type = "button";
     this.exitBtn.className = "full-exit";
