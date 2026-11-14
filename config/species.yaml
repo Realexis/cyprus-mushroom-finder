@@ -104,7 +104,7 @@ species:
   - code: slu
     latin: Suillus                                  # Real, 2026-11-13: the genus (was S. luteus [BRIEF])
     common: slippery Jacks                          # [BRIEF] "slippery Jack", now plural for the genus
-    local: lartias                                  # [BRIEF] to confirm
+    local: sfoungaras                               # Real, 2026-11-14: KYKPEE gives σφουγκαράς for S. granulatus (brief had "lartias", found in no source). To confirm
     local_confirmed: false
     trees: [1, 2]                                   # [BRIEF] pine
     trees_text: "Pine"

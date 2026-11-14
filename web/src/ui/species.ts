@@ -174,9 +174,9 @@ const FIELD: Record<string, Field> = {
     ],
     danger: ["Gills instead of pores: it is not this mushroom."],
     check: [
-      "The Cyprus Department of Forests lists Suillus collinitus (no ring, pink stem base) and S. granulatus, but not S. luteus. Which Suillus is \"lartias\" is still to confirm.",
+      "The Cyprus Department of Forests lists Suillus collinitus (no ring, pink stem base) and S. granulatus, but not S. luteus. The local name σφουγκαράς (sfoungaras) is given by one Cyprus source for S. granulatus. Whether it is used for the other slippery Jacks is still to confirm.",
     ],
-    src: ["w_slu", "forests", "fn_col", "w_sgr", "w_slt"],
+    src: ["w_slu", "forests", "kykpee", "fn_col", "w_sgr", "w_slt"],
   },
 };
 function cap1(s: string) { return s.charAt(0).toUpperCase() + s.slice(1); }
