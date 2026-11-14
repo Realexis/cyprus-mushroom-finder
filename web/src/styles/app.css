@@ -272,3 +272,17 @@ dialog.emergency::backdrop { background: rgba(0, 0, 0, 0.6); }
 .sp-name { flex: 1; min-width: 0; display: grid; line-height: 1.3; }
 .sp-name i { font-weight: 700; font-size: var(--fs-1); }
 .sp-common { font-size: var(--fs-0); color: var(--ink-soft); }
+
+/* ---------------------------------------------------------------- Lab: small phones (Real, 14 Nov 2026)
+   The name was cut off ("Shroomy L…") and the top bar took three lines at 360 px. One tidy row instead,
+   so the map gets the room. The About page keeps its "Back to the map" line. */
+@media (max-width: 420px) {
+  .topbar { gap: 6px; padding: 6px 8px; }
+  .brand { gap: 6px; }
+  .brand svg { width: 26px; height: 26px; }
+  .brand-name { font-size: 1.05rem; }
+  .app .brand-sub { display: none; }
+  .app .ver-badge { margin-left: 0; }
+  .about-link, .sos { padding: 0 10px; }
+  .map-legend { width: 156px; padding: 5px 8px 6px; }
+}
