@@ -6,7 +6,7 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const web = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const VERSION = "Lite";
+const VERSION = "Lab";
 
 for (const dir of ["dist/data", "public/data"].map((d) => resolve(web, d))) {
   const metaFile = resolve(dir, "meta.json");
