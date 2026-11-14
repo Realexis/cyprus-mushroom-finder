@@ -42,6 +42,11 @@ Each is tagged `[GUESS]` in `config/*.yaml`. No source gives a number. Source ta
 | G8 | **Morel filter** covers nearly all forest (Calabrian pine, golden oak, other broadleaf, recent burns, all altitudes). Fable suggests keeping only recent burns + other broadleaf. Real, 2026-11-13: no clear view yet, so unchanged. V5: the morel card now says it covers 94% of forest squares (when, not where) | unchanged, said on the card | `config/species.yaml` (morels) |
 | G9 | ~~**EFFIS fire-map licence** not yet checked~~ **Checked 2026-11-13 (V5): CC BY 4.0**, credit + changes stated (`config/sources.yaml` `burned_areas`) | kept | `config/sources.yaml` |
 
+## Shroomy Lab only (14 Nov 2026)
+| # | What | Guess now | Where |
+|---|---|---|---|
+| LAB1 | **50 m heat map**: how much a patch's own shade moves its square's score. Patch score = square score x (1 + strength x (patch shade - square shade) / 100). No source gives a number; no find locations to tune it on | strength 1.0 (98% of patches move by -23 to +22 points) | `config/lab.yaml`, `scripts/lab-heat50.py`, `web/src/map/heat50.ts` |
+
 ## Species and lookalikes (Phase 5)
 | # | What | Draft value now | Where |
 |---|---|---|---|

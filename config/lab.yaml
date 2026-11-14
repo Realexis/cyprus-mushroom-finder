@@ -1,0 +1,13 @@
+# Shroomy Lab only: experiments that are NOT in the brief.
+
+# The 50 m heat map (Real, 14 Nov 2026). Close up, every 50 m patch gets its own number:
+#
+#   patch score = its 250 m square's score x (1 + shade_strength x (patch shade - square shade) / 100)
+#
+# "patch shade" is the 50 m shade (0-100, tiles/shade50.pmtiles). "square shade" is the shade part
+# of the 250 m score (0-100). A patch with 20 points more shade than its square scores 20% higher
+# at strength 1.0. Kept between 0 and 100. A patch with no shade value keeps its square's score.
+# Rain, temperature, soil and season stay those of the 250 m square: there is no finer weather.
+heat50:
+  shade_strength: 1.0        # [GUESS] no source. Chosen so patches differ by up to about 25 points
+                             # (measured 14 Nov 2026: 98% of patches change by -23 to +22 points).

@@ -17,6 +17,7 @@ import { mountEmergency } from "./ui/safety";
 import { applyTheme, systemTheme } from "./ui/theme";
 import { hideMapTip as hideTip, mountTips, showAt } from "./ui/tips";
 import { renderLegend } from "./ui/legend";
+import type { Heat50 } from "./map/heat50";
 import { mountSpecies } from "./ui/species";
 import { FullMap, readUrlView, trackMapReady } from "./ui/fullmap";
 
@@ -52,13 +53,19 @@ async function main() {
   const protocol = new Protocol();
   maplibregl.addProtocol("pmtiles", protocol.tile);
 
-  const [meta, cellsIndex, hasShade] = await Promise.all([
+  const [meta, cellsIndex, hasShade, heatFile] = await Promise.all([
     fetch(abs("data/meta.json"), { cache: "no-cache" }).then((r) => r.json() as Promise<Meta>),
     fetch(abs("data/cells_info.json"), { cache: "no-cache" }).then((r) => (r.ok ? r.json() as Promise<CellsIndex> : null)).catch(() => null),
     // The 50 m shade map is published? (The dev server answers missing files with the HTML page.)
     fetch(abs(pmtiles("tiles/shade50.pmtiles")), { method: "HEAD" })
       .then((r) => r.ok && (r.headers.get("content-type") ?? "").indexOf("html") < 0).catch(() => false),
+    // Lab: the 50 m heat map, if it was made (scripts/lab-heat50.py).
+    fetch(abs("data/heat50.json"), { cache: "no-cache" })
+      .then((r) => (r.ok && (r.headers.get("content-type") ?? "").indexOf("html") < 0 ? r.json() as Promise<Heat50> : null)).catch(() => null),
   ]);
+  // Only when it was made from this very weather update and the shade squares are there for taps.
+  const heat = heatFile && hasShade && heatFile.weather_run === meta.weather_run ? heatFile : null;
+  if (heat) meta.heat50 = heat;
 
   // Today only: the day in the data that is today in Cyprus (day 0 on a normal morning).
   const today = cyprusToday();
@@ -76,7 +83,8 @@ async function main() {
   const ver = encodeURIComponent(meta.generated_utc);
   const v = (p: string) => `${abs(p)}?v=${ver}`;
   const urls = { terrain: v(pmtiles("tiles/terrain.pmtiles")), cells: v(pmtiles("data/cells.pmtiles")),
-    reserves: abs("data/reserves.geojson"), shade: hasShade ? v(pmtiles("tiles/shade50.pmtiles")) : undefined };
+    reserves: abs("data/reserves.geojson"), shade: hasShade ? v(pmtiles("tiles/shade50.pmtiles")) : undefined,
+    heat: heat ? v(pmtiles("data/heat50.pmtiles")) : undefined };
 
   const map = new maplibregl.Map({
     container: "map",
@@ -159,7 +167,7 @@ async function main() {
     onCardClosed: () => { picked = null; applySelection(); },
     openSpecies,
   });
-  const drawLegend = () => renderLegend(legendEl, panel.view, map.getZoom(), hasShade);
+  const drawLegend = () => renderLegend(legendEl, panel.view, map.getZoom(), hasShade, !!heat);
   drawLegend();
   map.on("zoom", drawLegend);
 

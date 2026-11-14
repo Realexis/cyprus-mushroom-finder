@@ -44,7 +44,8 @@ function hatch(theme: Theme): ImageData {
   return g.getImageData(0, 0, s, s);
 }
 
-export interface LayerUrls { terrain: string; reserves: string; cells: string; shade?: string; }
+export interface LayerUrls { terrain: string; reserves: string; cells: string; shade?: string;
+  heat?: string; }                     // Lab: the 50 m heat map picture (scripts/lab-heat50.py)
 
 export function addOverlays(map: MlMap, theme: Theme, urls: LayerUrls, v: View) {
   const firstSymbol = map.getStyle().layers.find((l) => l.type === "symbol")?.id;
@@ -80,13 +81,18 @@ export function addOverlays(map: MlMap, theme: Theme, urls: LayerUrls, v: View) 
     id: "cells-fill", type: "fill", source: "cells", "source-layer": "cells",
     filter: ["all", ["==", ["get", "closed"], 0], ["==", ["get", "g"], 1]],
     layout: { visibility: v.mode === "conditions" ? "visible" : "none" },
-    paint: { "fill-color": cellColor(v), "fill-opacity": cellOpacity(v), "fill-antialias": false },
+    // Lab: with the 50 m heat map, the 250 m colour fades out close up (it stays there for taps).
+    paint: { "fill-color": cellColor(v), "fill-antialias": false,
+      "fill-opacity": urls.heat
+        ? ["interpolate", ["linear"], ["zoom"], 11.5, cellOpacity(v), 12.3, 0] as unknown as ExpressionSpecification
+        : cellOpacity(v) },
   }, firstSymbol);
   // Close up: the hills and valleys drawn again ON the 250 m colour, so the open spots between
   // the shade squares show the real ground (ridges, gullies) instead of one flat colour.
   map.addLayer({
     id: "terrain-detail", type: "hillshade", source: "terrain", minzoom: 12,
-    layout: { visibility: v.mode === "conditions" ? "visible" : "none" },
+    // Lab: not drawn with the heat map, so a colour is never darkened into another number.
+    layout: { visibility: v.mode === "conditions" && !urls.heat ? "visible" : "none" },
     paint: {
       "hillshade-exaggeration": 0.6,
       "hillshade-shadow-color": "rgba(10,14,12,0.55)",
@@ -97,12 +103,23 @@ export function addOverlays(map: MlMap, theme: Theme, urls: LayerUrls, v: View) 
   // 50 m shade squares (island-wide, terrain only) when zoomed in: the double tap lands here.
   // Under the selection outline, so the tapped 250 m square still shows.
   const shadeOn = ["interpolate", ["linear"], ["zoom"], 11.5, 0, 12.3, 0.85] as unknown as ExpressionSpecification;
+  // Lab: the 50 m heat map. One picture, the same colours as the 250 m squares, sharp patches.
+  if (urls.heat) {
+    map.addSource("heat50", { type: "raster", url: `pmtiles://${urls.heat}`, tileSize: 256 });
+    map.addLayer({
+      id: "heat50", type: "raster", source: "heat50", minzoom: 11.5,
+      layout: { visibility: v.mode === "conditions" ? "visible" : "none" },
+      paint: { "raster-opacity": ["interpolate", ["linear"], ["zoom"], 11.5, 0, 12.3, 1] as unknown as ExpressionSpecification,
+        "raster-resampling": "nearest", "raster-fade-duration": 150 },
+    }, firstSymbol);
+  }
   if (urls.shade) {
     map.addSource("shade", { type: "vector", url: `pmtiles://${urls.shade}` });
     map.addLayer({
       id: "shade-fill", type: "fill", source: "shade", "source-layer": "hotspots", minzoom: 11.5,
       layout: { visibility: v.mode === "conditions" ? "visible" : "none" },
-      paint: { "fill-color": ramp(["get", "sh"], SHADE_STOPS), "fill-opacity": shadeOn, "fill-antialias": false },
+      // With the heat map the shade squares are invisible: they only tell a tap which patch it hit.
+      paint: { "fill-color": ramp(["get", "sh"], SHADE_STOPS), "fill-opacity": urls.heat ? 0 : shadeOn, "fill-antialias": false },
     }, firstSymbol);
   }
   map.addLayer({ id: "cells-selected-halo", type: "line", source: "cells", "source-layer": "cells",
@@ -134,8 +151,9 @@ export function applyView(map: MlMap, v: View) {
   const replay = v.mode === "replay";
   map.setLayoutProperty("rain-fill", "visibility", replay ? "visible" : "none");
   map.setLayoutProperty("cells-fill", "visibility", replay ? "none" : "visible");
-  for (const id of ["shade-fill", "terrain-detail"]) {
-    if (map.getLayer(id)) map.setLayoutProperty(id, "visibility", replay ? "none" : "visible");
+  const heat = !!map.getLayer("heat50");
+  for (const id of ["shade-fill", "terrain-detail", "heat50"]) {
+    if (map.getLayer(id)) map.setLayoutProperty(id, "visibility", replay || (heat && id === "terrain-detail") ? "none" : "visible");
   }
   if (replay) map.setPaintProperty("rain-fill", "fill-color", rainColor(v));
 }

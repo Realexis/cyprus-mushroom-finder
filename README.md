@@ -60,3 +60,15 @@ shelf and works as before.
 - `web/` — the website (Vite + TypeScript + MapLibre)
 - `docs/TODO-facts.md` — facts still to confirm
 - `PLAN.md` — the phase plan
+
+## Shroomy Lab: the 50 m heat map
+
+Lab is a test copy of Lite (branch `lab`). Close up it draws ONE colour scale: every 50 m patch gets its
+250 m square's score, moved up where the patch is shadier than its square and down where it is sunnier
+(an educated guess, `config/lab.yaml`). The card shows that same number.
+
+```bash
+cd pipeline && uv run python ../scripts/lab-heat50.py    # after the daily scores: makes data/heat50.pmtiles + heat50.json
+```
+
+Without those two files, or when they are from another day, the site falls back to the 50 m shade colours.

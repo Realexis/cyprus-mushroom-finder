@@ -4,6 +4,7 @@
 import { SCORE_STOPS } from "../map/layers";
 import { served } from "../map/files";
 import { inSeasonHere } from "./species";
+import { heat50, type Heat50 } from "../map/heat50";
 
 export interface DayInfo { offset: number; date: string; confidence: "high" | "medium" | "low"; }
 export interface Meta {
@@ -16,6 +17,8 @@ export interface Meta {
   weights: Record<string, number>;
   /** Score x (biggest 3-day rain in the last `days` days / full_at_mm, never above 1). */
   water_gate?: { enabled: boolean; full_at_mm: number; days: number };
+  /** Lab: the 50 m heat map is on (set by main.ts when data/heat50.json fits this update). */
+  heat50?: Heat50;
 }
 
 const TREES: Record<number, string> = {
@@ -45,10 +48,16 @@ export const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "
 export const fmtDay = (iso: string, opts: Intl.DateTimeFormatOptions) =>
   new Date(`${iso}T12:00:00`).toLocaleDateString("en-GB", { ...opts, timeZone: "Asia/Nicosia" });
 
+/** The map's colour for a score: the same smooth scale the map draws (Lab: was the nearest step
+ *  below, so the card's colour chip did not match the patch that was tapped). */
 export function scoreColour(v: number) {
-  let c = SCORE_STOPS[0][1];
-  for (const [s, col] of SCORE_STOPS) if (v >= s) c = col;
-  return c;
+  const x = Math.max(SCORE_STOPS[0][0], Math.min(SCORE_STOPS[SCORE_STOPS.length - 1][0], v));
+  let k = 0;
+  while (k < SCORE_STOPS.length - 2 && x > SCORE_STOPS[k + 1][0]) k++;
+  const [a, ca] = SCORE_STOPS[k], [b, cb] = SCORE_STOPS[k + 1];
+  const t = (x - a) / (b - a);
+  const ch = (c: string, i: number) => parseInt(c.slice(1 + 2 * i, 3 + 2 * i), 16);
+  return `rgb(${[0, 1, 2].map((i) => Math.round(ch(ca, i) + (ch(cb, i) - ch(ca, i)) * t)).join(", ")})`;
 }
 
 /** The four rating words (Real's choice for Lite, 13 Nov 2026: four words, same cut-offs as V5). */
@@ -196,14 +205,29 @@ export interface CardInput {
 export function cardHTML(c: CardInput, meta: Meta, day: number): string {
   const p = c.props;
   const raw = p[`s${day}`];
-  const v = raw === undefined || raw === null ? null : Number(raw);
+  const square = raw === undefined || raw === null ? null : Number(raw);     // the 250 m square's score
   const d = c.detail;
+  // Lab, the 50 m heat map: a tapped 50 m patch has its own number (the square's score, moved by
+  // how much shadier the patch is than its square). It needs the square's shade part, which comes
+  // with the details, so the number waits for them rather than showing one value and then another.
+  const fine = !!meta.heat50 && !!c.shade && square !== null;
+  const shadeIx = Object.keys(meta.weights).indexOf("shade");
+  const sq = d?.factors && shadeIx >= 0 ? Math.round(d.factors[shadeIx] * 100) : null;   // square shade, 0-100
+  const patch = fine && sq !== null ? heat50(square!, Number(c.shade!.sh), sq, meta.heat50!.shade_strength) : null;
+  const waiting = fine && !d && !c.failed;
+  const v = patch ?? square;
   const month = Number(meta.days[day].date.slice(5, 7));
   const monthName = fmtDay(meta.days[day].date, { month: "long" });
 
   // 1. Rating word. Tap it for the score breakdown.
+  const fineNote = patch !== null
+    ? `<p class="muted small fine-note" data-tip="Close up, each 50 m patch starts from its 250 m square's score. Shadier than the square = higher, sunnier = lower. The size of that step is an educated guess, not a measured rule. Rain, temperature and soil are the same for the whole area.">
+        This 50 m patch: <b>${patch}</b>. Its 250 m square: <b>${square}</b>.
+        Shade here ${Number(c.shade!.sh)}/100, the square ${sq}/100. The shade step is an educated guess.</p>`
+    : fine && !waiting ? `<p class="muted small fine-note">This is the number of the whole 250 m square. The patch's own number could not be worked out.</p>` : "";
   const rating = v === null
     ? `<p class="rating-none"><b>Not scored</b></p>`
+    : waiting ? `<p class="rating-none"><b>Working out this patch…</b></p>`
     : `<button type="button" class="rating" id="rating" aria-expanded="${c.open}" aria-controls="why"
         data-tip="How good the growing conditions are in this square today. Tap to see why.">
         <i class="rating-swatch" style="background:${scoreColour(v)}" aria-hidden="true"></i>
@@ -211,8 +235,8 @@ export function cardHTML(c: CardInput, meta: Meta, day: number): string {
           <span class="rating-sub">growing conditions today · ${v}/100</span></span>
         <span class="rating-more" aria-hidden="true">${c.open ? "▴" : "▾"}</span></button>
       <div class="why" id="why" ${c.open ? "" : "hidden"}>
-        <p class="muted small">Why this score: six things count. A long bar = that thing is good right now.</p>
-        ${breakdown(d, meta, day)}</div>`;
+        <p class="muted small">Why this score: six things count. A long bar = that thing is good right now.${patch !== null ? " These bars are for the whole 250 m square." : ""}</p>
+        ${breakdown(d, meta, day)}</div>${fineNote}`;
 
   // 2. Mushrooms in season here (this square's trees and altitude, this month): photo and name.
   const sp = inSeasonHere(Number(p.tree), Number(p.band), month);
@@ -255,7 +279,7 @@ export function cardHTML(c: CardInput, meta: Meta, day: number): string {
   const clock = `<p class="clock ${clk.open ? "open" : ""}" data-tip="${esc(clockTip(meta.clock))}"><span aria-hidden="true">⏱</span>
     <b>Mushroom clock:</b> ${clk.text}${meta.clock.counted_from ? ` <span class="muted">(rain counted from ${esc(fmtDay(meta.clock.counted_from, { day: "numeric", month: "long" }))})</span>` : ""}</p>`;
 
-  const what = c.shade ? "50 m spot · conditions of its 250 m square" : "250 m forest square · today";
+  const what = c.shade ? (meta.heat50 ? "50 m patch · today" : "50 m spot · conditions of its 250 m square") : "250 m forest square · today";
   return `<div class="card-bar"><span class="muted small">${what}</span>
       <button type="button" class="card-x" data-card-close aria-label="Close this card" data-tip="Close this card.">✕</button></div>
     ${rating}${season}${facts}${maps}${clock}
