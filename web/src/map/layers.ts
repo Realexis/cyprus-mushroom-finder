@@ -40,7 +40,7 @@ function hatch(theme: Theme): ImageData {
   return g.getImageData(0, 0, s, s);
 }
 
-export interface LayerUrls { terrain: string; reserves: string; cells: string; shade?: string; soft?: string; }
+export interface LayerUrls { terrain: string; reserves: string; cells: string; shade?: string; }
 
 export function addOverlays(map: MlMap, theme: Theme, urls: LayerUrls, v: View) {
   const firstSymbol = map.getStyle().layers.find((l) => l.type === "symbol")?.id;
@@ -88,19 +88,6 @@ export function addOverlays(map: MlMap, theme: Theme, urls: LayerUrls, v: View) 
       layout: { visibility: v.mode === "conditions" ? "visible" : "none" },
       paint: { "fill-color": ramp(["get", "sh"], SHADE_STOPS), "fill-opacity": shadeOn, "fill-antialias": false },
     }, firstSymbol);
-    // Spots with no shade square (no forest at 50 m) show today's conditions colour of their
-    // 250 m square: drawn as a soft picture (scripts/lite-soft-orange.py, made daily) so they
-    // fade into the shade around them. The 250 m squares stay underneath, invisible, for taps.
-    if (urls.soft) {
-      map.addSource("soft", { type: "raster", url: `pmtiles://${urls.soft}`, tileSize: 256 });
-      map.addLayer({
-        id: "soft", type: "raster", source: "soft", minzoom: 11.5,
-        layout: { visibility: v.mode === "conditions" ? "visible" : "none" },
-        paint: { "raster-opacity": shadeOn, "raster-resampling": "linear", "raster-fade-duration": 150 },
-      }, firstSymbol);
-      map.setPaintProperty("cells-fill", "fill-opacity",
-        ["interpolate", ["linear"], ["zoom"], 11.5, 0.72, 12.3, 0]);
-    }
   }
   map.addLayer({ id: "cells-selected-halo", type: "line", source: "cells", "source-layer": "cells",
     filter: ["==", ["get", "i"], -1], paint: { "line-color": SEL_HALO, "line-width": selW(5, 8) } }, firstSymbol);
@@ -131,7 +118,7 @@ export function applyView(map: MlMap, v: View) {
   const replay = v.mode === "replay";
   map.setLayoutProperty("rain-fill", "visibility", replay ? "visible" : "none");
   map.setLayoutProperty("cells-fill", "visibility", replay ? "none" : "visible");
-  for (const id of ["shade-fill", "soft"]) {
+  for (const id of ["shade-fill"]) {
     if (map.getLayer(id)) map.setLayoutProperty(id, "visibility", replay ? "none" : "visible");
   }
   if (replay) map.setPaintProperty("rain-fill", "fill-color", rainColor(v));

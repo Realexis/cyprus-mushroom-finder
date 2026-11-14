@@ -44,8 +44,6 @@ say "▶ Shroomy Lite daily update for $TODAY"
 (cd "$REPO/pipeline" && uv run python -m shroomy.daily --public) || fail "weather or scoring step failed"
 RUN=$(python3 -c "import json,sys; print(json.load(open(sys.argv[1]))['weather_run'])" "$REPO/web/public/data/meta.json")
 [ "$RUN" = "$TODAY" ] || fail "scores are for $RUN, not $TODAY"
-# Close-up soft picture of today's conditions colour where there is no 50 m shade square.
-(cd "$REPO/pipeline" && uv run python ../scripts/lite-soft-orange.py) || fail "soft picture step failed"
 
 # 2. Build from the saved `lite` branch, with this Mac's data and map tiles.
 git -C "$REPO" archive lite | tar -x -C "$TMP"

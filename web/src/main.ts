@@ -75,8 +75,7 @@ async function main() {
   const ver = encodeURIComponent(meta.generated_utc);
   const v = (p: string) => `${abs(p)}?v=${ver}`;
   const urls = { terrain: v(pmtiles("tiles/terrain.pmtiles")), cells: v(pmtiles("data/cells.pmtiles")),
-    reserves: abs("data/reserves.geojson"), shade: hasShade ? v(pmtiles("tiles/shade50.pmtiles")) : undefined,
-    soft: hasShade ? v(pmtiles("data/soft.pmtiles")) : undefined };
+    reserves: abs("data/reserves.geojson"), shade: hasShade ? v(pmtiles("tiles/shade50.pmtiles")) : undefined };
 
   const map = new maplibregl.Map({
     container: "map",
