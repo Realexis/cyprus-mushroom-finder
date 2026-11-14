@@ -1,0 +1,172 @@
+{
+ "generated_utc": "2026-11-14T11:33+00:00",
+ "weather_run": "2026-11-14",
+ "model": "ecmwf_ifs",
+ "days": [
+  {
+   "offset": 0,
+   "date": "2026-11-14",
+   "confidence": "high"
+  },
+  {
+   "offset": 1,
+   "date": "2026-11-15",
+   "confidence": "high"
+  },
+  {
+   "offset": 2,
+   "date": "2026-11-16",
+   "confidence": "high"
+  },
+  {
+   "offset": 3,
+   "date": "2026-11-17",
+   "confidence": "medium"
+  },
+  {
+   "offset": 4,
+   "date": "2026-11-18",
+   "confidence": "medium"
+  },
+  {
+   "offset": 5,
+   "date": "2026-11-19",
+   "confidence": "low"
+  },
+  {
+   "offset": 6,
+   "date": "2026-11-20",
+   "confidence": "low"
+  },
+  {
+   "offset": 7,
+   "date": "2026-11-21",
+   "confidence": "low"
+  }
+ ],
+ "rain_days": [
+  "2026-10-16",
+  "2026-10-17",
+  "2026-10-18",
+  "2026-10-19",
+  "2026-10-20",
+  "2026-10-21",
+  "2026-10-22",
+  "2026-10-23",
+  "2026-10-24",
+  "2026-10-25",
+  "2026-10-26",
+  "2026-10-27",
+  "2026-10-28",
+  "2026-10-29",
+  "2026-10-30",
+  "2026-10-31",
+  "2026-11-01",
+  "2026-11-02",
+  "2026-11-03",
+  "2026-11-04",
+  "2026-11-05",
+  "2026-11-06",
+  "2026-11-07",
+  "2026-11-08",
+  "2026-11-09",
+  "2026-11-10",
+  "2026-11-11",
+  "2026-11-12",
+  "2026-11-13",
+  "2026-11-14",
+  "2026-11-15",
+  "2026-11-16",
+  "2026-11-17",
+  "2026-11-18",
+  "2026-11-19",
+  "2026-11-20",
+  "2026-11-21"
+ ],
+ "public_hexagon_resolution": 7,
+ "clock": {
+  "opens": 7,
+  "closes": 20,
+  "soak_mm": 20
+ },
+ "weights": {
+  "rain_total": 0.2,
+  "rain_pulse": 0.15,
+  "temperature": 0.25,
+  "soil_moisture": 0.15,
+  "season_altitude": 0.15,
+  "shade": 0.1
+ },
+ "season_share": 15.0,
+ "general_map_trees": [
+  1,
+  2,
+  3
+ ],
+ "credits": [
+  {
+   "name": "Copernicus DEM GLO-30",
+   "credit": "\u00a9 DLR e.V. 2010-2014 and \u00a9 Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA; all rights reserved",
+   "licence": "Copernicus DEM licence (free, attribution required)",
+   "status": "verified",
+   "use": ""
+  },
+  {
+   "name": "Copernicus HRL Forest Type 2018 (10 m)",
+   "credit": "\u00a9 European Union, Copernicus Land Monitoring Service 2018, European Environment Agency (EEA)",
+   "licence": "Copernicus full, free and open data policy (Regulation (EU) 2021/696)",
+   "status": "verified",
+   "use": ""
+  },
+  {
+   "name": "EEA Nationally designated areas (NatDA) v24 \u2014 Cyprus code CY04 \"Nature reserve\"",
+   "credit": "Nationally designated areas (NatDA) v24 \u00a9 European Environment Agency (EEA), CC BY 4.0",
+   "licence": "CC BY 4.0",
+   "status": "verified",
+   "use": ""
+  },
+  {
+   "name": "Natura 2000 sites (EEA)",
+   "credit": "Natura 2000 \u00a9 European Environment Agency (EEA)",
+   "licence": "CC BY 4.0",
+   "status": "to_verify",
+   "use": ""
+  },
+  {
+   "name": "Geology of Cyprus \u2014 Geologic Units (Geological Survey Department, via DLS INSPIRE)",
+   "credit": "Geological Survey Department, Republic of Cyprus (via Department of Lands and Surveys INSPIRE services)",
+   "licence": "Licence being confirmed with the Department of Lands and Surveys",
+   "status": "to_verify",
+   "use": "Used only inside the model to find the golden oak zone. The rock map itself is not published."
+  },
+  {
+   "name": "Open-Meteo Forecast API",
+   "credit": "Weather data by Open-Meteo.com (CC BY 4.0)",
+   "licence": "CC BY 4.0 (non-commercial free tier)",
+   "status": "verified",
+   "use": ""
+  },
+  {
+   "name": "OpenStreetMap (Geofabrik Cyprus extract, Protomaps build)",
+   "credit": "\u00a9 OpenStreetMap contributors",
+   "licence": "ODbL 1.0",
+   "status": "verified",
+   "use": ""
+  },
+  {
+   "name": "iNaturalist species photos",
+   "credit": "Species photos from iNaturalist (inaturalist.org). Each photo shows its author and licence.",
+   "licence": "Per photo. Only CC0, CC BY, CC BY-SA and CC BY-NC photos are used.",
+   "status": "verified",
+   "use": "Photos on the species cards. Shown from iNaturalist's open-data store, not copied."
+  },
+  {
+   "name": "GBIF occurrence records (Cyprus)",
+   "credit": "Record counts from GBIF.org (Global Biodiversity Information Facility) and iNaturalist.",
+   "licence": "Counts and links only. Each dataset keeps its own licence (CC0, CC BY or CC BY-NC).",
+   "status": "verified",
+   "use": "The \"Public records in Cyprus\" part of each species card. Never used for the score or the map."
+  }
+ ],
+ "safety": "Conditions only. Never eat a wild mushroom based on this map, an app or an AI."
+}

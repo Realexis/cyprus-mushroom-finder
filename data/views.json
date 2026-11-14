@@ -1,0 +1,41 @@
+{
+ "version": "V3",
+ "how": "Open <site>/?full=1&layer=<id>&day=<0-7>&theme=<light|dark>; wait for <html data-map-ready=\"1\">.",
+ "layers": [
+  {
+   "id": "general",
+   "label": "All forest (general map)",
+   "in_season": true
+  },
+  {
+   "id": "lde",
+   "label": "red pine mushroom · Lactarius deliciosus",
+   "in_season": true
+  },
+  {
+   "id": "lsa",
+   "label": "bloody milk cap · Lactarius sanguifluus · Sep-Oct",
+   "in_season": false
+  },
+  {
+   "id": "rde",
+   "label": "milk-white brittlegill · Russula delica · Sep-Oct",
+   "in_season": false
+  },
+  {
+   "id": "tca",
+   "label": "matsutake · Tricholoma caligatum",
+   "in_season": true
+  },
+  {
+   "id": "mor",
+   "label": "morels · Morchella esculenta / elata · Mar-Apr",
+   "in_season": false
+  },
+  {
+   "id": "slu",
+   "label": "slippery Jack · Suillus luteus",
+   "in_season": true
+  }
+ ]
+}
