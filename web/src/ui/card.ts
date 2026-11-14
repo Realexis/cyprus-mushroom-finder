@@ -1,6 +1,6 @@
 // The card for one tapped 250 m forest square, in Real's order (LITE-BRIEF.md):
 // 1 rating word (tap: the score breakdown), 2 mushrooms in season here, 3 place facts,
-// 4 Google Maps link, 5 the mushroom clock. Today only. Growing conditions only.
+// 4 Google Maps directions + share location, 5 the mushroom clock. Today only. Growing conditions only.
 import { SCORE_STOPS } from "../map/layers";
 import { served } from "../map/files";
 import { inSeasonHere } from "./species";
@@ -181,6 +181,8 @@ function breakdown(d: CellDetail | null, meta: Meta, day: number): string {
 const ll = (lat: number, lon: number) => `${lat.toFixed(5)},${lon.toFixed(5)}`;
 const mapsDirectionsUrl = (lat: number, lon: number) =>
   `https://www.google.com/maps/dir/?api=1&destination=${ll(lat, lon)}&travelmode=driving`;
+/** A Google Maps pin at a place, for sharing. */
+export const mapsPinUrl = (latLon: string) => `https://www.google.com/maps/search/?api=1&query=${latLon}`;
 const dist = (x: number) => (x < 0 ? "–" : x < 1000 ? `${Math.round(x / 10) * 10} m` : `${(x / 1000).toFixed(1)} km`);
 
 export interface CardInput {
@@ -231,11 +233,16 @@ export function cardHTML(c: CardInput, meta: Meta, day: number): string {
     <li data-tip="Straight-line distance to the nearest forest track and drivable road, from OpenStreetMap. Not a driving route."><span aria-hidden="true">🚙</span> <b>Nearest:</b> ${road}</li>
     ${c.shade ? `<li data-tip="The 50 m square you tapped: the average of three terrain parts. Faces north-east (cooler) ${c.shade.fa}/100, valley bottom ${c.shade.va}/100, little autumn sun ${c.shade.ls}/100. Shade keeps the ground moist. Terrain only: the weather is the same for the whole area."><span aria-hidden="true">🌗</span> <b>Shade here (50 m):</b> ${c.shade.sh}/100</li>` : ""}</ul>`;
 
-  // 4. Google Maps link (free, no key). None for squares in or by a nature reserve.
-  const maps = d?.access ? `<a class="maps-btn" href="${mapsDirectionsUrl(d.access.lat, d.access.lon)}" target="_blank" rel="noopener"
+  // 4. Two buttons: directions in Google Maps, and share this place (free, no key).
+  //    None for squares in or by a nature reserve.
+  const maps = d?.access ? `<div class="maps-row">
+      <a class="maps-btn" href="${mapsDirectionsUrl(d.access.lat, d.access.lon)}" target="_blank" rel="noopener"
         data-tip="Opens Google Maps with driving directions to the middle of this 250 m square. Free, no sign-in.">
-        <span><span aria-hidden="true">🚗</span> Directions in Google Maps</span>
-        <span class="maps-warn">The middle of this square may be away from roads. Tracks may be rough.</span></a>`
+        <span aria-hidden="true">🚗</span> Directions</a>
+      <button type="button" class="maps-btn maps-share" data-share="${ll(d.access.lat, d.access.lon)}"
+        data-tip="Send a Google Maps pin of the middle of this 250 m square to a friend (WhatsApp, Messenger, SMS...). On a computer the link is copied.">
+        <span aria-hidden="true">📍</span> <span class="share-label">Share location</span></button></div>
+      <p class="maps-warn">The middle of this square may be away from roads. Tracks may be rough.</p>`
     : d ? `<p class="muted small">No directions for this square: it is in or next to a nature reserve.</p>` : "";
 
   // 5. Mushroom clock, last.

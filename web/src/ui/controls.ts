@@ -2,7 +2,7 @@
 // the start bar (today's date, how to use, rain replay), the card of a tapped square,
 // or the rain replay.
 import type { Mode, View } from "../map/layers";
-import { cardHTML, fmtDay, RAKES_TIP, type CardInput, type Meta } from "./card";
+import { cardHTML, fmtDay, mapsPinUrl, RAKES_TIP, type CardInput, type Meta } from "./card";
 
 const REPLAY_DAYS = 30;
 
@@ -34,6 +34,7 @@ export class Panel {
       const sp = t.closest<HTMLElement>("[data-open-card]");
       if (sp) this.hooks.openSpecies(sp.dataset.openCard || undefined);
       else if (t.closest("[data-card-close]")) this.closeCard();
+      else if (t.closest("[data-share]")) void shareLocation(t.closest<HTMLElement>("[data-share]")!);
       else if (t.closest("#rating") && this.card) { this.card.open = !this.card.open; this.render(); }
       else if (t.closest("#replay-btn")) this.setMode("replay");
       else if (t.closest("#replay-back")) this.setMode("conditions");
@@ -172,4 +173,22 @@ export class Panel {
       <p class="hint"><b>Double tap</b> the map to zoom in. <b>Tap a square</b> to see its conditions.</p>
       <p class="no-rakes" data-tip="${RAKES_TIP}"><b>No rakes.</b> Pick by hand or knife. Put the leaf litter back.</p>`;
   }
+}
+
+/** Share a Google Maps pin of the tapped square: the phone's share sheet, else copy the link. */
+async function shareLocation(btn: HTMLElement) {
+  const url = mapsPinUrl(btn.dataset.share!);
+  const text = "A forest spot from Shroomy Lite (growing conditions only). Never eat a wild mushroom based on a map, an app or an AI.";
+  const label = btn.querySelector(".share-label");
+  const say = (msg: string) => {
+    if (!label) return;
+    label.textContent = msg;
+    setTimeout(() => { label.textContent = "Share location"; }, 2500);
+  };
+  if (navigator.share) {
+    try { await navigator.share({ title: "Shroomy Lite", text, url }); return; }
+    catch (e) { if ((e as Error).name === "AbortError") return; }   // closed the share sheet
+  }
+  try { await navigator.clipboard.writeText(`${text}\n${url}`); say("Link copied"); }
+  catch { window.prompt("Copy this link:", url); }
 }
