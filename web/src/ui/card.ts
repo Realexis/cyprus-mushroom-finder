@@ -181,6 +181,8 @@ function breakdown(d: CellDetail | null, meta: Meta, day: number): string {
 const ll = (lat: number, lon: number) => `${lat.toFixed(5)},${lon.toFixed(5)}`;
 const mapsDirectionsUrl = (lat: number, lon: number) =>
   `https://www.google.com/maps/dir/?api=1&destination=${ll(lat, lon)}&travelmode=driving`;
+const mapsPinUrl = (lat: number, lon: number) =>
+  `https://www.google.com/maps/search/?api=1&query=${ll(lat, lon)}`;
 const dist = (x: number) => (x < 0 ? "–" : x < 1000 ? `${Math.round(x / 10) * 10} m` : `${(x / 1000).toFixed(1)} km`);
 
 export interface CardInput {
@@ -232,10 +234,19 @@ export function cardHTML(c: CardInput, meta: Meta, day: number): string {
     ${c.shade ? `<li data-tip="The 50 m square you tapped: the average of three terrain parts. Faces north-east (cooler) ${c.shade.fa}/100, valley bottom ${c.shade.va}/100, little autumn sun ${c.shade.ls}/100. Shade keeps the ground moist. Terrain only: the weather is the same for the whole area."><span aria-hidden="true">🌗</span> <b>Shade here (50 m):</b> ${c.shade.sh}/100</li>` : ""}</ul>`;
 
   // 4. Google Maps link (free, no key). None for squares in or by a nature reserve.
-  const maps = d?.access ? `<a class="maps-btn" href="${mapsDirectionsUrl(d.access.lat, d.access.lon)}" target="_blank" rel="noopener"
-        data-tip="Opens Google Maps with driving directions to the middle of this 250 m square. Free, no sign-in.">
-        <span><span aria-hidden="true">🚗</span> Directions in Google Maps</span>
-        <span class="maps-warn">The middle of this square may be away from roads. Tracks may be rough.</span></a>`
+  // Lab (Real, 14 Nov 2026): the two buttons V5 had, side by side: drive there + share the location.
+  const maps = d?.access ? `<div class="maps-link">
+      <div class="maps-btns">
+        <a class="maps-btn primary" href="${mapsDirectionsUrl(d.access.lat, d.access.lon)}" target="_blank" rel="noopener"
+          data-tip="Opens Google Maps with driving directions to the middle of this 250 m square. Free, no sign-in. Forest tracks may be rough.">
+          <span class="maps-main"><span aria-hidden="true">🚗</span> Drive there</span>
+          <span class="maps-warn"><span aria-hidden="true">⚠</span> tracks may be rough</span></a>
+        <button type="button" class="maps-btn" data-share-url="${mapsPinUrl(d.access.lat, d.access.lon)}"
+          data-share-text="250 m forest square (Shroomy: growing conditions only)"
+          data-tip="Send a Google Maps pin of the middle of this 250 m square to a friend. On a computer it copies the link."><span aria-hidden="true">📍</span> <span class="maps-btn-label">Share location</span></button>
+      </div>
+      <p class="muted small maps-note">Both use the middle of this 250 m square. It may be away from roads and tracks.</p>
+    </div>`
     : d ? `<p class="muted small">No directions for this square: it is in or next to a nature reserve.</p>` : "";
 
   // 5. Mushroom clock, last.
@@ -252,3 +263,41 @@ export function cardHTML(c: CardInput, meta: Meta, day: number): string {
     <p class="no-rakes" data-tip="${RAKES_TIP}"><b>No rakes.</b> Pick by hand or knife. Put the leaf litter back.</p>`;
 }
 
+// ---------------------------------------------------------------- "Share location" (as in V5)
+// Phones: the system share sheet (WhatsApp, Messages…). Computers: copy the link.
+async function shareLink(btn: HTMLElement) {
+  const url = btn.dataset.shareUrl!;
+  const label = btn.querySelector<HTMLElement>(".maps-btn-label");
+  const say = (t: string) => {
+    if (!label) return;
+    label.textContent = t;
+    window.setTimeout(() => (label.textContent = "Share location"), 2500);
+  };
+  if (navigator.share && matchMedia("(pointer: coarse)").matches) {
+    try { await navigator.share({ title: "Location", text: btn.dataset.shareText ?? "", url }); return; }
+    catch (e) { if ((e as DOMException).name === "AbortError") return; }
+  }
+  try { await navigator.clipboard.writeText(url); say("Link copied ✓"); return; }
+  catch { /* clipboard blocked: show the link so it can be copied by hand */ }
+  const box = btn.closest(".maps-link");
+  let input = box?.querySelector<HTMLInputElement>(".maps-copy");
+  if (box && !input) {
+    input = document.createElement("input");
+    input.className = "maps-copy";
+    input.readOnly = true;
+    input.setAttribute("aria-label", "Google Maps link");
+    box.querySelector(".maps-btns")?.after(input);
+  }
+  if (!input) return;
+  input.value = url;
+  input.focus();
+  input.select();
+  say(document.execCommand?.("copy") ? "Link copied ✓" : "Copy the link below");
+}
+
+document.addEventListener("click", (e) => {
+  const b = (e.target as Element | null)?.closest?.<HTMLElement>("[data-share-url]");
+  if (!b) return;
+  e.preventDefault();
+  void shareLink(b);
+});
