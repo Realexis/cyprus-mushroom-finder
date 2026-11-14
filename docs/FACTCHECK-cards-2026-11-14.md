@@ -33,6 +33,8 @@ slippery Jacks have no ring. A2: the name is now "arnoui". The rest is unchanged
 **Also fixed in Lab on 14 Nov 2026 (Real said yes): the "grow in the same forests" lines (see B4).** The cards
 now say "Watch for these 10. 4 can kill." and "4 deadly lookalikes to watch for." All 10 stay on the cards.
 
+**Real's decision, 14 Nov 2026: A4 stays.** The card keeps the name "matsutake".
+
 | # | Card | What the card says | What the sources say |
 |---|---|---|---|
 | A1 | Slippery Jacks | Stem "with a ring: white on top, dark brown to violet underneath" | That is *Suillus luteus* (W). The two slippery Jacks the Department of Forests lists for Cyprus, *S. collinitus* and *S. granulatus* (FD), have **no ring** (W: *S. granulatus* "bears neither a partial veil nor a ring"; the card's own note says *S. collinitus* has no ring). GBIF Cyprus: *S. collinitus* 2, *S. luteus* 1, *S. granulatus* 0. |
