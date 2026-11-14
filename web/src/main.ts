@@ -66,7 +66,7 @@ async function main() {
   if (meta.weather_run < today) {
     const d = document.getElementById("delayed")!;
     d.textContent = `Data delayed · last update ${meta.weather_run}`;
-    d.dataset.tip = "Today's weather update has not arrived yet. The map shows today from the last good update. It usually updates at 6 am Cyprus time (7 am in summer).";
+    d.dataset.tip = "Today's weather update has not arrived yet. The map shows today from the last good update. It usually updates each morning at about 6:30 am Cyprus time.";
     d.hidden = false;
   }
 
@@ -75,7 +75,8 @@ async function main() {
   const ver = encodeURIComponent(meta.generated_utc);
   const v = (p: string) => `${abs(p)}?v=${ver}`;
   const urls = { terrain: v(pmtiles("tiles/terrain.pmtiles")), cells: v(pmtiles("data/cells.pmtiles")),
-    reserves: abs("data/reserves.geojson"), shade: hasShade ? v(pmtiles("tiles/shade50.pmtiles")) : undefined };
+    reserves: abs("data/reserves.geojson"), shade: hasShade ? v(pmtiles("tiles/shade50.pmtiles")) : undefined,
+    shadeSmooth: hasShade ? v(pmtiles("tiles/shade50_smooth.pmtiles")) : undefined };
 
   const map = new maplibregl.Map({
     container: "map",
@@ -118,6 +119,18 @@ async function main() {
 
   // ------------------------------------------------------------ the panel and the tapped square
   let picked: { i: number; lngLat: maplibregl.LngLat; small: GeoJSON.Geometry | null } | null = null;
+  /** Middle of a square (all its pieces: a square can be cut in two where map tiles meet). */
+  const middle = (geoms: GeoJSON.Geometry[]): maplibregl.LngLat | null => {
+    let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+    const walk = (c: unknown): void => {
+      if (Array.isArray(c) && typeof c[0] === "number") {
+        const [x, y] = c as number[];
+        x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y);
+      } else if (Array.isArray(c)) c.forEach(walk);
+    };
+    for (const g of geoms) if ("coordinates" in g) walk(g.coordinates);
+    return x0 <= x1 ? new maplibregl.LngLat((x0 + x1) / 2, (y0 + y1) / 2) : null;
+  };
   const pinEl = document.createElement("div");
   pinEl.className = "pick-pin";
   pinEl.setAttribute("aria-hidden", "true");
@@ -182,7 +195,10 @@ async function main() {
     const shadeF = map.getLayer("shade-fill") && map.getZoom() >= 11.5
       ? map.queryRenderedFeatures(point, { layers: ["shade-fill"] })[0] : undefined;
     const shade = shadeF ? (shadeF.properties as Record<string, number>) : undefined;
-    picked = { i, lngLat, small: shadeF ? shadeF.geometry : null };
+    // The dot and the view sit in the middle of the tapped square, not where the finger landed.
+    const cellParts = map.querySourceFeatures("cells", { sourceLayer: "cells", filter: ["==", ["get", "i"], i] });
+    const centre = (shadeF ? middle([shadeF.geometry]) : middle([f.geometry, ...cellParts.map((p) => p.geometry)])) ?? lngLat;
+    picked = { i, lngLat: centre, small: shadeF ? shadeF.geometry : null };
     applySelection();
     panel.showCard({ props, shade, detail: null });
     if (cellsIndex) {
@@ -193,7 +209,7 @@ async function main() {
     // Keep the tapped square in view, above the panel on phones / beside it on computers.
     const pad = phone.matches ? { bottom: sheet.offsetHeight, top: 0, left: 0, right: 0 }
       : { left: sheet.offsetWidth + 32, top: 0, bottom: 0, right: 0 };
-    map.easeTo({ center: lngLat, padding: pad, duration: 400 });
+    map.easeTo({ center: centre, padding: pad, duration: 400 });
   };
 
   /** Double tap: zoom in, centred on that exact spot, to the 250 m squares (or one step closer). */
