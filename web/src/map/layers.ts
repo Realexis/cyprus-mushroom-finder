@@ -8,10 +8,14 @@ export type Mode = "conditions" | "replay";
 /** What the map shows: today's score (day = index in meta.days), or one day of the rain replay. */
 export interface View { day: number; mode: Mode; replayIndex: number; }
 
-// Score colours: calm at the low end, warm glow at the top (same as V5).
+// Score colours: calm at the low end, warm glow at the top. Lite: brighter top than V5
+// (V5: 70 #d9b44a, 85 #ee8e4a, 100 #ff6a4d), so "Good" and "Very good" stand out.
 export const SCORE_STOPS: [number, string][] = [
-  [0, "#23413f"], [30, "#3e6b57"], [50, "#7e9f55"], [70, "#d9b44a"], [85, "#ee8e4a"], [100, "#ff6a4d"],
+  [0, "#23413f"], [30, "#3e6b57"], [50, "#7e9f55"], [65, "#e3c24a"], [80, "#ffa040"], [100, "#ff5a36"],
 ];
+/** How solid a square is drawn: low scores let the map show through, the best ones glow. */
+const cellOpacity = (v: View) => ["interpolate", ["linear"], ["to-number", ["get", `s${v.day}`], 0],
+  0, 0.62, 50, 0.7, 65, 0.85, 80, 0.95] as unknown as ExpressionSpecification;
 export const RAIN1_STOPS: [number, string][] = [[0, "rgba(217,232,242,0)"], [0.5, "#cfe3f0"], [3, "#9cc9e8"], [8, "#4f97d1"], [15, "#2a5fae"], [30, "#1b2f7a"]];
 
 // Shade (50 m, close up): sunny = pale sand, deep shade = deep teal (same as V5).
@@ -76,7 +80,19 @@ export function addOverlays(map: MlMap, theme: Theme, urls: LayerUrls, v: View) 
     id: "cells-fill", type: "fill", source: "cells", "source-layer": "cells",
     filter: ["all", ["==", ["get", "closed"], 0], ["==", ["get", "g"], 1]],
     layout: { visibility: v.mode === "conditions" ? "visible" : "none" },
-    paint: { "fill-color": cellColor(v), "fill-opacity": 0.72, "fill-antialias": false },
+    paint: { "fill-color": cellColor(v), "fill-opacity": cellOpacity(v), "fill-antialias": false },
+  }, firstSymbol);
+  // Close up: the hills and valleys drawn again ON the 250 m colour, so the open spots between
+  // the shade squares show the real ground (ridges, gullies) instead of one flat colour.
+  map.addLayer({
+    id: "terrain-detail", type: "hillshade", source: "terrain", minzoom: 12,
+    layout: { visibility: v.mode === "conditions" ? "visible" : "none" },
+    paint: {
+      "hillshade-exaggeration": 0.6,
+      "hillshade-shadow-color": "rgba(10,14,12,0.55)",
+      "hillshade-highlight-color": "rgba(255,250,235,0.35)",
+      "hillshade-accent-color": "rgba(0,0,0,0)",
+    },
   }, firstSymbol);
   // 50 m shade squares (island-wide, terrain only) when zoomed in: the double tap lands here.
   // Under the selection outline, so the tapped 250 m square still shows.
@@ -118,7 +134,7 @@ export function applyView(map: MlMap, v: View) {
   const replay = v.mode === "replay";
   map.setLayoutProperty("rain-fill", "visibility", replay ? "visible" : "none");
   map.setLayoutProperty("cells-fill", "visibility", replay ? "none" : "visible");
-  for (const id of ["shade-fill"]) {
+  for (const id of ["shade-fill", "terrain-detail"]) {
     if (map.getLayer(id)) map.setLayoutProperty(id, "visibility", replay ? "none" : "visible");
   }
   if (replay) map.setPaintProperty("rain-fill", "fill-color", rainColor(v));
