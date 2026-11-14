@@ -38,6 +38,7 @@ const MONTH_LONG = ["January", "February", "March", "April", "May", "June", "Jul
 // Every line comes from one of the SOURCES below. Not yet checked by the Cyprus Mycological Association.
 const SOURCES: Record<string, { label: string; url: string }> = {
   forests: { label: "Cyprus Department of Forests: Funga / Mushrooms", url: "https://www.moa.gov.cy/moa/fd/fd.nsf/fd67_en/fd67_en?OpenDocument=" },
+  leaflet: { label: "Cyprus Department of Forests leaflet: Mushrooms in Cyprus (English version; the local names are in the Greek version)", url: "https://www.pedoulas.org.cy/docs/MUSHROOMS%20IN%20CYPRUS.pdf" },
   kykpee: { label: "KYKPEE: Μανιτάρια της Κύπρου (2015)", url: "https://kykpee.org/mushrooms-of-cyprus/" },
   pedoulas: { label: "Pedoulas: Οδηγός για τα μανιτάρια της Κύπρου", url: "https://www.pedoulas.org.cy/index.php/el/articles/nature-gr/mushrooms-gr" },
   dialogos: { label: "Dialogos: Μανιτάρια, ένας θησαυρός της κυπριακής φύσης (2017)", url: "https://dialogos.com.cy/manitaria-enas-thisavros-tis-kipriakis-fisis/" },
@@ -90,10 +91,10 @@ const FIELD: Record<string, Field> = {
     ],
     danger: [
       "White milk, or milk that turns yellow. The yellowdrop milk cap's milk turns sulphur yellow in seconds.",
-      "A pinker cap with a woolly, shaggy edge: the woolly milk cap (μαλλίτσης). It is poisonous and grows in Cyprus.",
+      "A pinker cap with a woolly, shaggy edge: the woolly milk cap (mallitsis). It is poisonous and grows in Cyprus.",
     ],
     check: ["The woolly milk cap (Lactarius torminosus) is not yet in our list of 10 lookalikes."],
-    src: ["w_lde", "fn_lde", "forests", "dialogos", "kykpee", "agrotis", "fn_tor", "fn_chr"],
+    src: ["leaflet", "w_lde", "fn_lde", "forests", "dialogos", "kykpee", "agrotis", "fn_tor", "fn_chr"],
   },
   lsa: {
     look: [
@@ -110,7 +111,7 @@ const FIELD: Record<string, Field> = {
       "White milk, or milk that turns yellow: a different milk cap.",
       "A pinker cap with a woolly, shaggy edge: the woolly milk cap, which is poisonous.",
     ],
-    check: ["Local name: Wikipedia spells it γαιματάς (\"the bloody one\")."],
+    check: ["Local name: from Wikipedia (\"the bloody one\"). It is not in the Department of Forests leaflet."],
     src: ["w_lsa", "fn_chr", "fn_tor", "kykpee"],
   },
   rde: {
@@ -128,7 +129,7 @@ const FIELD: Record<string, Field> = {
     ],
     danger: [`A white mushroom with ${AMANITA_SIGNS}`],
     check: [],
-    src: ["w_rde", "kykpee", "w_dcap"],
+    src: ["leaflet", "w_rde", "kykpee", "w_dcap"],
   },
   tca: {
     look: [
@@ -136,6 +137,7 @@ const FIELD: Record<string, Field> = {
       ["Gills", "Whitish to cream, crowded. Brown spots with age."],
       ["Stem", "A cottony ring. Below it, dark brown bands of scales, like a boot."],
       ["Smell", "Strong and spicy, like nutmeg or allspice."],
+      ["Names", "Also called maratheftiko in Cyprus."],
     ],
     where: [
       "Calabrian pine and Troodos black pine forests.",
@@ -143,8 +145,8 @@ const FIELD: Record<string, Field> = {
       "Autumn and winter, on the coast and in the mountains.",
     ],
     danger: [`${cap1(AMANITA_SIGNS)}`],
-    check: ["Local name: also called μαραθεύτικο in one Cyprus source."],
-    src: ["w_tca", "kykpee", "pedoulas", "dialogos", "w_dcap"],
+    check: [],
+    src: ["leaflet", "w_tca", "kykpee", "pedoulas", "dialogos", "w_dcap"],
   },
   mor: {
     look: [
@@ -163,7 +165,7 @@ const FIELD: Record<string, Field> = {
       "Cyprus has several morel species, two of them first described from Cyprus in 2016 (Morchella arbutiphila and M. disparilis). This card covers all morels (the genus Morchella).",
       "False morels (Gyromitra) are not in our list of 10 lookalikes. We found no Cyprus record of them.",
     ],
-    src: ["kykpee", "agrotis", "exub", "w_arb", "w_dis", "w_false", "ncbi", "pedoulas"],
+    src: ["leaflet", "kykpee", "agrotis", "exub", "w_arb", "w_dis", "w_false", "ncbi", "pedoulas"],
   },
   slu: {
     look: [
@@ -177,9 +179,9 @@ const FIELD: Record<string, Field> = {
     ],
     danger: ["Gills instead of pores: it is not this mushroom."],
     check: [
-      "The Cyprus Department of Forests lists Suillus collinitus (no ring, pink stem base) and S. granulatus, but not S. luteus. The local name σφουγκαράς (sfoungaras) is given by one Cyprus source for S. granulatus. Whether it is used for the other slippery Jacks is still to confirm.",
+      "The Cyprus Department of Forests lists Suillus collinitus (no ring, pink stem base) and S. granulatus, but not S. luteus. The local name sfoungaras is from the Department of Forests leaflet, where it names Suillus granulatus.",
     ],
-    src: ["w_slu", "forests", "kykpee", "agrotis", "fn_col", "w_sgr", "w_slt"],
+    src: ["leaflet", "w_slu", "forests", "kykpee", "agrotis", "fn_col", "w_sgr", "w_slt"],
   },
 };
 function cap1(s: string) { return s.charAt(0).toUpperCase() + s.slice(1); }
@@ -478,7 +480,8 @@ export function mountSpecies(month: () => number): (code?: string) => void {
       <p>Seasons, trees and altitudes on the map come from the project brief. The field notes on each mushroom page
         come from the sources listed on that page. Photos come from iNaturalist; tap any photo to see its author and licence.</p>
       <h3>Still to confirm with the Cyprus Mycological Association</h3>
-      <p>The local names (except kokkinomanitaro), the field notes, and which lookalikes matter most for each mushroom.
+      <p>The local name gematas, the field notes, and which lookalikes matter most for each mushroom. The other local
+        names are from the Cyprus Department of Forests leaflet.
         Until then, all ${LOOKALIKES.length} lookalikes are shown on every mushroom.</p>
       <h3>Collecting in Cyprus</h3>
       <ul class="sc-links"><li>Allowed in state forests, but not in nature reserves.</li>

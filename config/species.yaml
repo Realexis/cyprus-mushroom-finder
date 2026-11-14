@@ -52,8 +52,8 @@ species:
   - code: rde
     latin: Russula delica
     common: milk-white brittlegill                  # [BRIEF]
-    local: aspromanitaro                            # [BRIEF] to confirm
-    local_confirmed: false
+    local: aspromanitaro                            # Dept of Forests leaflet "Μανιτάρια της Κύπρου" (P.I.O. 232/2004), Real 2026-11-14: Ασπρομανίταρο
+    local_confirmed: true
     # [BRIEF] "all forest". [S7] Other broadleaf (4) counts only for morels -> left out here.
     # Open question S9 in docs/TODO-facts.md.
     trees: [1, 2, 3]
@@ -68,8 +68,8 @@ species:
   - code: tca
     latin: Tricholoma caligatum
     common: matsutake                               # [BRIEF]
-    local: imero                                    # [BRIEF] to confirm
-    local_confirmed: false
+    local: imero                                    # Dept of Forests leaflet "Μανιτάρια της Κύπρου" (P.I.O. 232/2004), Real 2026-11-14: Ήμερο or Μαραθεύτικο
+    local_confirmed: true
     trees: [1, 2, 3]                                # [BRIEF] pine, golden oak
     trees_text: "Pine and golden oak"
     bands: [2, 3]                                   # [BRIEF] mid-high
@@ -81,8 +81,8 @@ species:
   - code: mor
     latin: Morchella                                # Real, 2026-11-14: the genus (was "M. esculenta / elata" [BRIEF]; no Cyprus source uses those names)
     common: morels                                  # [BRIEF]
-    local: arnoui                                   # KYKPEE spells it αρνούϊ (brief had "arnaoui"); fact-check 2026-11-14. To confirm
-    local_confirmed: false
+    local: arnoui                                   # Dept of Forests leaflet "Μανιτάρια της Κύπρου" (P.I.O. 232/2004), Real 2026-11-14: Αρνούϊ (brief had "arnaoui")
+    local_confirmed: true
     # V3 Fable feedback step 6 (audit GAPS A12): Cyprus morels were found at 500-600 m with
     # Cistus, olive and Calabrian pine, and with strawberry tree on Troodos [LOI16, LOI16m].
     # "Other broadleaf above 600 m" (the old rule) had no source. [S7] morels keep Other broadleaf.
@@ -104,8 +104,8 @@ species:
   - code: slu
     latin: Suillus                                  # Real, 2026-11-13: the genus (was S. luteus [BRIEF])
     common: slippery Jacks                          # [BRIEF] "slippery Jack", now plural for the genus
-    local: sfoungaras                               # Real, 2026-11-14: KYKPEE gives σφουγκαράς for S. granulatus (brief had "lartias", found in no source). To confirm
-    local_confirmed: false
+    local: sfoungaras                               # Dept of Forests leaflet "Μανιτάρια της Κύπρου" (P.I.O. 232/2004), Real 2026-11-14: Σφουγκαράς, for Suillus granulatus (brief had "lartias")
+    local_confirmed: true
     trees: [1, 2]                                   # [BRIEF] pine
     trees_text: "Pine"
     bands: [1, 2, 3]                                # [BRIEF] pine belt

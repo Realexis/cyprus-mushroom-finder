@@ -144,3 +144,23 @@ source for "lartias" (Λαρτάδες / Λαρτιάδες).
 - *Suillus collinitus*: pink mycelium at the stem base; all altitudes from the coast to the top of Troodos; autumn and winter. *S. bellinii* and *S. luteus*: autumn and winter, Calabrian or black pine forests.
 - No rakes or tools in the leaf litter: they destroy the mycelium.
 - *Amanita pantherina* is named as a Cyprus risk (young ones mistaken for puffballs).
+
+## Names settled by Real (14 Nov 2026): the Department of Forests leaflet
+
+Real gave the Greek leaflet "Μανιτάρια της Κύπρου - Ένας άγνωστος κόσμος" (Ministry of Agriculture, Natural
+Resources and Environment, Department of Forests; P.I.O. 232/2004) and said: use the names it uses, in English
+letters, and move on. Read: **Full** (both pages, as images).
+
+| Leaflet | On the card |
+|---|---|
+| *Lactarius deliciosus* "Κοκκινομανίταρο" | kokkinomanitaro |
+| *Russula delica* "Ασπρομανίταρο" | aspromanitaro |
+| *Tricholoma caligatum* "Ήμερο" or "Μαραθεύτικο" | imero (also maratheftiko) |
+| *Morchella conica* "Αρνούϊ" | arnoui |
+| *Suilus granulatus* "Σφουγκαράς" | sfoungaras |
+| *Lactarius torminosus* "Μαλλίτσης" or "Ξυσταρομανίταρο" | woolly milk cap (mallitsis) |
+
+Done in Lab: these five local names no longer carry the "?"; no Greek letters are left in the card text; the
+woolly milk cap keeps the leaflet's Latin name. "gematas" (bloody milk cap) is not in the leaflet and keeps its "?".
+The Latin names on the cards are unchanged (*Morchella*, *Suillus*: the genus, as Real chose).
+**No more naming questions are open.**
