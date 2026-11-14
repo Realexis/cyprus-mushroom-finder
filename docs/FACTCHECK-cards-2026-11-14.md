@@ -41,6 +41,9 @@ Its photos and record counts are for the whole genus (GBIF Cyprus: 43 records, F
 **Fixed in Lab on 14 Nov 2026 (Real said yes): A6.** The slippery Jacks card now gives the local name
 "sfoungaras" (KYK, for *S. granulatus*), still with the "?". "lartias" is no longer shown.
 
+**Fixed in Lab on 14 Nov 2026 (Real said yes): A5, the label only.** It now reads "the sickener (red to pink
+Russula)". The species is still a guess and there is still no Cyprus record of it.
+
 | # | Card | What the card says | What the sources say |
 |---|---|---|---|
 | A1 | Slippery Jacks | Stem "with a ring: white on top, dark brown to violet underneath" | That is *Suillus luteus* (W). The two slippery Jacks the Department of Forests lists for Cyprus, *S. collinitus* and *S. granulatus* (FD), have **no ring** (W: *S. granulatus* "bears neither a partial veil nor a ring"; the card's own note says *S. collinitus* has no ring). GBIF Cyprus: *S. collinitus* 2, *S. luteus* 1, *S. granulatus* 0. |

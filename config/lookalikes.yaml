@@ -59,7 +59,7 @@ lookalikes:
     inat: Omphalotus olearius
 
   - latin: Russula emetica
-    common: the sickener (pink Russula)     # [BRIEF] 'pink "sickener" Russula'. Taxon = [DRAFT] L3
+    common: the sickener (red to pink Russula)   # [BRIEF] 'pink "sickener" Russula'. Wikipedia: cap scarlet or cherry red, fading to pink (fact-check 2026-11-14). Taxon = [DRAFT] L3
     severity: toxic
     note: ""
     inat: Russula emetica
