@@ -9,7 +9,7 @@ import "./styles/app.css";
 import * as maplibregl from "maplibre-gl";
 import { Protocol } from "pmtiles";
 import { pmtiles } from "./map/files";
-import { addOverlays, applyView, setRainData, setReplayFrame, setSelection } from "./map/layers";
+import { addOverlays, applyView, setRainData, setReplayFrame, setSelection, setShadeLayer } from "./map/layers";
 import { baseStyle } from "./map/style";
 import { Panel } from "./ui/controls";
 import { loadCellDetail, words, type CellsIndex, type Meta } from "./ui/card";
@@ -158,7 +158,21 @@ async function main() {
     onCardClosed: () => { picked = null; applySelection(); },
     openSpecies,
   });
-  const drawLegend = () => renderLegend(legendEl, panel.view);
+  // The extra shade layer (off unless switched on; remembered on this phone only).
+  const shadeBtn = document.getElementById("shade-toggle") as HTMLButtonElement;
+  let shadeOn = false;
+  try { shadeOn = localStorage.getItem("lite-shade-layer") === "1"; } catch { /* private window */ }
+  const drawShade = () => {
+    shadeBtn.hidden = !hasShade || panel.view.mode === "replay";
+    shadeBtn.setAttribute("aria-pressed", String(shadeOn));
+    setShadeLayer(map, shadeOn);
+  };
+  shadeBtn.addEventListener("click", () => {
+    shadeOn = !shadeOn;
+    try { localStorage.setItem("lite-shade-layer", shadeOn ? "1" : "0"); } catch { /* fine */ }
+    drawShade(); drawLegend();
+  });
+  const drawLegend = () => { renderLegend(legendEl, panel.view, map.getZoom(), shadeOn); shadeBtn.hidden = !hasShade || panel.view.mode === "replay"; };
   drawLegend();
   map.on("zoom", drawLegend);
 
@@ -168,6 +182,7 @@ async function main() {
 
   map.once("load", () => {
     addOverlays(map, theme, urls, panel.view);
+    drawShade();
     fitCyprus();
     document.querySelector(".maplibregl-ctrl-attrib")?.classList.remove("maplibregl-compact-show");
   });

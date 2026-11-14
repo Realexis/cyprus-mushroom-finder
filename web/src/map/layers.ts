@@ -19,6 +19,12 @@ const cellOpacity = (v: View) => ["interpolate", ["linear"], ["to-number", ["get
 export const RAIN1_STOPS: [number, string][] = [[0, "rgba(217,232,242,0)"], [0.5, "#cfe3f0"], [3, "#9cc9e8"], [8, "#4f97d1"], [15, "#2a5fae"], [30, "#1b2f7a"]];
 
 
+// Shade (50 m), the extra layer someone can switch on: sunny = pale sand, deep shade = deep teal (as V5).
+export const SHADE_STOPS: [number, string][] = [[0, "#f1e3b5"], [35, "#b9c98f"], [55, "#5f9e86"], [75, "#2f6f78"], [100, "#183a5a"]];
+/** From this zoom the 50 m squares cover the forest (they fade in from 11.5). */
+export const SHADE_ZOOM = 12;
+const shadeFade = ["interpolate", ["linear"], ["zoom"], 11.5, 0, 12.3, 0.85] as unknown as ExpressionSpecification;
+
 const EMPTY: GeoJSON.FeatureCollection = { type: "FeatureCollection", features: [] };
 
 function ramp(prop: ExpressionSpecification, stops: [number, string][]): ExpressionSpecification {
@@ -90,10 +96,10 @@ export function addOverlays(map: MlMap, theme: Theme, urls: LayerUrls, v: View) 
       "hillshade-accent-color": "rgba(0,0,0,0)",
     },
   }, firstSymbol);
-  // 50 m spots (island-wide, terrain only), close up: NOT coloured, so every colour on the map is
-  // the conditions score shown on the card (V5 drew shade in its own blue colours here, and that
-  // mixed two scales). Kept invisible as tap targets: the double tap lands here and the card
-  // shows "Shade here (50 m)".
+  // 50 m spots (island-wide, terrain only), close up. By default NOT coloured, so every colour on
+  // the map is the conditions score shown on the card. Still there as tap targets: the double tap
+  // lands here and the card shows "Shade here (50 m)". The "Shade layer" switch colours them
+  // (setShadeLayer), and the colour key then says Shade.
   if (urls.shade) {
     map.addSource("shade", { type: "vector", url: `pmtiles://${urls.shade}` });
     map.addLayer({
@@ -124,6 +130,13 @@ export function addOverlays(map: MlMap, theme: Theme, urls: LayerUrls, v: View) 
     paint: { "text-color": theme === "dark" ? "#f2f4f3" : "#1b2620",
       "text-halo-color": theme === "dark" ? "#3a403d" : "#ffffff", "text-halo-width": 1.6 },
   });
+}
+
+/** The extra shade layer on or off (close up only). */
+export function setShadeLayer(map: MlMap, on: boolean) {
+  if (!map.getLayer("shade-fill")) return;
+  map.setPaintProperty("shade-fill", "fill-color", on ? ramp(["get", "sh"], SHADE_STOPS) : "#000");
+  map.setPaintProperty("shade-fill", "fill-opacity", on ? shadeFade : 0);
 }
 
 /** Switch between today's scores and the rain replay. */

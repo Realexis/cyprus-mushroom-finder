@@ -54,12 +54,29 @@ a { color: var(--accent); }
 :root[data-theme="dark"] .maplibregl-ctrl-icon { filter: invert(1); }
 .maplibregl-ctrl-attrib { font-size: 12px; }
 
+.map-key { position: absolute; z-index: 2; left: 8px; top: 8px; width: 176px; display: grid; gap: 6px; }
 .map-legend {
-  position: absolute; z-index: 2; left: 8px; top: 8px; width: 176px; padding: 6px 10px 7px;
+  padding: 6px 10px 7px;
   background: color-mix(in srgb, var(--surface) 94%, transparent); border: 1px solid var(--line);
   border-radius: var(--radius-s); box-shadow: var(--shadow); font-size: var(--fs-0); line-height: 1.35; cursor: help;
 }
 .ml-title { font-weight: 700; margin-bottom: 4px; }
+/* The extra shade layer: an on/off switch under the colour key. */
+.layer-toggle {
+  display: flex; align-items: center; gap: 8px; min-height: 40px; padding: 6px 10px; text-align: left;
+  background: color-mix(in srgb, var(--surface) 94%, transparent); border: 1px solid var(--line);
+  border-radius: var(--radius-s); box-shadow: var(--shadow); color: var(--ink);
+  font: inherit; font-size: var(--fs-0); font-weight: 700; line-height: 1.25; cursor: pointer;
+}
+.layer-toggle[hidden] { display: none; }
+.lt-switch { position: relative; flex: none; width: 32px; height: 18px; border-radius: 9px; background: var(--line); }
+.lt-switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%;
+  background: var(--ink-soft); transition: left 0.15s; }
+.layer-toggle[aria-pressed="true"] { border-color: var(--accent); }
+.layer-toggle[aria-pressed="true"] .lt-switch { background: var(--accent); }
+.layer-toggle[aria-pressed="true"] .lt-switch::after { left: 16px; background: var(--accent-ink); }
+.shade-chip { display: inline-block; width: 0.8em; height: 0.8em; border-radius: 3px; vertical-align: -0.05em;
+  border: 1px solid color-mix(in srgb, var(--ink) 30%, transparent); }
 .ml-bar { height: 10px; border-radius: 6px; border: 1px solid color-mix(in srgb, var(--ink) 25%, transparent); }
 .ml-scale { display: flex; justify-content: space-between; gap: 6px; margin-top: 3px; }
 .ml-scale span:nth-child(2) { color: var(--ink-soft); }
@@ -121,7 +138,7 @@ a { color: var(--accent); }
 @media (min-width: 900px) {
   .sheet { left: 16px; top: 16px; bottom: auto; right: auto; width: 380px; max-height: calc(100% - 32px);
     border-radius: var(--radius); border: 1px solid var(--line); padding: 14px 18px; }
-  .map-legend { left: calc(16px + 380px + 16px); top: auto; bottom: 28px; width: 210px; }
+  .map-key { left: calc(16px + 380px + 16px); top: auto; bottom: 28px; width: 210px; }
   .delayed { top: 12px; bottom: auto; left: calc(50% + 200px); }
   .loading { left: calc(50% + 200px); }
 }
@@ -228,7 +245,7 @@ dialog.emergency::backdrop { background: rgba(0, 0, 0, 0.6); }
 /* ---------------------------------------------------------------- narrow phones */
 @media (max-width: 899px) {
   /* The open card explains its own colour: give the map back the space. */
-  .stage:has(.sheet[data-view="card"]) .map-legend { display: none; }
+  .stage:has(.sheet[data-view="card"]) .map-key { display: none; }
 }
 @media (max-width: 420px) {
   .topbar { gap: 6px; padding: 6px 8px 6px 10px; }

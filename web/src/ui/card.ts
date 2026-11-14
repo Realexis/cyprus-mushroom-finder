@@ -1,7 +1,7 @@
 // The card for one tapped 250 m forest square, in Real's order (LITE-BRIEF.md):
 // 1 rating word (tap: the score breakdown), 2 mushrooms in season here, 3 place facts,
 // 4 Google Maps directions + share location, 5 the mushroom clock. Today only. Growing conditions only.
-import { SCORE_STOPS } from "../map/layers";
+import { SCORE_STOPS, SHADE_STOPS } from "../map/layers";
 import { served } from "../map/files";
 import { inSeasonHere } from "./species";
 
@@ -47,8 +47,7 @@ export const fmtDay = (iso: string, opts: Intl.DateTimeFormatOptions) =>
 
 /** The colour of a score, blended between the stops exactly like the map does it,
  *  so the card's colour matches the square's colour on the map. */
-export function scoreColour(v: number) {
-  const st = SCORE_STOPS;
+export function scoreColour(v: number, st: [number, string][] = SCORE_STOPS) {
   if (v <= st[0][0]) return st[0][1];
   for (let k = 1; k < st.length; k++) {
     const [s1, c1] = st[k];
@@ -242,7 +241,7 @@ export function cardHTML(c: CardInput, meta: Meta, day: number): string {
     <li data-tip="The likely trees, worked out from satellite forest maps, height and rock type. Not a tree survey."><span aria-hidden="true">🌲</span> <b>Trees:</b> ${TREES[Number(p.tree)] ?? "Forest"}</li>
     <li data-tip="Height above sea level. Higher forest is cooler and its season starts earlier."><span aria-hidden="true">⛰</span> <b>Altitude:</b> ${Number(p.elev).toLocaleString("en-GB")} m · ${BANDS[Number(p.band)] ?? ""} band</li>
     <li data-tip="Straight-line distance to the nearest forest track and drivable road, from OpenStreetMap. Not a driving route."><span aria-hidden="true">🚙</span> <b>Nearest:</b> ${road}</li>
-    ${c.shade ? `<li data-tip="The 50 m square you tapped: the average of three terrain parts. Faces north-east (cooler) ${c.shade.fa}/100, valley bottom ${c.shade.va}/100, little autumn sun ${c.shade.ls}/100. Shade keeps the ground moist. Terrain only: the weather is the same for the whole area."><span aria-hidden="true">🌗</span> <b>Shade here (50 m):</b> ${c.shade.sh}/100</li>` : ""}</ul>`;
+    ${c.shade ? `<li data-tip="The 50 m square you tapped: the average of three terrain parts. Faces north-east (cooler) ${c.shade.fa}/100, valley bottom ${c.shade.va}/100, little autumn sun ${c.shade.ls}/100. Shade keeps the ground moist. Terrain only: the weather is the same for the whole area."><span aria-hidden="true">🌗</span> <b>Shade here (50 m):</b> <i class="shade-chip" style="background:${scoreColour(c.shade.sh, SHADE_STOPS)}" aria-hidden="true"></i> ${c.shade.sh}/100</li>` : ""}</ul>`;
 
   // 4. Two buttons: directions in Google Maps, and share this place (free, no key).
   //    None for squares in or by a nature reserve.

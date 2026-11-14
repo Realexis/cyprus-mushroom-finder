@@ -42,7 +42,12 @@
       <div id="loading" class="loading" role="status"><span class="spinner" aria-hidden="true"></span>
         <span id="loading-text">Loading the forest map…</span></div>
       <div id="delayed" class="delayed" role="status" hidden></div>
-      <div id="map-legend" class="map-legend" role="img" tabindex="0"></div>
+      <div class="map-key">
+        <div id="map-legend" class="map-legend" role="img" tabindex="0"></div>
+        <button type="button" id="shade-toggle" class="layer-toggle" aria-pressed="false" hidden
+          data-tip="Extra layer, off unless you switch it on: shade in 50 m squares when you zoom in (cool north-east slopes, valley bottoms, little autumn sun). Shade keeps the ground moist. Terrain only. While it is on, the colours show shade, not the conditions.">
+          <span class="lt-switch" aria-hidden="true"></span><span>Shade layer</span></button>
+      </div>
       <section id="sheet" class="sheet" aria-label="Today and the tapped square"></section>
     </main>
   </div>

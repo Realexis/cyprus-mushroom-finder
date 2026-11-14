@@ -33,9 +33,9 @@
 :root.full-map .full-safety svg { width: 16px; height: 16px; flex: none; }
 
 /* Small colour key, bottom-left, above the safety line. */
-:root.full-map .map-legend {
-  left: 10px; right: auto; top: auto; bottom: 40px; width: 180px; padding: 6px 10px 7px; font-size: 0.8rem;
-}
+:root.full-map .map-key { left: 10px; right: auto; top: auto; bottom: 40px; width: 180px; }
+:root.full-map .map-legend { padding: 6px 10px 7px; font-size: 0.8rem; }
+:root.full-map .layer-toggle { display: none; }
 :root.full-map .ml-bar { height: 10px; }
 
 /* Map credits stay (licences), compact, bottom-right above the safety line. */
@@ -60,7 +60,7 @@
 
 @media (max-width: 899px) {
   :root.full-map .full-safety { font-size: 0.75rem; }
-  :root.full-map .map-legend { width: 150px; bottom: 44px; }
+  :root.full-map .map-key { width: 150px; bottom: 44px; }
   /* Phones: the island is a band across the middle, so the credits go top-left (open sea),
      clear of the colour key (bottom-left) and the exit button (top-right). */
   :root.full-map .maplibregl-ctrl-bottom-right {
