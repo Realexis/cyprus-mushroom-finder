@@ -81,7 +81,7 @@ species:
   - code: mor
     latin: Morchella esculenta / elata
     common: morels                                  # [BRIEF]
-    local: arnaoui                                  # [BRIEF] to confirm
+    local: arnoui                                   # KYKPEE spells it αρνούϊ (brief had "arnaoui"); fact-check 2026-11-14. To confirm
     local_confirmed: false
     # V3 Fable feedback step 6 (audit GAPS A12): Cyprus morels were found at 500-600 m with
     # Cistus, olive and Calabrian pine, and with strawberry tree on Troodos [LOI16, LOI16m].

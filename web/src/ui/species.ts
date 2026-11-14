@@ -54,6 +54,8 @@ const SOURCES: Record<string, { label: string; url: string }> = {
   fn_tor: { label: "First Nature: Lactarius torminosus", url: "https://www.first-nature.com/fungi/lactarius-torminosus.php" },
   fn_chr: { label: "First Nature: Lactarius chrysorrheus", url: "https://www.first-nature.com/fungi/lactarius-chrysorrheus.php" },
   fn_col: { label: "First Nature: Suillus collinitus", url: "https://www.first-nature.com/fungi/suillus-collinitus.php" },
+  w_sgr: { label: "Wikipedia: Suillus granulatus", url: "https://en.wikipedia.org/wiki/Suillus_granulatus" },
+  w_slt: { label: "Wikipedia: Suillus luteus", url: "https://en.wikipedia.org/wiki/Suillus_luteus" },
   exub: { label: "Miller lab (2017): first report of Morchella exuberans in eastern North America, citing Loizides et al. 2016 for burned Calabrian pine in Cyprus",
     url: "https://miller-mycology-lab.inhs.illinois.edu/files/2020/04/First-report-of-the-post-fire-morel-Morchella-exuberans-in-eastern-North-America-Mycologia-2017.pdf" },
   ncbi: { label: "NCBI StatPearls: Gyromitra toxicity", url: "https://www.ncbi.nlm.nih.gov/books/NBK470580/" },
@@ -164,7 +166,7 @@ const FIELD: Record<string, Field> = {
     look: [
       ["Cap", "Brown, slimy and shiny. The skin peels off."],
       ["Underneath", "A sponge of small pores, not gills. Yellow, then olive."],
-      ["Stem", "Pale yellow, with a ring: white on top, dark brown to violet underneath. Small dots above the ring."],
+      ["Stem", "Pale yellow, with small brown dots. The two slippery Jacks listed for Cyprus have no ring. One other kind (Suillus luteus) has a ring: white on top, dark brown to violet underneath."],
     ],
     where: [
       "Under pines, including planted pines, on poor soil.",
@@ -174,7 +176,7 @@ const FIELD: Record<string, Field> = {
     check: [
       "The Cyprus Department of Forests lists Suillus collinitus (no ring, pink stem base) and S. granulatus, but not S. luteus. Which Suillus is \"lartias\" is still to confirm.",
     ],
-    src: ["w_slu", "forests", "fn_col"],
+    src: ["w_slu", "forests", "fn_col", "w_sgr", "w_slt"],
   },
 };
 function cap1(s: string) { return s.charAt(0).toUpperCase() + s.slice(1); }
