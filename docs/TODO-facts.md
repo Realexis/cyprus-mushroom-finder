@@ -45,7 +45,7 @@ Each is tagged `[GUESS]` in `config/*.yaml`. No source gives a number. Source ta
 ## Shroomy Lab only (14 Nov 2026)
 | # | What | Guess now | Where |
 |---|---|---|---|
-| LAB1 | **50 m heat map**: how much a patch's own shade moves its square's score. Patch score = square score x (1 + strength x (patch shade - square shade) / 100). No source gives a number; no find locations to tune it on | strength 1.0 (98% of patches move by -23 to +22 points) | `config/lab.yaml`, `scripts/lab-heat50.py`, `web/src/map/heat50.ts` |
+| LAB1 | **50 m heat map**: how much a patch's own shade moves its square's score. Patch score = square score x (1 + strength x (patch shade - square shade) / 100). No source gives a number; no find locations to tune it on | strength 1.0. Public sightings fit 1.16 best (95% range 0.18 to 2.34, 173 patches): `docs/LAB-heat50-strength.md`. Needs real find locations to narrow | `config/lab.yaml`, `scripts/lab-heat50.py`, `web/src/map/heat50.ts` |
 
 ## Species and lookalikes (Phase 5)
 | # | What | Draft value now | Where |

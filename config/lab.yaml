@@ -9,5 +9,6 @@
 # at strength 1.0. Kept between 0 and 100. A patch with no shade value keeps its square's score.
 # Rain, temperature, soil and season stay those of the 250 m square: there is no finer weather.
 heat50:
-  shade_strength: 1.0        # [GUESS] no source. Chosen so patches differ by up to about 25 points
-                             # (measured 14 Nov 2026: 98% of patches change by -23 to +22 points).
+  shade_strength: 1.0        # Checked against 173 patches with public fungus sightings (iNaturalist,
+                             # 14 Nov 2026): best fit 1.16, 95% range 0.18 to 2.34. Rounded down to 1.0.
+                             # Still weak evidence, not a measured rule: docs/LAB-heat50-strength.md
