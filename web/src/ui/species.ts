@@ -59,6 +59,9 @@ const SOURCES: Record<string, { label: string; url: string }> = {
   exub: { label: "Miller lab (2017): first report of Morchella exuberans in eastern North America, citing Loizides et al. 2016 for burned Calabrian pine in Cyprus",
     url: "https://miller-mycology-lab.inhs.illinois.edu/files/2020/04/First-report-of-the-post-fire-morel-Morchella-exuberans-in-eastern-North-America-Mycologia-2017.pdf" },
   ncbi: { label: "NCBI StatPearls: Gyromitra toxicity", url: "https://www.ncbi.nlm.nih.gov/books/NBK470580/" },
+  // Real found this one (2026-11-14). Cyprus government magazine; the mushroom article is pages 34-38.
+  agrotis: { label: "Agrotis magazine 481 (2021), E. Hadjisterkotis, Agricultural Research Institute: telling Cyprus mushrooms from their poisonous lookalikes, part 2 (Greek, PDF)",
+    url: "https://www.gov.cy/media/sites/46/2025/12/2021-Jan-Apr.pdf" },
 };
 
 interface Field {
@@ -90,7 +93,7 @@ const FIELD: Record<string, Field> = {
       "A pinker cap with a woolly, shaggy edge: the woolly milk cap (μαλλίτσης). It is poisonous and grows in Cyprus.",
     ],
     check: ["The woolly milk cap (Lactarius torminosus) is not yet in our list of 10 lookalikes."],
-    src: ["w_lde", "fn_lde", "forests", "dialogos", "kykpee", "fn_tor", "fn_chr"],
+    src: ["w_lde", "fn_lde", "forests", "dialogos", "kykpee", "agrotis", "fn_tor", "fn_chr"],
   },
   lsa: {
     look: [
@@ -160,7 +163,7 @@ const FIELD: Record<string, Field> = {
       "Cyprus has several morel species, two of them first described from Cyprus in 2016 (Morchella arbutiphila and M. disparilis). This card covers all morels (the genus Morchella).",
       "False morels (Gyromitra) are not in our list of 10 lookalikes. We found no Cyprus record of them.",
     ],
-    src: ["kykpee", "exub", "w_arb", "w_dis", "w_false", "ncbi", "pedoulas"],
+    src: ["kykpee", "agrotis", "exub", "w_arb", "w_dis", "w_false", "ncbi", "pedoulas"],
   },
   slu: {
     look: [
@@ -176,7 +179,7 @@ const FIELD: Record<string, Field> = {
     check: [
       "The Cyprus Department of Forests lists Suillus collinitus (no ring, pink stem base) and S. granulatus, but not S. luteus. The local name σφουγκαράς (sfoungaras) is given by one Cyprus source for S. granulatus. Whether it is used for the other slippery Jacks is still to confirm.",
     ],
-    src: ["w_slu", "forests", "kykpee", "fn_col", "w_sgr", "w_slt"],
+    src: ["w_slu", "forests", "kykpee", "agrotis", "fn_col", "w_sgr", "w_slt"],
   },
 };
 function cap1(s: string) { return s.charAt(0).toUpperCase() + s.slice(1); }

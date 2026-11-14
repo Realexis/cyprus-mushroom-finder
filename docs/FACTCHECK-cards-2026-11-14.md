@@ -116,3 +116,28 @@ Russula)". The species is still a guess and there is still no Cyprus record of i
 
 ## What I could not read
 - LOI16m, LOI18 and TOR14 in full (paywall or server error). Their lines above come from summaries.
+
+## New source from Real (14 Nov 2026): Agrotis magazine
+
+**AGR** = Αγρότης (Agrotis) magazine, issue 481, January-April 2021, pages 34-38. Article by Eleftherios
+Hadjisterkotis Ph.D., Environment Officer, Agricultural Research Institute (Cyprus), "Part B" of a two-part
+article on telling Cyprus mushrooms from their poisonous lookalikes. In Greek.
+https://www.gov.cy/media/sites/46/2025/12/2021-Jan-Apr.pdf . Read: **Full**. Part A (the issue before) not read.
+
+It is now a source link on three cards in Lab: red pine mushroom, morels, slippery Jacks.
+
+**It changes four of my findings above:**
+
+| # | What I said | What AGR says |
+|---|---|---|
+| A6 | "lartias" is in no source | *Suillus* mushrooms "are known in Cyprus as «Λαρτάδες» or «Λαρτιάδες»"; one is a «Λαρτάς». **The brief's name has a Cyprus source.** The card now says "sfoungaras" on my advice: that advice was wrong. |
+| A1 | The ring describes *S. luteus*, not a Cyprus kind | *S. luteus* is one of "the three most common" slippery Jacks of Cyprus (with *S. bellinii* and *S. collinitus*); photo from Platres; "the stem has a large, membranous, slimy ring". So a ring is right for one common Cyprus kind. The card's new line (some have no ring, *S. luteus* has one) still holds, but "one other kind" undersells it. |
+| A3 | No Cyprus source uses *M. elata* | AGR names *Morchella purpurascens*, *M. costata*, *M. rigida* and *M. elata* for Cyprus. So *M. elata* has a Cyprus source; *M. esculenta* still has none. The genus name on the card is still correct. |
+| C | Woolly milk cap = *Lactarius torminosus* (PIO, KYK) | AGR: «Μαλλίτσης» or «Ξισταρομανίταρο» is ***Lactarius tesquorum***, which lives with rockrose (*Cistus*). Toxic (stomach and gut upset). White milk. The sources disagree on the species; AGR is the newest (2021). |
+
+**It also supports:**
+- Red pine mushroom: orange milk that turns greenish after some hours; autumn and winter; Calabrian pine forests and shrubland. A second species, *Lactarius semisanguifluus* (Troodos), is also called κοκκινομανίταρο: its orange milk turns red in 15-30 minutes.
+- Morels: local names «Αρνούθκια» (the most used), also «Κούκοι», «Κουκούθκια» and others; mainly spring; hollow inside. False morel (*Gyromitra esculenta*): poisons raw, boiled or fried; symptoms after 2-12 hours.
+- *Suillus collinitus*: pink mycelium at the stem base; all altitudes from the coast to the top of Troodos; autumn and winter. *S. bellinii* and *S. luteus*: autumn and winter, Calabrian or black pine forests.
+- No rakes or tools in the leaf litter: they destroy the mycelium.
+- *Amanita pantherina* is named as a Cyprus risk (young ones mistaken for puffballs).
