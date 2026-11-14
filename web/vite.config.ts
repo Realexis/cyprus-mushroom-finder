@@ -32,6 +32,9 @@ function privateData(): Plugin {
 
 export default defineConfig({
   base: "./",
+  // A new id for every build. Map files carry it in their address, so a phone that has pieces of an
+  // older upload never mixes them with the new one (that left the map empty until you zoomed).
+  define: { __BUILD_ID__: JSON.stringify(Date.now().toString(36)) },
   plugins: [privateData()],
   build: {
     rollupOptions: {

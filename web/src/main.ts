@@ -22,6 +22,7 @@ import { mountSpecies } from "./ui/species";
 import { FullMap, readUrlView, trackMapReady } from "./ui/fullmap";
 
 const abs = (p: string) => new URL(p, document.baseURI).href;
+declare const __BUILD_ID__: string;                   // set by vite.config.ts, new for every build
 
 /** The double tap lands here: the 50 m shade squares show, each about 13 screen pixels wide,
  *  so one solid colour can be tapped (Real, 13 Nov), with ~1.5 km of forest around. */
@@ -80,7 +81,7 @@ async function main() {
 
   // Map files get the data version in their address, so after each daily update the browser
   // fetches fresh pieces instead of mixing in old cached copies (which breaks PMTiles reads).
-  const ver = encodeURIComponent(meta.generated_utc);
+  const ver = encodeURIComponent(`${meta.generated_utc}-${__BUILD_ID__}`);
   const v = (p: string) => `${abs(p)}?v=${ver}`;
   const urls = { terrain: v(pmtiles("tiles/terrain.pmtiles")), cells: v(pmtiles("data/cells.pmtiles")),
     reserves: abs("data/reserves.geojson"), shade: hasShade ? v(pmtiles("tiles/shade50.pmtiles")) : undefined,
@@ -105,6 +106,23 @@ async function main() {
     (window as unknown as { map: unknown }).map = map;
     map.on("error", (e) => console.error("[map]", e.error?.message ?? e));
   }
+  // If the server answers a "give me this piece" request with the whole file (it can, when the
+  // browser holds pieces of an older upload), the map file cannot be read and the map stays empty.
+  // Ask again under a fresh address, at most three times.
+  let pieceRetries = 0, pieceTimer = 0;
+  map.on("error", (e) => {
+    if (!/content-length|Byte Serving|Wrong magic number/i.test(String(e.error?.message ?? "")) || pieceRetries >= 3 || pieceTimer) return;
+    pieceTimer = window.setTimeout(() => {
+      pieceTimer = 0;
+      pieceRetries++;
+      for (const [id, src] of Object.entries(map.getStyle().sources)) {
+        const url = (src as { url?: string }).url;
+        if (!url?.startsWith("pmtiles://")) continue;
+        const fresh = `${url.replace(/&r=\d+$/, "")}&r=${pieceRetries}`;
+        (map.getSource(id) as unknown as { setUrl?: (u: string) => void } | undefined)?.setUrl?.(fresh);
+      }
+    }, 800);
+  });
   map.addControl(new maplibregl.GeolocateControl({ positionOptions: { enableHighAccuracy: true } }), "top-right");
   const geo = document.querySelector<HTMLButtonElement>(".maplibregl-ctrl-geolocate");
   if (geo) { geo.removeAttribute("title"); geo.dataset.tip = "Show where you are on the map (needs location permission). Your position stays on your phone."; }
@@ -175,11 +193,21 @@ async function main() {
   new ResizeObserver(() => document.documentElement.style.setProperty("--sheet-h", `${sheet.offsetHeight + 8}px`))
     .observe(sheet);
 
-  map.once("load", () => {
+  // As soon as the map style is read (not after the whole base map has arrived), so the forest
+  // colours load together with the base map and show on first open.
+  let overlaysOn = false;
+  const startOverlays = () => {
+    if (overlaysOn) return;
+    overlaysOn = true;
     addOverlays(map, theme, urls, panel.view);
     fitCyprus();
-    document.querySelector(".maplibregl-ctrl-attrib")?.classList.remove("maplibregl-compact-show");
-  });
+  };
+  // The credits start folded (the "i" button opens them), so they do not cover the map on a phone.
+  const foldCredits = () => document.querySelector(".maplibregl-ctrl-attrib")?.classList.remove("maplibregl-compact-show");
+  map.once("load", foldCredits);
+  map.once("idle", foldCredits);
+  map.once("style.load", startOverlays);
+  map.once("load", startOverlays);
 
   // Loading message: hide once the map has drawn its layers for the first time.
   const loading = document.getElementById("loading")!;
