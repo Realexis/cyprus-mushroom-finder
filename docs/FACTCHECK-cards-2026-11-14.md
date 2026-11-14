@@ -126,6 +126,9 @@ https://www.gov.cy/media/sites/46/2025/12/2021-Jan-Apr.pdf . Read: **Full**. Par
 
 It is now a source link on three cards in Lab: red pine mushroom, morels, slippery Jacks.
 
+**Real's decision, 14 Nov 2026: the slippery Jacks card keeps "sfoungaras"**, knowing that AGR gives a Cyprus
+source for "lartias" (Λαρτάδες / Λαρτιάδες).
+
 **It changes four of my findings above:**
 
 | # | What I said | What AGR says |
