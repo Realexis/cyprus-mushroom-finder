@@ -1,0 +1,68 @@
+/* Night Trail: outdoor gear. Thick outlines, amber for warnings only. */
+html:root[data-design="trail"] {
+  --font: "Overpass Variable", system-ui, sans-serif;
+  --lh: 1.55; --track: 0.01em;
+  --r-s: 6px; --r-m: 10px; --r-l: 22px; --r-pill: 10px; --ico-w: 2.2;
+  --shadow: 0 -6px 24px rgba(0, 0, 0, 0.55);
+  --bg: #0b101b; --surface: #101827; --surface-2: #1a2438; --line: #34425f;
+  --ink: #f3efe6; --ink-soft: #aab4c8; --accent: #f3efe6; --accent-ink: #101827;
+  --safety-bg: #ffb454; --safety-ink: #1a1206; --sos-bg: #cf2a20; --sos-ink: #ffffff; --focus: #8cc4ff;
+  --amber: #ffb454;
+
+  .topbar { border-bottom: 0; min-height: 58px; }
+  .brand svg path { fill: var(--amber); } .brand svg rect { fill: var(--ink); }
+  .brand-name { font-weight: 800; font-size: 1.2rem; letter-spacing: 0.01em; }
+  .ver-badge { background: none; border: 2px solid var(--line); color: var(--ink-soft); }
+  .about-link, .chip-btn, .back-btn, .maps-btn, .card-x, .em-close, .sc-round { border: 2px solid var(--line); background: var(--surface-2); font-weight: 750; }
+  .sos { border: 2px solid #ff8a80; font-weight: 800; }
+  .safety, .sc-safety { font-weight: 750; font-size: 0.92rem; padding: 7px 12px; }
+
+  .map-legend { border: 2px solid var(--line); background: var(--surface); box-shadow: none; }
+  .ml-title { font-weight: 800; }
+  .ml-bar { height: 14px; border: 0; border-radius: 7px; }
+  .maplibregl-ctrl-group { border: 2px solid var(--line); box-shadow: none !important; border-radius: 10px; }
+  .pick-pin { border: 3px solid var(--amber); background: none; box-shadow: 0 0 0 3px #0a0f1a; }
+
+  /* Panel with a grab handle. */
+  @media (max-width: 899px) {
+    .sheet { border-top: 2px solid var(--line); padding-top: 22px; }
+    .sheet::before { content: ""; position: absolute; top: 8px; left: 50%; width: 44px; height: 5px; margin-left: -22px; border-radius: 3px; background: var(--line); }
+    .card-bar { top: -22px; margin-top: -22px; padding-top: 20px; }
+  }
+  .start-row .today { font-size: 1.35rem; } .start-row .today b { font-weight: 800; }
+  .chip-btn { min-height: 54px; flex: 1 1 0; }
+  .no-rakes, .clock { border: 0; background: var(--surface-2); padding: 10px 12px; }
+  .clock.open { box-shadow: inset 4px 0 0 var(--ink); }
+  .primary-btn, .maps-btn.primary { background: var(--ink); border-color: var(--ink); color: var(--accent-ink); font-weight: 800; }
+  .maps-btn { min-height: 60px; }
+
+  .rating { border: 2px solid var(--line); background: var(--surface-2); padding: 12px 14px; gap: 14px; }
+  .rating-swatch { width: 52px; height: 52px; border-radius: 50%; box-shadow: 0 0 0 3px var(--surface), 0 0 0 5px var(--line); }
+  .rating-word { font-size: 2rem; font-weight: 850; letter-spacing: 0.005em; }
+  .why { border: 2px solid var(--line); }
+  .why-bar { height: 10px; border: 0; background: var(--bg); }
+  .card-h { font-size: 1.1rem; font-weight: 800; margin-top: 18px; }
+  .sp-open { border: 2px solid var(--line); min-height: 72px; }
+  .sp-thumb { width: 58px; height: 58px; }
+  .sp-name i { font-weight: 750; }
+  .facts { gap: 8px; }
+  .facts .ico { color: var(--amber); margin-right: 4px; }
+  .tl i { background: #5fb4e6; }
+
+  .em-head h2, .page h1, .sc-name { font-weight: 850; }
+  .page h2 { font-weight: 800; }
+  .page .card { border: 2px solid var(--line); background: var(--surface); }
+  .page a { color: var(--amber); }
+
+  .sc-row { border: 2px solid var(--line); background: var(--surface); }
+  .sc-row.on { border-color: var(--ink); }
+  .sc-chip.on { background: var(--ink); color: var(--accent-ink); }
+  .sc-h .ic, .sc-when.on .ic { color: var(--amber); }
+  .sc-fold summary { color: var(--amber); }
+  .sc-months span.on { background: var(--ink); color: var(--accent-ink); }
+  .sc-months span.now { outline-color: var(--amber); }
+  .sc-look { border-width: 2px; }
+
+  /* Small phones: keep the name whole and the start panel low, so the map keeps its room. */
+  @media (max-width: 380px), (max-height: 700px) { .start-btns { flex-wrap: nowrap; } .chip-btn { padding: 0 8px; min-height: 48px; } }
+}

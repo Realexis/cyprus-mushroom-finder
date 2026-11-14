@@ -1,0 +1,31 @@
+/* Shared ground for every design except the original.
+   The original's styles carry fixed corner sizes; here they become settings a design can turn:
+   --r-s (photos, chips), --r-m (buttons, boxes), --r-l (panel, dialogs), --r-pill (round ends).
+   Also: line icons, and --font-display for headings. Each design then only writes what makes it itself. */
+:where(html[data-design]:not([data-design="original"])) {
+  --r-s: 4px; --r-m: 8px; --r-l: 14px; --r-pill: 999px;
+  --ico-w: 1.75;
+  --font-display: var(--font);
+}
+html:root[data-design]:not([data-design="original"]) {
+
+  .about-link, .sos, .back-btn, .primary-btn, .card-x, .maps-btn, .em-close, .sp-open, .maps-copy, .sc-more, .sc-jump,
+  .rating, .why, .clock, .no-rakes, .call, .page .card, .sc-row, .sc-danger-btn, .sc-danger, .sc-look, .sc-fold,
+  .sc-lk-row, .sc-signs li, .sc-sign, .sc-unchecked, .tip, .map-legend, .loading.failed { border-radius: var(--r-m); }
+  .chip-btn, .delayed, .loading, .ver-badge, .sc-chip, .sc-sev, .full-exit { border-radius: var(--r-pill); }
+  dialog.emergency, .sc-car { border-radius: var(--r-l); }
+  .sp-thumb, .sc-row img, .sc-lk-row img, .sc-noimg, .sc-credits img, .sc-months span, .rating-swatch, .ml-bar,
+  .maplibregl-ctrl-group { border-radius: var(--r-s); }
+  @media (max-width: 899px) { .sheet { border-radius: var(--r-l) var(--r-l) 0 0; } }
+  @media (min-width: 900px) { .sheet, dialog.species-dlg.sc { border-radius: var(--r-l); } }
+
+  .brand-name, .today, .panel-h, .card-h, .rating-word, .rating-num, .em-head h2, .page h1, .page h2,
+  .sc-title, .sc-h, .sc-name, .sc-layer-head h2, .ml-title { font-family: var(--font-display); }
+
+  .ico { width: 1.2em; height: 1.2em; flex: none; vertical-align: -0.22em; fill: none; stroke: currentColor;
+    stroke-width: var(--ico-w); stroke-linecap: round; stroke-linejoin: round; }
+  .chip-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+  .call .ico { width: 28px; height: 28px; }
+  .sc .ic { stroke-width: var(--ico-w); }
+  .ml-scale span:nth-child(2) { display: none; }      /* the arrow between the two ends of the colour key */
+}

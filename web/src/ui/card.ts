@@ -5,6 +5,7 @@ import { SCORE_STOPS } from "../map/layers";
 import { served } from "../map/files";
 import { inSeasonHere } from "./species";
 import { heat50, type Heat50 } from "../map/heat50";
+import { ic } from "./icons";
 
 export interface DayInfo { offset: number; date: string; confidence: "high" | "medium" | "low"; }
 export interface Meta {
@@ -58,6 +59,12 @@ export function scoreColour(v: number) {
   const t = (x - a) / (b - a);
   const ch = (c: string, i: number) => parseInt(c.slice(1 + 2 * i, 3 + 2 * i), 16);
   return `rgb(${[0, 1, 2].map((i) => Math.round(ch(ca, i) + (ch(cb, i) - ch(ca, i)) * t)).join(", ")})`;
+}
+
+/** Black or white, whichever reads better on this colour (for designs that print text on the score colour). */
+export function inkOn(rgb: string): string {
+  const [r, g, b] = rgb.match(/\d+/g)!.map((x) => { const c = Number(x) / 255; return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b > 0.179 ? "#000" : "#fff";
 }
 
 /** The four rating words (Real's choice for Lite, 13 Nov 2026: four words, same cut-offs as V5). */
@@ -228,9 +235,9 @@ export function cardHTML(c: CardInput, meta: Meta, day: number): string {
   const rating = v === null
     ? `<p class="rating-none"><b>Not scored</b></p>`
     : waiting ? `<p class="rating-none"><b>Working out this patch…</b></p>`
-    : `<button type="button" class="rating" id="rating" aria-expanded="${c.open}" aria-controls="why"
+    : `<button type="button" class="rating" id="rating" aria-expanded="${c.open}" aria-controls="why" style="--v:${v};--c:${scoreColour(v)};--c-ink:${inkOn(scoreColour(v))}"
         data-tip="How good the growing conditions are in this square today. Tap to see why.">
-        <i class="rating-swatch" style="background:${scoreColour(v)}" aria-hidden="true"></i>
+        <i class="rating-swatch" style="background:${scoreColour(v)}" aria-hidden="true"></i><span class="rating-num" aria-hidden="true">${v}</span>
         <span class="rating-text"><span class="rating-word">${words(v)}</span>
           <span class="rating-sub">growing conditions today · ${v}/100</span></span>
         <span class="rating-more" aria-hidden="true">${c.open ? "▴" : "▾"}</span></button>
@@ -252,10 +259,10 @@ export function cardHTML(c: CardInput, meta: Meta, day: number): string {
   // 3. Place facts.
   const road = d ? `forest track ${dist(d.road[0])} · road ${dist(d.road[1])}` : c.failed ? "–" : "loading…";
   const facts = `<ul class="facts">
-    <li data-tip="The likely trees, worked out from satellite forest maps, height and rock type. Not a tree survey."><span aria-hidden="true">🌲</span> <b>Trees:</b> ${TREES[Number(p.tree)] ?? "Forest"}</li>
-    <li data-tip="Height above sea level. Higher forest is cooler and its season starts earlier."><span aria-hidden="true">⛰</span> <b>Altitude:</b> ${Number(p.elev).toLocaleString("en-GB")} m · ${BANDS[Number(p.band)] ?? ""} band</li>
-    <li data-tip="Straight-line distance to the nearest forest track and drivable road, from OpenStreetMap. Not a driving route."><span aria-hidden="true">🚙</span> <b>Nearest:</b> ${road}</li>
-    ${c.shade ? `<li data-tip="The 50 m square you tapped: the average of three terrain parts. Faces north-east (cooler) ${c.shade.fa}/100, valley bottom ${c.shade.va}/100, little autumn sun ${c.shade.ls}/100. Shade keeps the ground moist. Terrain only: the weather is the same for the whole area."><span aria-hidden="true">🌗</span> <b>Shade here (50 m):</b> ${c.shade.sh}/100</li>` : ""}</ul>`;
+    <li data-tip="The likely trees, worked out from satellite forest maps, height and rock type. Not a tree survey.">${ic("tree", "🌲")} <b>Trees:</b> ${TREES[Number(p.tree)] ?? "Forest"}</li>
+    <li data-tip="Height above sea level. Higher forest is cooler and its season starts earlier.">${ic("mountain", "⛰")} <b>Altitude:</b> ${Number(p.elev).toLocaleString("en-GB")} m · ${BANDS[Number(p.band)] ?? ""} band</li>
+    <li data-tip="Straight-line distance to the nearest forest track and drivable road, from OpenStreetMap. Not a driving route.">${ic("track", "🚙")} <b>Nearest:</b> ${road}</li>
+    ${c.shade ? `<li data-tip="The 50 m square you tapped: the average of three terrain parts. Faces north-east (cooler) ${c.shade.fa}/100, valley bottom ${c.shade.va}/100, little autumn sun ${c.shade.ls}/100. Shade keeps the ground moist. Terrain only: the weather is the same for the whole area.">${ic("shade", "🌗")} <b>Shade here (50 m):</b> ${c.shade.sh}/100</li>` : ""}</ul>`;
 
   // 4. Google Maps link (free, no key). None for squares in or by a nature reserve.
   // Lab (Real, 14 Nov 2026): the two buttons V5 had, side by side: drive there + share the location.
@@ -263,11 +270,11 @@ export function cardHTML(c: CardInput, meta: Meta, day: number): string {
       <div class="maps-btns">
         <a class="maps-btn primary" href="${mapsDirectionsUrl(d.access.lat, d.access.lon)}" target="_blank" rel="noopener"
           data-tip="Opens Google Maps with driving directions to the middle of this 250 m square. Free, no sign-in. Forest tracks may be rough.">
-          <span class="maps-main"><span aria-hidden="true">🚗</span> Drive there</span>
-          <span class="maps-warn"><span aria-hidden="true">⚠</span> tracks may be rough</span></a>
+          <span class="maps-main">${ic("drive", "🚗")} Drive there</span>
+          <span class="maps-warn">${ic("warn", "⚠")} tracks may be rough</span></a>
         <button type="button" class="maps-btn" data-share-url="${mapsPinUrl(d.access.lat, d.access.lon)}"
           data-share-text="250 m forest square (Shroomy: growing conditions only)"
-          data-tip="Send a Google Maps pin of the middle of this 250 m square to a friend. On a computer it copies the link."><span aria-hidden="true">📍</span> <span class="maps-btn-label">Share location</span></button>
+          data-tip="Send a Google Maps pin of the middle of this 250 m square to a friend. On a computer it copies the link.">${ic("share", "📍")} <span class="maps-btn-label">Share location</span></button>
       </div>
       <p class="muted small maps-note">Both use the middle of this 250 m square. It may be away from roads and tracks.</p>
     </div>`
@@ -276,7 +283,7 @@ export function cardHTML(c: CardInput, meta: Meta, day: number): string {
   // 5. Mushroom clock, last.
   const clk = clockSentence(Number(p[`p${day}`]), meta.clock,
     p[`o${day}`] === undefined ? meta.clock.opens : Number(p[`o${day}`]));
-  const clock = `<p class="clock ${clk.open ? "open" : ""}" data-tip="${esc(clockTip(meta.clock))}"><span aria-hidden="true">⏱</span>
+  const clock = `<p class="clock ${clk.open ? "open" : ""}" data-tip="${esc(clockTip(meta.clock))}">${ic("clock", "⏱")}
     <b>Mushroom clock:</b> ${clk.text}${meta.clock.counted_from ? ` <span class="muted">(rain counted from ${esc(fmtDay(meta.clock.counted_from, { day: "numeric", month: "long" }))})</span>` : ""}</p>`;
 
   const what = c.shade ? (meta.heat50 ? "50 m patch · today" : "50 m spot · conditions of its 250 m square") : "250 m forest square · today";

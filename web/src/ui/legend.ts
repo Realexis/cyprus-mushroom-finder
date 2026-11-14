@@ -2,10 +2,14 @@
 // closed nature reserves), the 50 m shade close up, or the rain of one day during the rain replay.
 import { RAIN1_STOPS, SCORE_STOPS, SHADE_STOPS, SHADE_ZOOM, type View } from "../map/layers";
 
-function gradient(stops: [number, string][]) {
+/** The colour stops as CSS. Also given as --stops, so a design can draw the bar its own way. */
+function stopList(stops: [number, string][]) {
   const lo = stops[0][0], hi = stops[stops.length - 1][0];
-  return `linear-gradient(90deg, ${stops.map(([v, c]) => `${c} ${((v - lo) / (hi - lo)) * 100}%`).join(", ")})`;
+  return stops.map(([v, c]) => `${c} ${((v - lo) / (hi - lo)) * 100}%`).join(", ");
 }
+const gradient = (stops: [number, string][]) => `linear-gradient(90deg, ${stopList(stops)})`;
+/** Where the four rating words start (same cut-offs as words() in card.ts). Hidden in the original. */
+const TICKS = `<div class="ml-ticks" aria-hidden="true"><i style="left:0">Poor</i><i style="left:45%">Fair</i><i style="left:65%">Good</i><i style="left:80%">Very good</i></div>`;
 
 export function renderLegend(el: HTMLElement, v: View, zoom: number, hasShade: boolean, hasHeat = false) {
   const replay = v.mode === "replay";
@@ -22,7 +26,7 @@ export function renderLegend(el: HTMLElement, v: View, zoom: number, hasShade: b
         tip: "Colour of each 250 m forest square: how good the growing conditions are today, from poor (dark green) to very good (orange-red). Not a sign that mushrooms are there. Hatched grey = nature reserve, closed to picking." };
   const html = `
     <div class="ml-title">${k.title}</div>
-    <div class="ml-bar" style="background:${gradient(k.stops)}" aria-hidden="true"></div>
+    <div class="ml-bar" style="--stops:${stopList(k.stops)};background:${gradient(k.stops)}" aria-hidden="true"></div>${replay || shade ? "" : TICKS}
     <div class="ml-scale"><span>${k.left}</span><span aria-hidden="true">→</span><span>${k.right}</span></div>
     ${shade ? `<div class="ml-note">Zoom out to see the conditions</div>` : ""}
     ${fine ? `<div class="ml-note">50 m patches · shade counted in</div>` : ""}

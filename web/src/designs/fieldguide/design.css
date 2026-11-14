@@ -1,0 +1,111 @@
+/* Field Guide: a printed nature guide. Rules, not boxes. No shadows. */
+html:root[data-design="fieldguide"] {
+  --font: "Literata Variable", Georgia, "Times New Roman", serif;
+  --lh: 1.65; --track: 0.005em;
+  --r-s: 0px; --r-m: 0px; --r-l: 0px; --r-pill: 0px; --ico-w: 1.5;
+  --shadow: none;
+  --bg: #ffffff; --surface: #ffffff; --surface-2: #f3f4ee; --line: #c5cabe;
+  --ink: #14231c; --ink-soft: #46544b; --accent: #1f4a36; --accent-ink: #ffffff;
+  --safety-bg: #ffffff; --safety-ink: #14231c; --sos-bg: #a3211a; --sos-ink: #ffffff; --focus: #1c6dd0;
+  --rule: 1.5px solid var(--ink);
+
+  body { font-variant-numeric: lining-nums; }
+  i, em { font-style: italic; }
+
+  /* Header: a title line, like the running head of a book. */
+  .topbar { border-bottom: 0; padding: 8px 14px 6px; min-height: 58px; }
+  .brand svg path { fill: var(--ink); } .brand svg circle { fill: #fff; } .brand svg rect { fill: #fff; stroke: var(--ink); stroke-width: 1.5; }
+  .brand-name { font-size: 1.35rem; font-weight: 650; letter-spacing: -0.005em; }
+  .brand-sub { font-style: italic; font-size: 0.9rem; }
+  .ver-badge { background: none; color: var(--ink-soft); border: 1px solid var(--ink-soft); font-style: italic; font-weight: 500; }
+  .about-link { border: 0; background: none; padding: 0 6px; text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; font-weight: 600; }
+  .sos { font-family: var(--font); }
+
+  /* Safety line: a ruled notice. Black on white, red mark. */
+  .safety, .sc-safety { border-block: var(--rule); padding: 8px 14px; font-weight: 650; font-size: 0.95rem; line-height: 1.45; }
+  .safety svg, .sc-safety svg, .full-safety svg { color: var(--sos-bg); }
+  .full-safety { border-top: var(--rule); }
+
+  /* Colour key: a printed map key. */
+  .map-legend { border: 1px solid var(--ink); background: #fff; padding: 7px 10px 8px; width: 186px; }
+  .ml-title { font-style: italic; font-weight: 600; }
+  .ml-bar { height: 14px; border: 1px solid var(--ink); }
+  .ml-ticks { display: block; position: relative; height: 6px; }
+  .ml-ticks i { position: absolute; top: 0; width: 1px; height: 6px; background: var(--ink); font-size: 0; }
+  .ml-ticks i:first-child { display: none; }
+  .maplibregl-ctrl-group { border: 1px solid var(--ink); box-shadow: none !important; }
+  .maplibregl-ctrl-group button + button { border-top-color: var(--line); }
+  .pick-pin { border: 2px solid var(--ink); background: #fff; box-shadow: none; }
+
+  /* Bottom panel: a page, with a strong rule on top. */
+  .sheet { border-top: var(--rule); padding: 14px 18px calc(16px + env(safe-area-inset-bottom)); }
+  .start-row .today { font-size: 1.5rem; line-height: 1.2; }
+  .start-row .today b { font-weight: 650; }
+  .chip-btn, .back-btn, .maps-btn, .card-x, .em-close { background: #fff; border: 1px solid var(--ink); font-weight: 600; }
+  .chip-btn { min-height: 48px; justify-content: flex-start; }
+  .hint { border-top: 1px solid var(--line); padding-top: 10px; margin-top: 12px !important; }
+  .no-rakes, .clock { background: none; border: 0; border-left: 3px solid var(--ink); padding: 2px 0 2px 12px; font-size: var(--fs-1) !important; }
+  .clock.open { border-color: var(--accent); }
+  .primary-btn, .maps-btn.primary { background: var(--ink); border-color: var(--ink); color: #fff; }
+
+  /* The card: rating as a title with its colour chip, then ruled sections. */
+  .card-bar { border-bottom: 1px solid var(--line); }
+  .card-bar .muted { font-style: italic; font-size: 0.95rem !important; }
+  .rating { background: none; border: 0; border-bottom: 1px solid var(--line); padding: 6px 0 12px; gap: 14px; }
+  .rating-swatch { width: 44px; height: 44px; box-shadow: none; border: 1px solid var(--ink); }
+  .rating-word { font-size: 2.1rem; font-weight: 600; letter-spacing: -0.01em; }
+  .rating-sub { font-style: italic; font-size: 0.95rem; }
+  .why { border: 0; border-bottom: 1px solid var(--line); padding: 4px 0 14px; }
+  .why-bar { height: 10px; background: #fff; border: 1px solid var(--ink); }
+  .card-h { font-size: 1.2rem; font-weight: 650; margin: 18px 0 6px; }
+  .sp-list { gap: 0; border-top: 1px solid var(--line); }
+  .sp-open { background: none; border: 0; border-bottom: 1px solid var(--line); padding: 8px 0; min-height: 72px; }
+  .sp-thumb { width: 56px; height: 56px; border: 1px solid var(--ink); padding: 2px; background: #fff; }
+  .sp-name i { font-weight: 600; font-size: 1.1rem; }
+  .facts { gap: 0; margin-top: 16px; border-top: 1px solid var(--line); }
+  .facts li { padding: 8px 0; border-bottom: 1px solid var(--line); }
+  .facts .ico { color: var(--ink-soft); margin-right: 4px; }
+  .maps-btns { gap: 10px; }
+  .tl i { background: #35627f; border-radius: 0; }
+
+  /* Emergency, tips */
+  .em-head h2 { font-weight: 650; }
+  .call.secondary { background: #fff; }
+  .tip { background: var(--ink); }
+
+  /* About page: a chapter. */
+  .page { padding: 28px 20px 72px; }
+  .page h1 { font-size: 2.2rem; font-weight: 600; letter-spacing: -0.01em; margin-bottom: 20px; }
+  .page h2 { font-size: 1.35rem; font-weight: 650; margin-top: 36px; padding-top: 14px; border-top: var(--rule); }
+  .page .card { border: 0; border-left: 3px solid var(--ink); padding: 2px 0 2px 16px; }
+  .page a { color: var(--accent); }
+
+  /* Mushroom cards: plates and ruled lists. */
+  dialog.species-dlg.sc { background: #fff; }
+  .sc-head { border-bottom: 0; }
+  .sc-title { font-size: 1.3rem; font-weight: 650; } .sc-title span { font-style: italic; }
+  .sc-round { border-radius: 0; border: 1px solid var(--ink); background: #fff; }
+  .sc-h { font-size: 1.35rem; font-weight: 650; padding-top: 14px; border-top: var(--rule); }
+  .sc-h.danger { border-top: 0; padding-top: 0; }
+  .sc-list { gap: 0; }
+  .sc-row { border: 0; border-bottom: 1px solid var(--line); padding: 10px 0; }
+  .sc-row.on { border: 0; border-bottom: 1px solid var(--line); }
+  .sc-row img { border: 1px solid var(--ink); padding: 3px; background: #fff; }
+  .sc-row-text b { font-size: 1.2rem; font-weight: 600; }
+  .sc-chip { background: none; border: 1px solid var(--line); font-style: italic; font-weight: 500; }
+  .sc-chip.on { background: var(--accent); border-color: var(--accent); font-style: normal; }
+  .sc-danger-btn, .sc-danger, .sc-jump { background: #fff; }
+  .sc-danger-ph img { border-radius: 0; border: 1px solid var(--ink); margin-left: -10px; }
+  .sc-signs li, .sc-sign, .sc-unchecked { background: #fbf3df; color: #3d2c00; }
+  .sc-name { font-size: 2.1rem; font-weight: 600; letter-spacing: -0.01em; }
+  .sc-car { border: 1px solid var(--ink); padding: 4px; }
+  .sc-look { border: 0; border-top: 1px solid var(--line); }
+  .sc-look div { padding: 10px 0; border-top: 0; border-bottom: 1px solid var(--line); }
+  .sc-months span { height: 44px; background: #fff; border: 1px solid var(--line); }
+  .sc-months span.on { background: var(--accent); border-color: var(--accent); }
+  .sc-more { border-color: var(--ink); color: var(--ink); }
+
+  /* Small phones: keep the name whole and the start panel low, so the map keeps its room. */
+  .start-btns { flex-wrap: nowrap; } .chip-btn { padding: 0 10px; justify-content: center; }
+  @media (max-width: 380px) { .brand-name { font-size: 1.12rem; } .app .brand svg { display: none; } .chip-btn { font-size: 0.95rem; gap: 6px; } }
+}

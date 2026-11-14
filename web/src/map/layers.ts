@@ -2,6 +2,10 @@
 // the 50 m shade squares close up, the rain replay and the closed nature reserves. (Shroomy Lite: today only.)
 import type { ExpressionSpecification, Map as MlMap } from "maplibre-gl";
 import type { Theme } from "./style";
+import { activeDesign } from "../designs";
+import type { HeatTiles } from "./recolor";
+
+const LOOK = activeDesign.map;
 
 export type Mode = "conditions" | "replay";
 
@@ -10,12 +14,18 @@ export interface View { day: number; mode: Mode; replayIndex: number; }
 
 // Score colours: calm at the low end, warm glow at the top. Lite: brighter top than V5
 // (V5: 70 #d9b44a, 85 #ee8e4a, 100 #ff6a4d), so "Good" and "Very good" stand out.
-export const SCORE_STOPS: [number, string][] = [
+export const ORIGINAL_SCORE_STOPS: [number, string][] = [
   [0, "#23413f"], [30, "#3e6b57"], [50, "#7e9f55"], [65, "#e3c24a"], [80, "#ffa040"], [100, "#ff5a36"],
 ];
+/** The one score scale of the page: the design's own, or the original. Map, colour key and card all read it. */
+export const SCORE_STOPS: [number, string][] = activeDesign.scoreStops ?? ORIGINAL_SCORE_STOPS;
+// For designs that draw the scale themselves (a gauge on the card, a tall colour key).
+document.documentElement.style.setProperty("--score-stops", SCORE_STOPS.map(([v, c]) => `${c} ${v}%`).join(", "));
+export const ORIGINAL_CELL_OPACITY = [0, 0.62, 50, 0.7, 65, 0.85, 80, 0.95];
+export const CELL_OPACITY = LOOK?.cellOpacity ?? ORIGINAL_CELL_OPACITY;
 /** How solid a square is drawn: low scores let the map show through, the best ones glow. */
 const cellOpacity = (v: View) => ["interpolate", ["linear"], ["to-number", ["get", `s${v.day}`], 0],
-  0, 0.62, 50, 0.7, 65, 0.85, 80, 0.95] as unknown as ExpressionSpecification;
+  ...CELL_OPACITY] as unknown as ExpressionSpecification;
 export const RAIN1_STOPS: [number, string][] = [[0, "rgba(217,232,242,0)"], [0.5, "#cfe3f0"], [3, "#9cc9e8"], [8, "#4f97d1"], [15, "#2a5fae"], [30, "#1b2f7a"]];
 
 // Shade (50 m, close up): sunny = pale sand, deep shade = deep teal (same as V5).
@@ -36,16 +46,17 @@ function hatch(theme: Theme): ImageData {
   const s = 16, c = document.createElement("canvas");
   c.width = c.height = s;
   const g = c.getContext("2d")!;
-  g.fillStyle = theme === "dark" ? "rgba(140,146,143,0.30)" : "rgba(120,126,123,0.25)";
+  g.fillStyle = LOOK?.reserve.fill ?? (theme === "dark" ? "rgba(140,146,143,0.30)" : "rgba(120,126,123,0.25)");
   g.fillRect(0, 0, s, s);
-  g.strokeStyle = theme === "dark" ? "rgba(214,219,216,0.85)" : "rgba(70,76,73,0.85)";
+  g.strokeStyle = LOOK?.reserve.stroke ?? (theme === "dark" ? "rgba(214,219,216,0.85)" : "rgba(70,76,73,0.85)");
   g.lineWidth = 2;
   for (const o of [-s, 0, s]) { g.beginPath(); g.moveTo(o, s); g.lineTo(o + s, 0); g.stroke(); }
   return g.getImageData(0, 0, s, s);
 }
 
 export interface LayerUrls { terrain: string; reserves: string; cells: string; shade?: string;
-  heat?: string; }                     // Lab: the 50 m heat map picture (scripts/lab-heat50.py)
+  heat?: string;                       // Lab: the 50 m heat map picture (scripts/lab-heat50.py)
+  heatTiles?: HeatTiles; }             // the same picture in a design's own colours (map/recolor.ts)
 
 export function addOverlays(map: MlMap, theme: Theme, urls: LayerUrls, v: View) {
   const firstSymbol = map.getStyle().layers.find((l) => l.type === "symbol")?.id;
@@ -56,10 +67,10 @@ export function addOverlays(map: MlMap, theme: Theme, urls: LayerUrls, v: View) 
   map.addLayer({
     id: "hillshade", type: "hillshade", source: "terrain",
     paint: {
-      "hillshade-exaggeration": theme === "dark" ? 0.55 : 0.45,
-      "hillshade-shadow-color": theme === "dark" ? "#050a08" : "#5b5340",
-      "hillshade-highlight-color": theme === "dark" ? "#3a4a41" : "#ffffff",
-      "hillshade-accent-color": theme === "dark" ? "#0c1612" : "#8a8270",
+      "hillshade-exaggeration": LOOK?.hillshade.exaggeration ?? (theme === "dark" ? 0.55 : 0.45),
+      "hillshade-shadow-color": LOOK?.hillshade.shadow ?? (theme === "dark" ? "#050a08" : "#5b5340"),
+      "hillshade-highlight-color": LOOK?.hillshade.highlight ?? (theme === "dark" ? "#3a4a41" : "#ffffff"),
+      "hillshade-accent-color": LOOK?.hillshade.accent ?? (theme === "dark" ? "#0c1612" : "#8a8270"),
     },
   }, firstSymbol);
 
@@ -72,8 +83,8 @@ export function addOverlays(map: MlMap, theme: Theme, urls: LayerUrls, v: View) 
   }, firstSymbol);
 
   // Today's 250 m forest squares. Closed reserves and forest with no partner tree are not drawn.
-  const SEL_HALO = theme === "dark" ? "#0c1612" : "#ffffff";
-  const SEL_CORE = theme === "dark" ? "#ffffff" : "#1b2620";
+  const SEL_HALO = LOOK?.selection.halo ?? (theme === "dark" ? "#0c1612" : "#ffffff");
+  const SEL_CORE = LOOK?.selection.core ?? (theme === "dark" ? "#ffffff" : "#1b2620");
   const selW = (a: number, b: number) => ["interpolate", ["linear"], ["zoom"], 7, a, 12, b] as unknown as ExpressionSpecification;
   map.addSource("cells", { type: "vector", url: `pmtiles://${urls.cells}`,
     attribution: "Copernicus Land Monitoring Service · EEA" });
@@ -105,7 +116,8 @@ export function addOverlays(map: MlMap, theme: Theme, urls: LayerUrls, v: View) 
   const shadeOn = ["interpolate", ["linear"], ["zoom"], 11.5, 0, 12.3, 0.85] as unknown as ExpressionSpecification;
   // Lab: the 50 m heat map. One picture, the same colours as the 250 m squares, sharp patches.
   if (urls.heat) {
-    map.addSource("heat50", { type: "raster", url: `pmtiles://${urls.heat}`, tileSize: 256 });
+    map.addSource("heat50", urls.heatTiles ? { type: "raster", tileSize: 256, ...urls.heatTiles }
+      : { type: "raster", url: `pmtiles://${urls.heat}`, tileSize: 256 });
     map.addLayer({
       id: "heat50", type: "raster", source: "heat50", minzoom: 11.5,
       layout: { visibility: v.mode === "conditions" ? "visible" : "none" },
@@ -136,13 +148,13 @@ export function addOverlays(map: MlMap, theme: Theme, urls: LayerUrls, v: View) 
     attribution: "Nature reserves: EEA NatDA (CC BY 4.0)" });
   map.addLayer({ id: "reserve-fill", type: "fill", source: "reserves", paint: { "fill-pattern": "hatch" } }, firstSymbol);
   map.addLayer({ id: "reserve-line", type: "line", source: "reserves",
-    paint: { "line-color": theme === "dark" ? "#d6dbd8" : "#464c49", "line-width": 1.4 } }, firstSymbol);
+    paint: { "line-color": LOOK?.reserve.line ?? (theme === "dark" ? "#d6dbd8" : "#464c49"), "line-width": 1.4 } }, firstSymbol);
   map.addLayer({
     id: "reserve-label", type: "symbol", source: "reserves", minzoom: 9.5,
     layout: { "text-field": ["concat", "CLOSED\n", ["get", "name"]], "text-font": ["Noto Sans Medium"],
       "text-size": 13, "text-max-width": 9, "symbol-placement": "point" },
-    paint: { "text-color": theme === "dark" ? "#f2f4f3" : "#1b2620",
-      "text-halo-color": theme === "dark" ? "#3a403d" : "#ffffff", "text-halo-width": 1.6 },
+    paint: { "text-color": LOOK?.reserve.label ?? (theme === "dark" ? "#f2f4f3" : "#1b2620"),
+      "text-halo-color": LOOK?.reserve.labelHalo ?? (theme === "dark" ? "#3a403d" : "#ffffff"), "text-halo-width": 1.6 },
   });
 }
 

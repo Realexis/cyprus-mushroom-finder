@@ -1,12 +1,15 @@
 // Basemap style: Protomaps OSM vector tiles, recoloured into our own calm palette.
 import { layers, namedFlavor, type Flavor } from "@protomaps/basemaps";
 import type { StyleSpecification } from "maplibre-gl";
+import { activeDesign } from "../designs";
 
 export type Theme = "dark" | "light";
 
 const ASSETS = "https://protomaps.github.io/basemaps-assets";
 
 function flavor(theme: Theme): Flavor {
+  const look = activeDesign.map;
+  if (look) return { ...namedFlavor(look.base), ...look.flavor };
   if (theme === "dark") {
     return {
       ...namedFlavor("dark"),
@@ -35,7 +38,7 @@ export function baseStyle(theme: Theme, basemapUrl: string): StyleSpecification 
   return {
     version: 8,
     glyphs: `${ASSETS}/fonts/{fontstack}/{range}.pbf`,
-    sprite: `${ASSETS}/sprites/v4/${theme}`,
+    sprite: `${ASSETS}/sprites/v4/${activeDesign.map?.base ?? theme}`,
     sources: {
       protomaps: {
         type: "vector",

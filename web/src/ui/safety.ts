@@ -1,5 +1,7 @@
 // Safety banner text and the emergency box. Wording comes from the project brief.
 
+import { ic } from "./icons";
+
 export const SAFETY_LINE =
   "Conditions only. Never eat a wild mushroom based on this map, an app or an AI.";
 
@@ -18,10 +20,10 @@ export function emergencyHTML(): string {
   </div>
   <div class="em-body">
     <a class="call" href="tel:112">
-      <span>Call 112<small>Ambulance</small></span><span aria-hidden="true">📞</span>
+      <span>Call 112<small>Ambulance</small></span>${ic("phone", "📞")}
     </a>
     <a class="call secondary" href="tel:1401">
-      <span>Cyprus Poison Centre: 1401</span><span aria-hidden="true">📞</span>
+      <span>Cyprus Poison Centre: 1401</span>${ic("phone", "📞")}
     </a>
     <ul>
       <li><b>Do not wait for symptoms.</b> Death cap poisons show no symptoms for <b>6–12 hours</b>.

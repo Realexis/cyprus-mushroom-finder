@@ -1,0 +1,13 @@
+/* The design picker bar. Plain on purpose: it belongs to no design. */
+.dz-bar {
+  display: flex; align-items: center; gap: 6px; height: 44px; padding: 0 6px;
+  background: #1d1d1f; color: #fff; font: 600 15px/1 system-ui, -apple-system, "Segoe UI", sans-serif; letter-spacing: 0;
+}
+.dz-bar button { flex: none; width: 44px; height: 36px; border: 1px solid #5a5a5e; border-radius: 6px; background: #2c2c2e; color: #fff; font: inherit; font-size: 20px; cursor: pointer; }
+.dz-bar label { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; }
+.dz-bar label span { flex: none; color: #c7c7cc; font-weight: 400; font-size: 13px; }
+.dz-bar select { flex: 1; min-width: 0; height: 36px; border: 1px solid #5a5a5e; border-radius: 6px; background: #2c2c2e; color: #fff; font: inherit; padding: 0 8px; }
+:root.has-picker .app { height: calc(100dvh - 44px); }
+:root.has-picker.full-map .dz-bar { display: none; }
+:root.has-picker.full-map .app { height: 100dvh; }
+@media (max-width: 380px) { .dz-bar label span { display: none; } }

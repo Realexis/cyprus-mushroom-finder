@@ -20,6 +20,9 @@ import { renderLegend } from "./ui/legend";
 import type { Heat50 } from "./map/heat50";
 import { mountSpecies } from "./ui/species";
 import { FullMap, readUrlView, trackMapReady } from "./ui/fullmap";
+import { activeDesign, mountPicker } from "./designs";
+import { recolouredHeat } from "./map/recolor";
+import { CELL_OPACITY, ORIGINAL_CELL_OPACITY, ORIGINAL_SCORE_STOPS } from "./map/layers";
 
 const abs = (p: string) => new URL(p, document.baseURI).href;
 declare const __BUILD_ID__: string;                   // set by vite.config.ts, new for every build
@@ -38,8 +41,9 @@ function cyprusToday(): string {
 
 async function main() {
   const urlView = readUrlView();                       // ?full=1 and ?theme=light|dark
-  const theme = urlView.theme ?? systemTheme();
+  const theme = urlView.theme ?? activeDesign.theme ?? systemTheme();
   applyTheme(theme);
+  mountPicker();
   // Test copies say so in the header (VITE_PREVIEW_LABEL in web/.env.local, not in git).
   // Shroomy Lab is always a test copy, so it shows "Preview" even without that setting.
   const previewLabel = (import.meta.env.VITE_PREVIEW_LABEL as string | undefined) ?? "Preview";
@@ -85,7 +89,12 @@ async function main() {
   const v = (p: string) => `${abs(p)}?v=${ver}`;
   const urls = { terrain: v(pmtiles("tiles/terrain.pmtiles")), cells: v(pmtiles("data/cells.pmtiles")),
     reserves: abs("data/reserves.geojson"), shade: hasShade ? v(pmtiles("tiles/shade50.pmtiles")) : undefined,
-    heat: heat ? v(pmtiles("data/heat50.pmtiles")) : undefined };
+    heat: heat ? v(pmtiles("data/heat50.pmtiles")) : undefined,
+    // A design with its own score colours: the same heat map picture, its colours swapped in the browser.
+    heatTiles: heat && (activeDesign.scoreStops || activeDesign.map?.cellOpacity)
+      ? await recolouredHeat(v(pmtiles("data/heat50.pmtiles")), ORIGINAL_SCORE_STOPS, ORIGINAL_CELL_OPACITY,
+          activeDesign.scoreStops ?? ORIGINAL_SCORE_STOPS, CELL_OPACITY).catch(() => undefined)
+      : undefined };
 
   const map = new maplibregl.Map({
     container: "map",

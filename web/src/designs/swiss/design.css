@@ -1,0 +1,106 @@
+/* Swiss Grid: big type, one left edge, heavy rules. Red is for danger only. */
+html:root[data-design="swiss"] {
+  --font: "Schibsted Grotesk Variable", "Helvetica Neue", Arial, sans-serif;
+  --lh: 1.5; --track: 0;
+  --r-s: 0px; --r-m: 0px; --r-l: 0px; --r-pill: 0px; --ico-w: 2;
+  --shadow: none;
+  --bg: #ffffff; --surface: #ffffff; --surface-2: #f0f0f0; --line: #000000;
+  --ink: #000000; --ink-soft: #454545; --accent: #000000; --accent-ink: #ffffff;
+  --safety-bg: #ffffff; --safety-ink: #000000; --sos-bg: #e4002b; --sos-ink: #ffffff; --focus: #1c6dd0;
+  --edge: 16px; --rule: 3px solid #000;
+
+  .topbar { border-bottom: 0; padding: 8px var(--edge) 4px; min-height: 60px; align-items: flex-end; }
+  .brand svg { display: none; }
+  .brand-name { font-size: 1.7rem; font-weight: 800; letter-spacing: -0.035em; line-height: 1; }
+  .brand-sub { font-size: 0.85rem; color: var(--ink); margin-top: 3px; }
+  .ver-badge { background: #000; margin-left: 0; margin-top: 2px; font-weight: 600; }
+  .about-link { border: 0; background: none; padding: 0 8px; font-weight: 700; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; }
+  .sos { font-weight: 800; }
+  .safety, .sc-safety { border-top: 3px solid var(--sos-bg); border-bottom: var(--rule); padding: 8px var(--edge); font-weight: 700; font-size: 0.95rem; line-height: 1.35; letter-spacing: -0.005em; }
+  .safety svg, .sc-safety svg { display: none; }
+
+  .map-legend { left: 0; top: 0; width: 200px; border: 0; border-right: var(--rule); border-bottom: var(--rule); padding: 8px 12px 9px var(--edge); background: #fff; }
+  .ml-title { font-weight: 800; letter-spacing: -0.01em; }
+  .ml-bar { height: 16px; border: 0; }
+  .ml-scale { font-weight: 600; }
+  .maplibregl-ctrl-group { border: 2px solid #000; box-shadow: none !important; }
+  .maplibregl-ctrl-group button + button { border-top: 2px solid #000; }
+  .pick-pin { border-radius: 0; border: 3px solid var(--sos-bg); background: none; box-shadow: 0 0 0 2px #fff; }
+
+  .sheet { border-top: var(--rule); padding: 12px var(--edge) calc(16px + env(safe-area-inset-bottom)); }
+  .start-row .today { font-size: 2.3rem; font-weight: 400; letter-spacing: -0.04em; line-height: 1.05; }
+  .start-row .today b { font-weight: 800; }
+  .start-btns { gap: 0; margin-top: 12px; border-top: 2px solid #000; flex-direction: column; }
+  .chip-btn { justify-content: space-between; flex-direction: row-reverse; min-height: 52px; padding: 0; border: 0; border-bottom: 2px solid #000; background: none; font-size: 1.15rem; font-weight: 700; letter-spacing: -0.01em; }
+  .chip-btn .ico { display: none; }
+  .chip-btn::after { content: "›"; font-size: 1.4rem; line-height: 1; }
+  .chip-btn { flex-direction: row; }
+  .hint { margin-top: 12px !important; }
+  .no-rakes, .clock { background: none; border: 0; border-top: 2px solid #000; padding: 8px 0 0; }
+  .back-btn, .card-x, .em-close { border: 2px solid #000; background: #fff; font-weight: 700; }
+  .primary-btn, .maps-btn.primary { background: #000; border-color: #000; color: #fff; }
+  .maps-btn { border: 2px solid #000; background: #fff; font-weight: 700; }
+  .maps-btns { gap: 0; } .maps-btns > * + * { border-left: 0; }
+
+  .card-bar { border-bottom: 0; }
+  .rating { background: none; border: 0; border-bottom: var(--rule); padding: 0 0 12px; gap: 12px; align-items: flex-end; }
+  .rating-swatch { order: 3; width: 64px; height: 64px; box-shadow: none; }
+  .rating-more { display: none; }
+  .rating-word { font-size: 3.4rem; font-weight: 800; letter-spacing: -0.05em; line-height: 0.95; }
+  .rating-sub { font-size: 0.95rem; color: var(--ink); margin-top: 6px; }
+  .why { border: 0; border-bottom: var(--rule); padding: 6px 0 14px; }
+  .why-bar { height: 12px; border: 0; background: var(--surface-2); } .why-bar i { border-radius: 0; }
+  .card-h { font-size: 1.25rem; font-weight: 800; letter-spacing: -0.02em; margin: 16px 0 8px; }
+  .sp-list { gap: 0; border-top: 2px solid #000; }
+  .sp-open { background: none; border: 0; border-bottom: 2px solid #000; padding: 8px 0; min-height: 76px; }
+  .sp-thumb { width: 60px; height: 60px; }
+  .sp-name i { font-style: normal; font-weight: 700; font-size: 1.1rem; letter-spacing: -0.01em; }
+  .facts { gap: 0; margin-top: 16px; border-top: 2px solid #000; }
+  .facts li { padding: 8px 0; border-bottom: 1px solid #000; }
+  .facts .ico { display: none; }
+  .tl i { background: #000; border-radius: 0; opacity: 0.35; }
+
+  .em-head h2 { font-size: 2.2rem; font-weight: 800; letter-spacing: -0.04em; }
+  .call.secondary { background: #fff; }
+  .tip { background: #000; }
+
+  .page { padding: 24px var(--edge) 72px; }
+  .page h1 { font-size: 3.2rem; font-weight: 800; letter-spacing: -0.05em; line-height: 0.95; margin: 8px 0 24px; }
+  .page h2 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.03em; margin-top: 36px; padding-top: 10px; border-top: var(--rule); }
+  .page .card { border: 0; background: var(--surface-2); padding: 14px 16px; }
+  .page a { color: #000; font-weight: 700; }
+
+  dialog.species-dlg.sc { background: #fff; }
+  .sc-head { border-bottom: var(--rule); }
+  .sc-title { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.03em; } .sc-title i { font-style: normal; }
+  .sc-round { border-radius: 0; border: 2px solid #000; background: #fff; }
+  .sc-safety { border-top: 0; }
+  .sc-h { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.03em; padding-top: 10px; border-top: var(--rule); }
+  .sc-h .ic { display: none; }
+  .sc-h.danger { border-top: 0; padding-top: 0; }
+  .sc-list { gap: 0; }
+  .sc-row { border: 0; border-bottom: 2px solid #000; padding: 10px 0; }
+  .sc-row.on { border: 0; border-bottom: 2px solid #000; }
+  .sc-row img { width: 96px; height: 96px; }
+  .sc-row-text b { font-size: 1.25rem; letter-spacing: -0.02em; } .sc-row-text b i { font-style: normal; }
+  .sc-chip { background: none; padding: 0; color: var(--ink-soft); }
+  .sc-chip.on { background: #000; color: #fff; padding: 2px 8px; }
+  .sc-name { font-size: 2.8rem; font-weight: 800; letter-spacing: -0.05em; line-height: 1; } .sc-name i { font-style: normal; }
+  .sc-car { margin: -16px -16px 0; }
+  .sc-look { border: 0; border-top: 2px solid #000; }
+  .sc-look div { padding: 10px 0; border-top: 0; border-bottom: 1px solid #000; }
+  .sc-signs li, .sc-sign, .sc-unchecked { background: var(--surface-2); color: #000; }
+  .sc-danger, .sc-danger-btn, .sc-jump { border-width: 3px; }
+  .sc-months span { background: var(--surface-2); height: 44px; }
+  .sc-months span.on { background: #000; }
+  .sc-months span.now { outline-color: var(--sos-bg); }
+  .sc-more { border: 2px solid #000; color: #000; font-weight: 700; }
+
+  /* Small phones: keep the name whole and the start panel low, so the map keeps its room. */
+  @media (max-width: 380px) { .brand-name { font-size: 1.3rem; } .about-link { padding: 0 4px; } .sos { padding: 0 8px; } }
+  @media (max-height: 700px) {
+    .start-row .today { font-size: 1.8rem; }
+    .start-btns { flex-direction: row; flex-wrap: nowrap; border-bottom: 2px solid #000; }
+    .chip-btn { border-bottom: 0; font-size: 1.02rem; } .chip-btn + .chip-btn { border-left: 2px solid #000; padding-left: 10px; }
+  }
+}

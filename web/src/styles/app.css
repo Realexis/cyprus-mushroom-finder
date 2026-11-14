@@ -286,3 +286,6 @@ dialog.emergency::backdrop { background: rgba(0, 0, 0, 0.6); }
   .about-link, .sos { padding: 0 10px; }
   .map-legend { width: 156px; padding: 5px 8px 6px; }
 }
+
+/* Hooks for the design exploration (src/designs). Not shown in the original. */
+.rating-num, .ml-ticks { display: none; }

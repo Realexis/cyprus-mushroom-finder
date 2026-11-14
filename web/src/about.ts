@@ -5,8 +5,10 @@ import { mountEmergency } from "./ui/safety";
 import { applyTheme, systemTheme } from "./ui/theme";
 import { esc, fmtDay, type Meta } from "./ui/card";
 import { LOOKALIKES, SPECIES } from "./ui/species";
+import { activeDesign, mountPicker } from "./designs";
 
-applyTheme(systemTheme());
+applyTheme(activeDesign.theme ?? systemTheme());
+mountPicker();
 mountEmergency([...document.querySelectorAll<HTMLElement>("[data-emergency]")]);
 
 fetch(new URL("data/meta.json", document.baseURI), { cache: "no-cache" })
