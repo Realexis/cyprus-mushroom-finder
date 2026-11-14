@@ -1,7 +1,7 @@
 # Cyprus Mushroom Finder
 
 > **Branch `lite`: Shroomy Lite.** A simplified, phone-first copy of V5 for the Mushroom Hunters Cyprus
-> group: today only, double tap to zoom to the 50 m shade, tap a square for its card, rain replay,
+> group: today only, double tap to zoom in (one colour scale at every zoom; the 50 m shade is on the card), tap a square for its card, rain replay,
 > full map (`?full=1`). Same scores as V5 (the pipeline is unchanged).
 > Preview: https://realexis.github.io/cyprus-mushroom-finder-preview/lite/
 > Daily update: Real's Mac runs `scripts/lite-daily.sh` (launchd `local.shroomy.lite-daily`, 06:30 Cyprus time,

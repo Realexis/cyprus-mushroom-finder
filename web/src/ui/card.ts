@@ -45,10 +45,21 @@ export const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "
 export const fmtDay = (iso: string, opts: Intl.DateTimeFormatOptions) =>
   new Date(`${iso}T12:00:00`).toLocaleDateString("en-GB", { ...opts, timeZone: "Asia/Nicosia" });
 
+/** The colour of a score, blended between the stops exactly like the map does it,
+ *  so the card's colour matches the square's colour on the map. */
 export function scoreColour(v: number) {
-  let c = SCORE_STOPS[0][1];
-  for (const [s, col] of SCORE_STOPS) if (v >= s) c = col;
-  return c;
+  const st = SCORE_STOPS;
+  if (v <= st[0][0]) return st[0][1];
+  for (let k = 1; k < st.length; k++) {
+    const [s1, c1] = st[k];
+    if (v > s1) continue;
+    const [s0, c0] = st[k - 1];
+    const t = (v - s0) / (s1 - s0);
+    const rgb = (c: string) => [1, 3, 5].map((i) => parseInt(c.slice(i, i + 2), 16));
+    const a = rgb(c0), b = rgb(c1);
+    return `rgb(${a.map((x, i) => Math.round(x + (b[i] - x) * t)).join(",")})`;
+  }
+  return st[st.length - 1][1];
 }
 
 /** The four rating words (Real's choice for Lite, 13 Nov 2026: four words, same cut-offs as V5). */

@@ -1,5 +1,5 @@
 // Our data layers on top of the basemap: hill shading, today's 250 m forest squares,
-// the 50 m shade squares close up, the rain replay and the closed nature reserves. (Shroomy Lite: today only.)
+// the 50 m spots close up (tap targets only), the rain replay and the closed nature reserves. (Shroomy Lite: today only.)
 import type { ExpressionSpecification, Map as MlMap } from "maplibre-gl";
 import type { Theme } from "./style";
 
@@ -18,10 +18,6 @@ const cellOpacity = (v: View) => ["interpolate", ["linear"], ["to-number", ["get
   0, 0.62, 50, 0.7, 65, 0.85, 80, 0.95] as unknown as ExpressionSpecification;
 export const RAIN1_STOPS: [number, string][] = [[0, "rgba(217,232,242,0)"], [0.5, "#cfe3f0"], [3, "#9cc9e8"], [8, "#4f97d1"], [15, "#2a5fae"], [30, "#1b2f7a"]];
 
-// Shade (50 m, close up): sunny = pale sand, deep shade = deep teal (same as V5).
-export const SHADE_STOPS: [number, string][] = [[0, "#f1e3b5"], [35, "#b9c98f"], [55, "#5f9e86"], [75, "#2f6f78"], [100, "#183a5a"]];
-/** From this zoom the 50 m shade squares cover the forest (they fade in from 11.5). */
-export const SHADE_ZOOM = 12;
 
 const EMPTY: GeoJSON.FeatureCollection = { type: "FeatureCollection", features: [] };
 
@@ -82,8 +78,8 @@ export function addOverlays(map: MlMap, theme: Theme, urls: LayerUrls, v: View) 
     layout: { visibility: v.mode === "conditions" ? "visible" : "none" },
     paint: { "fill-color": cellColor(v), "fill-opacity": cellOpacity(v), "fill-antialias": false },
   }, firstSymbol);
-  // Close up: the hills and valleys drawn again ON the 250 m colour, so the open spots between
-  // the shade squares show the real ground (ridges, gullies) instead of one flat colour.
+  // Close up: the hills and valleys drawn again ON the conditions colour, so the ground
+  // (ridges, gullies) shows instead of one flat colour. Light and shadow only, no new colour.
   map.addLayer({
     id: "terrain-detail", type: "hillshade", source: "terrain", minzoom: 12,
     layout: { visibility: v.mode === "conditions" ? "visible" : "none" },
@@ -94,15 +90,16 @@ export function addOverlays(map: MlMap, theme: Theme, urls: LayerUrls, v: View) 
       "hillshade-accent-color": "rgba(0,0,0,0)",
     },
   }, firstSymbol);
-  // 50 m shade squares (island-wide, terrain only) when zoomed in: the double tap lands here.
-  // Under the selection outline, so the tapped 250 m square still shows.
-  const shadeOn = ["interpolate", ["linear"], ["zoom"], 11.5, 0, 12.3, 0.85] as unknown as ExpressionSpecification;
+  // 50 m spots (island-wide, terrain only), close up: NOT coloured, so every colour on the map is
+  // the conditions score shown on the card (V5 drew shade in its own blue colours here, and that
+  // mixed two scales). Kept invisible as tap targets: the double tap lands here and the card
+  // shows "Shade here (50 m)".
   if (urls.shade) {
     map.addSource("shade", { type: "vector", url: `pmtiles://${urls.shade}` });
     map.addLayer({
       id: "shade-fill", type: "fill", source: "shade", "source-layer": "hotspots", minzoom: 11.5,
       layout: { visibility: v.mode === "conditions" ? "visible" : "none" },
-      paint: { "fill-color": ramp(["get", "sh"], SHADE_STOPS), "fill-opacity": shadeOn, "fill-antialias": false },
+      paint: { "fill-color": "#000", "fill-opacity": 0, "fill-antialias": false },
     }, firstSymbol);
   }
   map.addLayer({ id: "cells-selected-halo", type: "line", source: "cells", "source-layer": "cells",

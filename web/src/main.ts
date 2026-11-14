@@ -158,7 +158,7 @@ async function main() {
     onCardClosed: () => { picked = null; applySelection(); },
     openSpecies,
   });
-  const drawLegend = () => renderLegend(legendEl, panel.view, map.getZoom(), hasShade);
+  const drawLegend = () => renderLegend(legendEl, panel.view);
   drawLegend();
   map.on("zoom", drawLegend);
 
