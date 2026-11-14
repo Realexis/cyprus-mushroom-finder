@@ -273,7 +273,7 @@ export function mountSpecies(month: () => number): (code?: string) => void {
   const looksHTML = () => `
     <section class="sc-danger">
       <h3 class="sc-h danger">${WARN_ICON}Deadly and toxic lookalikes</h3>
-      <p>These grow in the same forests and can look like the mushrooms on this map. <b>Some can kill.</b></p>
+      <p>Watch for these. They can look like the mushrooms on this map. <b>Some can kill.</b></p>
       <p class="sc-sign"><b>Leave it alone if you see</b> ${AMANITA_SIGNS}</p>
       ${lookRows()}
     </section>`;
@@ -298,7 +298,7 @@ export function mountSpecies(month: () => number): (code?: string) => void {
         <h3 class="sc-name"><i>${esc(sp.latin)}</i></h3>
         <p class="sc-sub">${esc(sp.common)}. Local name <b>${esc(sp.local)}</b>${sp.local_confirmed ? "" : `<span class="sc-q" tabindex="0"
           data-tip="Spelling still to confirm with the Cyprus Mycological Association.">?</span>`}</p>
-        <a class="sc-jump" href="#sc-danger-h" data-act="jump">${WARN_ICON}<span><b>${nDeadly} deadly lookalikes</b> grow in the same forests. See them at the bottom.</span></a>
+        <a class="sc-jump" href="#sc-danger-h" data-act="jump">${WARN_ICON}<span><b>${nDeadly} deadly lookalikes</b> to watch for. See them at the bottom.</span></a>
       </section>
 
       ${f ? `<section class="sc-sec">
@@ -327,7 +327,7 @@ export function mountSpecies(month: () => number): (code?: string) => void {
         <h3 class="sc-h danger" id="sc-danger-h" tabindex="-1">${WARN_ICON}Danger: lookalikes</h3>
         ${f?.danger.length ? `<p class="sc-sign-h"><b>Leave it alone if you see:</b></p>
           <ul class="sc-signs">${f.danger.map((d) => `<li>${esc(d)}</li>`).join("")}</ul>` : ""}
-        <p>These ${LOOKALIKES.length} grow in the same forests. ${nDeadly} can kill. Tap one to see it larger.</p>
+        <p>Watch for these ${LOOKALIKES.length}. ${nDeadly} can kill. Tap one to see it larger.</p>
         ${lookRows()}
       </section>
 
