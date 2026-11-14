@@ -40,7 +40,7 @@ function hatch(theme: Theme): ImageData {
   return g.getImageData(0, 0, s, s);
 }
 
-export interface LayerUrls { terrain: string; reserves: string; cells: string; shade?: string; shadeSmooth?: string; }
+export interface LayerUrls { terrain: string; reserves: string; cells: string; shade?: string; soft?: string; }
 
 export function addOverlays(map: MlMap, theme: Theme, urls: LayerUrls, v: View) {
   const firstSymbol = map.getStyle().layers.find((l) => l.type === "symbol")?.id;
@@ -78,27 +78,29 @@ export function addOverlays(map: MlMap, theme: Theme, urls: LayerUrls, v: View) 
     layout: { visibility: v.mode === "conditions" ? "visible" : "none" },
     paint: { "fill-color": cellColor(v), "fill-opacity": 0.72, "fill-antialias": false },
   }, firstSymbol);
-  // 50 m shade (island-wide, terrain only) when zoomed in: the double tap lands here.
+  // 50 m shade squares (island-wide, terrain only) when zoomed in: the double tap lands here.
   // Under the selection outline, so the tapped 250 m square still shows.
-  // Seen as one smooth picture (scripts/shade-smooth.sh: same values and colours, blended from
-  // square to square). The 50 m squares stay on the map, invisible, so a tap still finds its square.
   const shadeOn = ["interpolate", ["linear"], ["zoom"], 11.5, 0, 12.3, 0.85] as unknown as ExpressionSpecification;
   if (urls.shade) {
-    if (urls.shadeSmooth) {
-      map.addSource("shade-smooth", { type: "raster", url: `pmtiles://${urls.shadeSmooth}`, tileSize: 256 });
-      map.addLayer({
-        id: "shade-smooth", type: "raster", source: "shade-smooth", minzoom: 11.5,
-        layout: { visibility: v.mode === "conditions" ? "visible" : "none" },
-        paint: { "raster-opacity": shadeOn, "raster-resampling": "linear", "raster-fade-duration": 150 },
-      }, firstSymbol);
-    }
     map.addSource("shade", { type: "vector", url: `pmtiles://${urls.shade}` });
     map.addLayer({
       id: "shade-fill", type: "fill", source: "shade", "source-layer": "hotspots", minzoom: 11.5,
       layout: { visibility: v.mode === "conditions" ? "visible" : "none" },
-      paint: { "fill-color": ramp(["get", "sh"], SHADE_STOPS),
-        "fill-opacity": urls.shadeSmooth ? 0 : shadeOn, "fill-antialias": false },
+      paint: { "fill-color": ramp(["get", "sh"], SHADE_STOPS), "fill-opacity": shadeOn, "fill-antialias": false },
     }, firstSymbol);
+    // Spots with no shade square (no forest at 50 m) show today's conditions colour of their
+    // 250 m square: drawn as a soft picture (scripts/lite-soft-orange.py, made daily) so they
+    // fade into the shade around them. The 250 m squares stay underneath, invisible, for taps.
+    if (urls.soft) {
+      map.addSource("soft", { type: "raster", url: `pmtiles://${urls.soft}`, tileSize: 256 });
+      map.addLayer({
+        id: "soft", type: "raster", source: "soft", minzoom: 11.5,
+        layout: { visibility: v.mode === "conditions" ? "visible" : "none" },
+        paint: { "raster-opacity": shadeOn, "raster-resampling": "linear", "raster-fade-duration": 150 },
+      }, firstSymbol);
+      map.setPaintProperty("cells-fill", "fill-opacity",
+        ["interpolate", ["linear"], ["zoom"], 11.5, 0.72, 12.3, 0]);
+    }
   }
   map.addLayer({ id: "cells-selected-halo", type: "line", source: "cells", "source-layer": "cells",
     filter: ["==", ["get", "i"], -1], paint: { "line-color": SEL_HALO, "line-width": selW(5, 8) } }, firstSymbol);
@@ -129,7 +131,7 @@ export function applyView(map: MlMap, v: View) {
   const replay = v.mode === "replay";
   map.setLayoutProperty("rain-fill", "visibility", replay ? "visible" : "none");
   map.setLayoutProperty("cells-fill", "visibility", replay ? "none" : "visible");
-  for (const id of ["shade-fill", "shade-smooth"]) {
+  for (const id of ["shade-fill", "soft"]) {
     if (map.getLayer(id)) map.setLayoutProperty(id, "visibility", replay ? "none" : "visible");
   }
   if (replay) map.setPaintProperty("rain-fill", "fill-color", rainColor(v));

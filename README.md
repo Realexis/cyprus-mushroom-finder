@@ -6,7 +6,7 @@
 > Preview: https://realexis.github.io/cyprus-mushroom-finder-preview/lite/
 > Daily update: Real's Mac runs `scripts/lite-daily.sh` (launchd `local.shroomy.lite-daily`, 06:30 Cyprus time,
 > retries later in the day). It builds the saved `lite` branch and publishes only the preview's `lite/` folder.
-> The smooth shade picture is a fixed file made once with `scripts/shade-smooth.sh`.
+> Close up, spots with no 50 m shade square show the conditions colour as a soft picture (`scripts/lite-soft-orange.py`, made daily).
 
 A map of Cyprus showing where **growing conditions** are right for wild mushrooms.
 

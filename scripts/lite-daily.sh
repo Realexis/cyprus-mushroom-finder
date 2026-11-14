@@ -6,7 +6,8 @@
 # 3. Publish ONLY the lite/ folder of the preview site (repo cyprus-mushroom-finder-preview,
 #    branch gh-pages). Other folders are never touched. Never a force-push.
 #
-# Runs at several times a day; once today's update is published, later runs stop at once.
+# Runs at several times a day; once today's update is published, later runs stop at once
+# (FORCE=1 publishes again anyway).
 # If the weather source is down, nothing is published: the site keeps yesterday's data and shows
 # "Data delayed" by itself, and the next run tries again.
 # Log: ~/Library/Application Support/shroomy-lite-robot/run.log
@@ -36,13 +37,15 @@ fi
 TMP=$(mktemp -d)
 trap 'rm -rf "$LOCK" "$TMP"' EXIT
 
-if [ "$(cat "$HOME_DIR/last_ok" 2>/dev/null)" = "$TODAY" ]; then say "already published for $TODAY"; exit 0; fi
+if [ -z "${FORCE:-}" ] && [ "$(cat "$HOME_DIR/last_ok" 2>/dev/null)" = "$TODAY" ]; then say "already published for $TODAY"; exit 0; fi
 say "▶ Shroomy Lite daily update for $TODAY"
 
 # 1. Weather + scores -> web/public/data (today + 7 days, public files only).
 (cd "$REPO/pipeline" && uv run python -m shroomy.daily --public) || fail "weather or scoring step failed"
 RUN=$(python3 -c "import json,sys; print(json.load(open(sys.argv[1]))['weather_run'])" "$REPO/web/public/data/meta.json")
 [ "$RUN" = "$TODAY" ] || fail "scores are for $RUN, not $TODAY"
+# Close-up soft picture of today's conditions colour where there is no 50 m shade square.
+(cd "$REPO/pipeline" && uv run python ../scripts/lite-soft-orange.py) || fail "soft picture step failed"
 
 # 2. Build from the saved `lite` branch, with this Mac's data and map tiles.
 git -C "$REPO" archive lite | tar -x -C "$TMP"

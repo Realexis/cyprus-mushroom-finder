@@ -76,7 +76,7 @@ async function main() {
   const v = (p: string) => `${abs(p)}?v=${ver}`;
   const urls = { terrain: v(pmtiles("tiles/terrain.pmtiles")), cells: v(pmtiles("data/cells.pmtiles")),
     reserves: abs("data/reserves.geojson"), shade: hasShade ? v(pmtiles("tiles/shade50.pmtiles")) : undefined,
-    shadeSmooth: hasShade ? v(pmtiles("tiles/shade50_smooth.pmtiles")) : undefined };
+    soft: hasShade ? v(pmtiles("data/soft.pmtiles")) : undefined };
 
   const map = new maplibregl.Map({
     container: "map",
