@@ -157,7 +157,7 @@ const FIELD: Record<string, Field> = {
       "Brain-like wrinkles instead of pits, or a cotton-filled or chambered inside: a false morel. False morels stay poisonous even after cooking.",
     ],
     check: [
-      "Cyprus has several morel species, two of them first described from Cyprus in 2016 (Morchella arbutiphila and M. disparilis). The names M. esculenta / elata may need updating.",
+      "Cyprus has several morel species, two of them first described from Cyprus in 2016 (Morchella arbutiphila and M. disparilis). This card covers all morels (the genus Morchella).",
       "False morels (Gyromitra) are not in our list of 10 lookalikes. We found no Cyprus record of them.",
     ],
     src: ["kykpee", "exub", "w_arb", "w_dis", "w_false", "ncbi", "pedoulas"],
