@@ -1,4 +1,4 @@
-// Shroomy Lab: a test copy of Shroomy Lite for trying ideas. Today's growing conditions, phone first.
+// Shroomy (branch `lab`, the key version since 15 Nov 2026; grew out of Shroomy Lite). Today's growing conditions, phone first.
 // Open the site: the whole island. Double tap: zoom in to the 250 m squares, centred on the
 // tapped spot. Tap a square: its card. Same scores as V5 (made by the pipeline, not here).
 import "@fontsource/atkinson-hyperlegible/400.css";
@@ -41,8 +41,8 @@ async function main() {
   const theme = urlView.theme ?? systemTheme();
   applyTheme(theme);
   // Test copies say so in the header (VITE_PREVIEW_LABEL in web/.env.local, not in git).
-  // Shroomy Lab is always a test copy, so it shows "Preview" even without that setting.
-  const previewLabel = (import.meta.env.VITE_PREVIEW_LABEL as string | undefined) ?? "Preview";
+  // The daily update (scripts/lab-daily.sh) builds without it: this is the key version now (Real, 15 Nov 2026).
+  const previewLabel = (import.meta.env.VITE_PREVIEW_LABEL as string | undefined) ?? "";
   if (previewLabel) {
     document.querySelector(".brand-sub")?.insertAdjacentHTML("afterend",
       ` <span class="ver-badge" data-tip="A test copy of the site. Not the live site.">${previewLabel.replace(/[&<>"]/g, "")}</span>`);
