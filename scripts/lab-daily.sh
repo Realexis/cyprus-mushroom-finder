@@ -11,8 +11,9 @@
 # 1. Fetch today's weather and score the squares (pipeline/shroomy/daily.py).
 # 2. Redraw the 50 m heat map from the new scores (scripts/lab-heat50.py).
 # 3. Build the site.
-# 4. Publish ONLY the lab/ folder of the preview site (repo cyprus-mushroom-finder-preview,
-#    branch gh-pages). Other folders are never touched. Never a force-push.
+# 4. Publish to the site's own GitHub project (repo Realexis/shroomy, branch gh-pages; since
+#    15 Nov 2026, because the shared preview site was near GitHub's 1 GB limit).
+#    The whole branch is this one site. Never a force-push.
 #
 # Runs at several times a day; once today's update is published, later runs stop at once
 # (FORCE=1 publishes again anyway).
@@ -25,9 +26,9 @@ export PATH="$HOME/Library/pnpm/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/b
 main() {
 REPO="$(cd "$(dirname "$0")/.." && pwd)"
 HOME_DIR="$HOME/Library/Application Support/shroomy-lab-robot"
-CLONE="$HOME_DIR/preview"
-PREVIEW_URL=https://github.com/Realexis/cyprus-mushroom-finder-preview.git
-SITE=https://realexis.github.io/cyprus-mushroom-finder-preview/lab/
+CLONE="$HOME_DIR/site"
+SITE_REPO=https://github.com/Realexis/shroomy.git
+SITE=https://realexis.github.io/shroomy/
 TODAY=$(TZ=Asia/Nicosia date +%F)
 mkdir -p "$HOME_DIR"
 
@@ -79,25 +80,23 @@ HEAT=$(python3 -c "import json,sys; print(json.load(open(sys.argv[1]))['weather_
 DIST="$REPO/web/dist"
 if find "$DIST" -iname "*private*" -o -iname "*finds*" -o -iname "static_key*" | grep -q .; then fail "private files in the build, not publishing"; fi
 
-# 4. Publish lab/ only.
+# 4. Publish. README.md and .nojekyll on the site branch are kept as they are.
 if [ ! -d "$CLONE/.git" ]; then
   rm -rf "$CLONE"
-  git clone -q --filter=blob:none --no-checkout --sparse --branch gh-pages "$PREVIEW_URL" "$CLONE"
-  git -C "$CLONE" sparse-checkout set lab
-  git -C "$CLONE" checkout -q gh-pages
+  git clone -q --filter=blob:none --branch gh-pages "$SITE_REPO" "$CLONE"
 fi
 cd "$CLONE"
 for try in 1 2 3; do
   git fetch -q origin gh-pages
   git reset -q --hard origin/gh-pages          # local copy only: start from what is online now
-  rsync -a --delete "$DIST/" lab/
-  git add -A lab
-  if git diff --cached --name-only | grep -v '^lab/' | grep -q .; then fail "a change outside lab/, not publishing"; fi
+  rsync -a --delete --exclude=.git --exclude=.nojekyll --exclude=README.md "$DIST/" ./
+  git add -A
+  if git diff --cached --name-only | grep -i "private\|finds\|static_key" | grep -q .; then fail "private files staged, not publishing"; fi
   if git diff --cached --quiet; then say "nothing new to publish"; break; fi
   git -c user.name="$(git -C "$REPO" config user.name)" -c user.email="$(git -C "$REPO" config user.email)" \
     commit -q -m "Shroomy: daily update $TODAY"
   if git push -q origin HEAD:gh-pages; then say "✓ published"; break; fi
-  [ "$try" = 3 ] && fail "could not push to the preview site"
+  [ "$try" = 3 ] && fail "could not push to the site"
   say "push refused (someone else published at the same time), trying again"; sleep 20
 done
 

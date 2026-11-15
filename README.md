@@ -1,11 +1,12 @@
 # Cyprus Mushroom Finder
 
-> **Branch `lite`: Shroomy Lite.** A simplified, phone-first copy of V5 for the Mushroom Hunters Cyprus
-> group: today only, double tap to zoom to the 50 m shade, tap a square for its card, rain replay,
-> full map (`?full=1`). Same scores as V5 (the pipeline is unchanged).
-> Preview: https://realexis.github.io/cyprus-mushroom-finder-preview/lite/
-> Daily update: Real's Mac runs `scripts/lite-daily.sh` (launchd `local.shroomy.lite-daily`, 06:30 Cyprus time,
-> retries later in the day). It builds the saved `lite` branch and publishes only the preview's `lite/` folder.
+> **Branch `lab`: Shroomy, the key version (since 15 Nov 2026).** Grew out of Shroomy Lite: phone first,
+> today only, one colour scale down to a 50 m heat map, tap a patch for its card, rain replay.
+> Site: https://realexis.github.io/shroomy/ (its own GitHub project, Realexis/shroomy, branch gh-pages).
+> Daily update: Real's Mac runs `scripts/lab-daily.sh` from the robot's own copy in
+> `~/Library/Application Support/shroomy-lab-robot/` (launchd `local.shroomy.lab-daily`, 06:50 Cyprus time,
+> retries later in the day; set up by `scripts/lab-robot-setup.sh`). It takes the saved `lab` branch from GitHub.
+> The old link (preview site, `lab/`) forwards to the new one.
 
 A map of Cyprus showing where **growing conditions** are right for wild mushrooms.
 

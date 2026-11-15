@@ -3,7 +3,7 @@
 #
 # Makes ~/Library/Application Support/shroomy-lab-robot/ with
 #   repo/     the robot's own copy of the `lab` branch (from GitHub) + the data it needs
-#   preview/  made on the first run: only the lab/ folder of the preview site
+#   site/     made on the first run: the site branch (gh-pages) of Realexis/shroomy
 # and the timed job ~/Library/LaunchAgents/local.shroomy.lab-daily.plist (06:50, 08:50, 12:50, 18:50).
 # The data and map tiles are copied from THIS folder (the one the script is run from); on this
 # Mac's disk such a copy takes no extra room until the files change.
