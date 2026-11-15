@@ -53,8 +53,15 @@ if [ -z "${FORCE:-}" ] && [ "$(cat "$HOME_DIR/last_ok" 2>/dev/null)" = "$TODAY" 
 say "▶ Shroomy daily update for $TODAY"
 
 # 0. Newest saved code. If GitHub cannot be reached, carry on with the code already here.
+WAS=$(git -C "$REPO" rev-parse HEAD)
 if git -C "$REPO" fetch -q origin lab 2>/dev/null; then
   git -C "$REPO" merge -q --ff-only FETCH_HEAD || fail "the robot's copy has its own changes, cannot take the new code"
+  # New code came in: start again so THIS run uses it (bash has already read the old script).
+  if [ "$WAS" != "$(git -C "$REPO" rev-parse HEAD)" ] && [ -z "${LAB_RESTARTED:-}" ]; then
+    say "new code, starting again with it"
+    rm -rf "$LOCK"; trap - EXIT
+    LAB_RESTARTED=1 exec /bin/bash "$0" "$@"
+  fi
 else
   say "could not reach GitHub for new code, using the code already here"
 fi
