@@ -41,11 +41,11 @@ async function main() {
   const theme = urlView.theme ?? systemTheme();
   applyTheme(theme);
   // Test copies say so in the header (VITE_PREVIEW_LABEL in web/.env.local, not in git).
-  // The daily update (scripts/lab-daily.sh) builds without it: this is the key version now (Real, 15 Nov 2026).
-  const previewLabel = (import.meta.env.VITE_PREVIEW_LABEL as string | undefined) ?? "";
+  // The key version says "Beta": a work in progress (Real, 15 Nov 2026). The daily update builds without the setting.
+  const previewLabel = (import.meta.env.VITE_PREVIEW_LABEL as string | undefined) ?? "Beta";
   if (previewLabel) {
     document.querySelector(".brand-sub")?.insertAdjacentHTML("afterend",
-      ` <span class="ver-badge" data-tip="A test copy of the site. Not the live site.">${previewLabel.replace(/[&<>"]/g, "")}</span>`);
+      ` <span class="ver-badge" data-tip="Beta: a work in progress. Things may change or be wrong.">${previewLabel.replace(/[&<>"]/g, "")}</span>`);
   }
   mountTips();
   mountEmergency([...document.querySelectorAll<HTMLElement>("[data-emergency]")]);
