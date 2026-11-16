@@ -5,9 +5,14 @@ import { mountEmergency } from "./ui/safety";
 import { applyTheme, systemTheme } from "./ui/theme";
 import { esc, fmtDay, type Meta } from "./ui/card";
 import { LOOKALIKES, SPECIES } from "./ui/species";
+import { COUNTER_SITE, countPage, mountCounter } from "./count";
 
 applyTheme(systemTheme());
 mountEmergency([...document.querySelectorAll<HTMLElement>("[data-emergency]")]);
+mountCounter();
+countPage("/about");
+// The note about counting shows only when a counter is set up.
+if (COUNTER_SITE) document.getElementById("counting")!.hidden = false;
 
 fetch(new URL("data/meta.json", document.baseURI), { cache: "no-cache" })
   .then((r) => r.json() as Promise<Meta>)

@@ -20,6 +20,7 @@ import { renderLegend } from "./ui/legend";
 import type { Heat50 } from "./map/heat50";
 import { mountSpecies } from "./ui/species";
 import { FullMap, readUrlView, trackMapReady } from "./ui/fullmap";
+import { countAction, countPage, mountCounter } from "./count";
 
 const abs = (p: string) => new URL(p, document.baseURI).href;
 declare const __BUILD_ID__: string;                   // set by vite.config.ts, new for every build
@@ -47,6 +48,8 @@ async function main() {
     document.querySelector(".brand-sub")?.insertAdjacentHTML("afterend",
       ` <span class="ver-badge" data-tip="Beta: a work in progress. Things may change or be wrong.">${previewLabel.replace(/[&<>"]/g, "")}</span>`);
   }
+  mountCounter();
+  countPage("/");
   mountTips();
   mountEmergency([...document.querySelectorAll<HTMLElement>("[data-emergency]")]);
 
@@ -236,6 +239,7 @@ async function main() {
     const centre = (shadeF ? middle([shadeF.geometry]) : middle([f.geometry, ...cellParts.map((p) => p.geometry)])) ?? lngLat;
     picked = { i, lngLat: centre, small: shadeF ? shadeF.geometry : null };
     applySelection();
+    countAction("square-card");                        // that a square was opened, never which one
     panel.showCard({ props, shade, detail: null });
     if (cellsIndex) {
       loadCellDetail(abs("data/"), cellsIndex, i, day)
