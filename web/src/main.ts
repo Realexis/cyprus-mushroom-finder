@@ -28,6 +28,7 @@ declare const __BUILD_ID__: string;                   // set by vite.config.ts, 
 /** The double tap lands here: the 50 m shade squares show, each about 13 screen pixels wide,
  *  so one solid colour can be tapped (Real, 13 Nov), with ~1.5 km of forest around. */
 const SQUARE_ZOOM = 14;
+const DISTRICT_ZOOM = 10.5;                           // first double tap from the whole island stops here
 /** Two taps closer than this (time, distance) are a double tap. */
 const DOUBLE_TAP_MS = 300;
 const DOUBLE_TAP_PX = 40;
@@ -252,10 +253,12 @@ async function main() {
     map.easeTo({ center: centre, padding: pad, duration: 400 });
   };
 
-  /** Double tap: zoom in, centred on that exact spot, to the 250 m squares (or one step closer). */
+  /** Double tap: zoom in, centred on that exact spot. From the whole island it goes in two steps
+   *  (district, then the 250 m squares): in one leap a finger a few pixels off lands kilometres away. */
   const zoomTo = (lngLat: maplibregl.LngLat) => {
     const z = map.getZoom();
-    const target = z < SQUARE_ZOOM - 0.25 ? SQUARE_ZOOM : Math.min(map.getMaxZoom(), z + 1);
+    const target = z < DISTRICT_ZOOM - 0.25 ? DISTRICT_ZOOM
+      : z < SQUARE_ZOOM - 0.25 ? SQUARE_ZOOM : Math.min(map.getMaxZoom(), z + 1);
     const pad = phone.matches ? { bottom: sheet.offsetHeight, top: 0, left: 0, right: 0 }
       : { left: sheet.offsetWidth + 32, top: 0, bottom: 0, right: 0 };
     const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -263,18 +266,19 @@ async function main() {
   };
 
   // One tap waits a moment: if a second tap follows, it was a double tap (zoom), not a pick.
-  let pending: { t: number; x: number; y: number; timer: number } | null = null;
+  let pending: { t: number; x: number; y: number; lngLat: maplibregl.LngLat; timer: number } | null = null;
   map.on("click", (e) => {
     const now = performance.now();
     if (pending && now - pending.t < DOUBLE_TAP_MS && Math.hypot(e.point.x - pending.x, e.point.y - pending.y) < DOUBLE_TAP_PX) {
       window.clearTimeout(pending.timer);
+      const aimed = pending.lngLat;                    // the first tap is the aimed one; the second drifts
       pending = null;
-      zoomTo(e.lngLat);
+      zoomTo(aimed);
       return;
     }
     if (pending) window.clearTimeout(pending.timer);
     const { point, lngLat } = e;
-    pending = { t: now, x: point.x, y: point.y, timer: window.setTimeout(() => { pending = null; pick(point, lngLat); }, DOUBLE_TAP_MS) };
+    pending = { t: now, x: point.x, y: point.y, lngLat, timer: window.setTimeout(() => { pending = null; pick(point, lngLat); }, DOUBLE_TAP_MS) };
   });
 
   // Mouse only: a small tip with the score while hovering, so you can scan before clicking.
