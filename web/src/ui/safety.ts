@@ -41,3 +41,71 @@ export function mountEmergency(openers: HTMLElement[]): void {
   document.body.append(dlg);
   for (const b of openers) b.addEventListener("click", () => dlg.showModal());
 }
+
+/** The warning a visitor must agree to before using the site (Real, 18 Nov 2026).
+ *  First time on a device: the full warning. Every later visit: a short reminder with one big OK
+ *  (they have read it already, so it must be quick). Moving between the map and the About page
+ *  in the same tab does not ask again.
+ *  Change the number when the wording changes in substance: everyone then gets the full one again. */
+const AGREE_KEY = "shroomy-agreed";
+const AGREE_VERSION = "1";
+
+const stored = (box: () => Storage): boolean => {
+  try { return box().getItem(AGREE_KEY) === AGREE_VERSION; } catch { return false; }
+};
+const store = (box: () => Storage): void => {
+  try { box().setItem(AGREE_KEY, AGREE_VERSION); } catch { /* private window: asked again next time */ }
+};
+
+const FULL_HTML = `
+  <div class="em-head">
+    <h2 id="agree-title">${WARN_ICON} This is not a game</h2>
+    <div>Some wild mushrooms in Cyprus can kill. They can look just like others.</div>
+  </div>
+  <div class="em-body">
+    <ul>
+      <li><b>Never eat a mushroom based on pictures or guesses.</b> Not from this site, an app or an AI.</li>
+      <li><b>Always have an experienced person check it,</b> in person. Trust them before any screen.</li>
+      <li><b>Learn first. Do not just go and guess.</b> Go out with people who know mushrooms.</li>
+      <li><b>Good conditions grow deadly mushrooms too.</b> A high score says nothing about what a mushroom is. This site is not enough to decide.</li>
+    </ul>
+    <div class="agree-foot">
+      <p class="agree-numbers">${NUMBERS_LINE}</p>
+      <button type="button" class="agree-yes">I understand and agree</button>
+      <p class="agree-note">Shroomy is a hobby project in beta. It can be wrong.</p>
+    </div>
+  </div>`;
+
+const SHORT_HTML = `
+  <div class="em-body">
+    <h2 id="agree-title" class="agree-short-title">${WARN_ICON} Not a game</h2>
+    <p class="agree-short-line"><b>Never eat a mushroom based on pictures or guesses.</b>
+      Always have an experienced person check it.</p>
+    <button type="button" class="agree-yes">OK, I agree</button>
+    <p class="agree-note">${NUMBERS_LINE} · <button type="button" class="agree-more">Read the full warning</button></p>
+  </div>`;
+
+/** Covers the page until the button is pressed. Nothing is sent. Screenshot robots are not asked. */
+export function mountAgree(): void {
+  if (stored(() => sessionStorage) || (navigator as Navigator & { webdriver?: boolean }).webdriver) return;
+  const dlg = document.createElement("dialog");
+  dlg.setAttribute("aria-labelledby", "agree-title");
+  const draw = (full: boolean) => {
+    dlg.className = full ? "emergency agree" : "emergency agree short";
+    dlg.innerHTML = full ? FULL_HTML : SHORT_HTML;
+    dlg.scrollTop = 0;
+    const yes = dlg.querySelector<HTMLButtonElement>(".agree-yes")!;
+    yes.addEventListener("click", () => {
+      store(() => localStorage);
+      store(() => sessionStorage);
+      dlg.close();
+      dlg.remove();
+    });
+    dlg.querySelector(".agree-more")?.addEventListener("click", () => draw(true));
+    if (!full) yes.focus();                            // Enter or Space is enough on a computer
+  };
+  document.body.append(dlg);
+  dlg.addEventListener("cancel", (e) => e.preventDefault());   // Esc does not skip it
+  dlg.showModal();
+  draw(!stored(() => localStorage));
+}

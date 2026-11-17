@@ -13,7 +13,7 @@ import { addOverlays, applyView, setRainData, setReplayFrame, setSelection } fro
 import { baseStyle } from "./map/style";
 import { Panel } from "./ui/controls";
 import { loadCellDetail, words, type CellsIndex, type Meta } from "./ui/card";
-import { mountEmergency } from "./ui/safety";
+import { mountAgree, mountEmergency } from "./ui/safety";
 import { applyTheme, systemTheme } from "./ui/theme";
 import { hideMapTip as hideTip, mountTips, showAt } from "./ui/tips";
 import { renderLegend } from "./ui/legend";
@@ -53,6 +53,7 @@ async function main() {
   countPage("/");
   mountTips();
   mountEmergency([...document.querySelectorAll<HTMLElement>("[data-emergency]")]);
+  mountAgree();                                        // first visit: the warning to agree to
 
   maplibregl.setWorkerUrl(abs("vendor/maplibre-gl-worker.mjs"));
   const protocol = new Protocol();

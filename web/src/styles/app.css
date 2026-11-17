@@ -206,6 +206,37 @@ dialog.emergency::backdrop { background: rgba(0, 0, 0, 0.6); }
 .em-close { width: 100%; min-height: 48px; border-radius: 12px; border: 1px solid var(--line);
   background: var(--surface-2); cursor: pointer; font-weight: 700; margin-top: 8px; }
 
+/* ---------------------------------------------------------------- the warning to agree to (first visit) */
+dialog.agree::backdrop { background: rgba(0, 0, 0, 0.78); backdrop-filter: blur(3px); }
+.agree .em-head h2 { display: flex; align-items: center; gap: 8px; }
+.agree .em-body { padding-bottom: 0; }
+.agree .em-body ul { margin: 0 0 8px; }
+.agree .em-body li { margin: 6px 0; }
+/* The button stays in view on short phones; the text scrolls behind it. */
+.agree-foot { position: sticky; bottom: 0; background: var(--surface); padding: 8px 0 14px; }
+.agree-foot::before { content: ""; position: absolute; left: 0; right: 0; top: -18px; height: 18px;
+  background: linear-gradient(to bottom, transparent, var(--surface)); pointer-events: none; }
+dialog.agree { max-height: calc(100dvh - 16px); }
+.agree .em-head { padding: 14px 20px; }
+.agree-numbers { margin: 0 0 8px; padding: 6px 12px; font-size: var(--fs-0); text-align: center; border-radius: 12px; font-weight: 700;
+  background: var(--safety-bg); color: var(--safety-ink); }
+.agree-numbers a { color: inherit; }
+.agree-yes { width: 100%; min-height: 56px; border: 0; border-radius: 14px; cursor: pointer;
+  background: var(--accent); color: var(--accent-ink); font: inherit; font-weight: 700; font-size: var(--fs-2); }
+.agree-note { margin: 10px 0 0; font-size: var(--fs-0); color: var(--ink-soft); }
+/* Later visits: short, and low on a phone so the thumb reaches the button. */
+dialog.agree.short { width: min(420px, calc(100vw - 24px)); }
+dialog.agree.short::backdrop { background: rgba(0, 0, 0, 0.55); backdrop-filter: none; }
+.agree.short .em-body { padding: 18px 20px 16px; }
+.agree-short-title { display: flex; align-items: center; gap: 8px; margin: 0 0 6px; font-size: var(--fs-3); line-height: 1.2; color: var(--safety-ink); }
+.agree-short-line { margin: 0 0 14px; }
+.agree.short .agree-yes { min-height: 64px; font-size: var(--fs-3); }
+.agree-more { border: 0; background: none; padding: 0; font: inherit; color: inherit; text-decoration: underline; cursor: pointer; }
+.agree-note a { color: inherit; }
+@media (max-width: 899px) {
+  dialog.agree.short { margin-bottom: max(16px, env(safe-area-inset-bottom)); }
+}
+
 /* ---------------------------------------------------------------- tooltips (hover, or press and hold) */
 .tip {
   position: fixed; z-index: 1000; max-width: min(300px, calc(100vw - 16px));

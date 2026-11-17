@@ -1,7 +1,7 @@
 import "@fontsource/atkinson-hyperlegible/400.css";
 import "@fontsource/atkinson-hyperlegible/700.css";
 import "./styles/app.css";
-import { mountEmergency } from "./ui/safety";
+import { mountAgree, mountEmergency } from "./ui/safety";
 import { applyTheme, systemTheme } from "./ui/theme";
 import { esc, fmtDay, type Meta } from "./ui/card";
 import { LOOKALIKES, SPECIES } from "./ui/species";
@@ -9,6 +9,7 @@ import { COUNTER_SITE, countPage, mountCounter } from "./count";
 
 applyTheme(systemTheme());
 mountEmergency([...document.querySelectorAll<HTMLElement>("[data-emergency]")]);
+mountAgree();
 mountCounter();
 countPage("/about");
 // The note about counting shows only when a counter is set up.
