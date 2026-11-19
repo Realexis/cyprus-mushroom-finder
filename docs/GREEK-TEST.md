@@ -1,4 +1,9 @@
-# Greek test copy (started 19 Nov 2026)
+# Greek version (started 19 Nov 2026; merged into the live site the same day)
+
+**Live since 19 Nov 2026 (Real said: merge).** The daily robot (`scripts/lab-daily.sh`) builds both languages:
+English at https://realexis.github.io/shroomy/ (the default) and Greek at https://realexis.github.io/shroomy/el/.
+Greek visits are counted apart, as pages `/el/` and `/el/about`. The rest of this file describes the test copy.
+To undo: revert the merge commit on `lab` (the live branch was at `b4fdb5c` before).
 
 A separate test copy of Shroomy in Greek. It is **not** the live site and has **no automatic update**.
 

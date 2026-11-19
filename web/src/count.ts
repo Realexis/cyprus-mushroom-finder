@@ -11,6 +11,8 @@
 /** A test copy is built with VITE_COUNTER=off, so its visits never mix with the live numbers. */
 export const COUNTER_SITE = import.meta.env.VITE_COUNTER === "off" ? "" : "realexis";
 
+import { LANG } from "./i18n";
+
 const nav = navigator as Navigator & { globalPrivacyControl?: boolean; webdriver?: boolean };
 const LOCAL = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) || location.protocol === "file:";
 const ASKED_NOT_TO = nav.doNotTrack === "1" || nav.globalPrivacyControl === true;
@@ -33,7 +35,9 @@ function send(params: Record<string, string>) {
 export function countPage(page: "/" | "/about") {
   let from = "";
   try { if (document.referrer) { const h = new URL(document.referrer).hostname; if (h !== location.hostname) from = h; } } catch { /* no referrer */ }
-  send({ p: page, s: `${screen.width},${screen.height},${window.devicePixelRatio || 1}`, ...(from ? { r: from } : {}) });
+  // Greek pages are counted apart ("/el/" and "/el/about"), so we can see how much Greek is used.
+  const name = LANG === "el" ? `/el${page}` : page;
+  send({ p: name, s: `${screen.width},${screen.height},${window.devicePixelRatio || 1}`, ...(from ? { r: from } : {}) });
 }
 
 /** Count one named action (a fixed word, no details about the place). */
@@ -43,6 +47,7 @@ export function countAction(name: string) {
 
 // Buttons counted by what they are, in the order checked. Mushroom cards add the public species code.
 const ACTIONS: [selector: string, name: (el: HTMLElement) => string][] = [
+  [".lang-link", () => "change-language"],
   ["[data-share-url]", () => "share-location"],
   ["a.maps-btn.primary", () => "directions"],
   ["#rating", () => "score-details"],

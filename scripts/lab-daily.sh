@@ -10,7 +10,8 @@
 # 0. Take the newest SAVED version of the `lab` branch from GitHub (never half-done edits).
 # 1. Fetch today's weather and score the squares (pipeline/shroomy/daily.py).
 # 2. Redraw the 50 m heat map from the new scores (scripts/lab-heat50.py).
-# 3. Build the site.
+# 3. Build the site, twice: Greek first (it goes into the folder el/ and reads the English
+#    build's data and map files), then English, the default (since 19 Nov 2026).
 # 4. Publish to the site's own GitHub project (repo Realexis/shroomy, branch gh-pages; since
 #    15 Nov 2026, because the shared preview site was near GitHub's 1 GB limit).
 #    The whole branch is this one site. Never a force-push.
@@ -83,8 +84,20 @@ HEAT=$(python3 -c "import json,sys; print(json.load(open(sys.argv[1]))['weather_
 [ "$HEAT" = "$TODAY" ] || fail "the 50 m heat map is for $HEAT, not $TODAY"
 
 # 3. Build. No VITE_PREVIEW_LABEL: this is the key version, so no "Preview" badge.
-(cd "$REPO/web" && npm run build >"$HOME_DIR/build.log" 2>&1) || { cat "$HOME_DIR/build.log"; fail "site build failed"; }
+#    Two languages (Real, 19 Nov 2026): English is the default, at the site's address; Greek is in
+#    the folder el/. Each has a button to the other (VITE_OTHER_LANG_URL). The Greek pages read the
+#    English build's data and map files (VITE_FILES_BASE=../), so those are published once.
 DIST="$REPO/web/dist"
+EL="$HOME_DIR/dist-el"
+(cd "$REPO/web" && VITE_LANG=el VITE_OTHER_LANG_URL=../ VITE_FILES_BASE=../ npm run build >"$HOME_DIR/build-el.log" 2>&1) \
+  || { cat "$HOME_DIR/build-el.log"; fail "site build failed (Greek)"; }
+grep -q '<html lang="el">' "$DIST/index.html" || fail "the Greek build is not in Greek"
+rm -rf "$EL"; mkdir -p "$EL"
+rsync -a --exclude=data --exclude=tiles --exclude=vendor "$DIST/" "$EL/"
+(cd "$REPO/web" && VITE_OTHER_LANG_URL=el/ npm run build >"$HOME_DIR/build.log" 2>&1) || { cat "$HOME_DIR/build.log"; fail "site build failed"; }
+grep -q '<html lang="en">' "$DIST/index.html" || fail "the English build is not in English"
+rsync -a "$EL/" "$DIST/el/"
+[ -f "$DIST/el/index.html" ] && [ -f "$DIST/el/about.html" ] || fail "the Greek pages are missing from the build"
 if find "$DIST" -iname "*private*" -o -iname "*finds*" -o -iname "static_key*" | grep -q .; then fail "private files in the build, not publishing"; fi
 
 # 4. Publish. README.md and .nojekyll on the site branch are kept as they are.
