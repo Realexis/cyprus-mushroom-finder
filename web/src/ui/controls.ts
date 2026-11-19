@@ -124,7 +124,7 @@ export class Panel {
     if (m === "replay") {
       this.card = null;
       this.hooks.onCardClosed();
-      this.replayIndex = 0;
+      this.replayIndex = REPLAY_DAYS - 1;                             // opens still, on today; Play starts from 30 days ago
       this.render();                                                  // shows "Loading the rain…"
       if (!this.data) {
         try { this.data = await this.hooks.loadRain(); this.rainFailed = false; }
@@ -134,7 +134,6 @@ export class Panel {
       if (!this.rain) this.layer = "rain";
       this.render();
       this.hooks.onMode(this);
-      if (this.rain) this.play();
       return;
     }
     this.render();
