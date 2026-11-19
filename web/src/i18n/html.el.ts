@@ -7,13 +7,13 @@ type Pairs = [en: string, el: string][];
 
 const both: Pairs = [
   ["Conditions only. Never eat a wild mushroom based on this map, an app or an AI.",
-    "Μόνο συνθήκες. Ποτέ μην φάτε άγριο μανιτάρι με βάση αυτόν τον χάρτη ή οποιαδήποτε πληροφορία αυτής της σελίδας."],
+    "Μόνο συνθήκες. Ποτέ μην φάτε άγριο μανιτάρι με βάση τις πληροφορίες αυτής της σελίδας."],
   ['aria-label="Poisoning emergency: 112 and 1401"', 'aria-label="Έκτακτη ανάγκη δηλητηρίασης: 112 και 1401"'],
 ];
 
 const index: Pairs = [
   [`content="Today's growing conditions for wild mushrooms in Cyprus forests. Conditions only. Never eat a wild mushroom based on this map, an app or an AI."`,
-    'content="Οι σημερινές συνθήκες ανάπτυξης για τα άγρια μανιτάρια στα δάση της Κύπρου. Μόνο συνθήκες. Ποτέ μην φάτε άγριο μανιτάρι με βάση αυτόν τον χάρτη ή οποιαδήποτε πληροφορία αυτής της σελίδας."'],
+    'content="Οι σημερινές συνθήκες ανάπτυξης για τα άγρια μανιτάρια στα δάση της Κύπρου. Μόνο συνθήκες. Ποτέ μην φάτε άγριο μανιτάρι με βάση τις πληροφορίες αυτής της σελίδας."'],
   [`content="Today's growing conditions for wild mushrooms in Cyprus forests. Conditions only."`,
     'content="Οι σημερινές συνθήκες ανάπτυξης για τα άγρια μανιτάρια στα δάση της Κύπρου. Μόνο συνθήκες."'],
   ["<title>Shroomy · mushroom growing conditions in Cyprus</title>", "<title>Shroomy · συνθήκες ανάπτυξης μανιταριών στην Κύπρο</title>"],

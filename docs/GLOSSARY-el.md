@@ -158,7 +158,7 @@ Some of the sources say that a mushroom can be eaten. The site never repeats tha
 | Do not wait for symptoms | Μην περιμένετε συμπτώματα | **Own translation.** No official Greek wording found |
 | Bring the mushroom to the hospital | Πάρτε μαζί σας το μανιτάρι στο νοσοκομείο | **Own translation.** No official Greek wording found |
 | Cooking does not remove the poison | Το μαγείρεμα δεν αφαιρεί το δηλητήριο | Own translation |
-| safety banner: "Conditions only. Never eat a wild mushroom based on this map, an app or an AI." | Μόνο συνθήκες. Ποτέ μην φάτε άγριο μανιτάρι με βάση αυτόν τον χάρτη ή οποιαδήποτε πληροφορία αυτής της σελίδας. | Own translation |
+| safety banner: "Conditions only. Never eat a wild mushroom based on this map, an app or an AI." | Μόνο συνθήκες. Ποτέ μην φάτε άγριο μανιτάρι με βάση τις πληροφορίες αυτής της σελίδας. | Own translation |
 | "This is not a game" | Αυτό δεν είναι παιχνίδι | Own translation |
 
 ## 6. Gaps
