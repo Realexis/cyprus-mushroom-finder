@@ -255,8 +255,8 @@ export class Panel {
         <p class="today"><b>Today</b> · ${fmtDay(d.date, { weekday: "short", day: "numeric", month: "short" })}</p>
       </div>
       <div class="start-btns">
-        <button type="button" class="chip-btn" data-open-card="" data-tip="Photos, season, trees and the deadly lookalikes for each mushroom.">🍄 Mushroom cards</button>
         <button type="button" class="chip-btn" id="replay-btn" data-tip="Watch the last 30 days move over the island, day by day: rain, temperature and soil wetness.">🌧 Weather replay</button>
+        <button type="button" class="chip-btn" data-open-card="" data-tip="Photos, season, trees and the deadly lookalikes for each mushroom.">🍄 Mushroom cards</button>
       </div>
       <p class="hint"><b>Double tap</b> the map to zoom in. <b>Tap a square</b> to see its conditions.</p>
       <p class="no-rakes" data-tip="${RAKES_TIP}"><b>No rakes.</b> Pick by hand or knife. Put the leaf litter back.</p>`;
