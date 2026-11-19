@@ -367,3 +367,13 @@ dialog.agree.short::backdrop { background: rgba(0, 0, 0, 0.55); backdrop-filter:
 :lang(el) .sp-name { font-weight: 700; font-size: var(--fs-1); }
 :lang(el) .sp-name .sp-common { font-weight: 400; }
 :lang(el) .sp-name .sp-common i { font-weight: 400; font-size: inherit; }
+
+/* ---------------------------------------------------------------- language button (next to About)
+   The full name on wide screens, two letters on a phone. */
+.lang-link { text-decoration: none; }
+.lang-short { display: none; }
+@media (max-width: 899px) {
+  .lang-long { display: none; }
+  .lang-short { display: inline; }
+  .topbar:has(.lang-link) .about-link, .topbar:has(.lang-link) .sos { padding: 0 8px; }
+}

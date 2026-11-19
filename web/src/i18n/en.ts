@@ -29,6 +29,10 @@ export const en = {
   /** A number with a fixed count of decimals. */
   num: (v: number, digits = 1) => v.toFixed(digits),
 
+  /** The button that opens the other language (written in THAT language, so its readers find it). */
+  lang: { otherCode: "el", otherName: "Ελληνικά", otherShort: "ΕΛ", otherLabel: "Ελληνικά: η σελίδα στα ελληνικά",
+    otherTip: "Ελληνικά: ανοίγει τη σελίδα στα ελληνικά. Η προειδοποίηση εμφανίζεται ξανά." },
+
   safety: {
     line: "Conditions only. Never eat a wild mushroom based on this map, an app or an AI.",
     numbers: `Poisoning: call <a href="tel:112">112</a> · Poison Centre <a href="tel:1401">1401</a>`,

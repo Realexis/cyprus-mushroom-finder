@@ -79,8 +79,19 @@ const SHORT_HTML = `
     <p class="agree-note">${NUMBERS_LINE} · <button type="button" class="agree-more">${S.readFull}</button></p>
   </div>`;
 
+/** After a change of language: ask again, with the FULL warning, in the new language (Real, 19 Nov 2026).
+ *  Both languages are on the same website address, so this note is read by the page that opens next. */
+const AGAIN_KEY = "shroomy-warn-again";
+export function askAgainInFull(): void {
+  try { sessionStorage.removeItem(AGREE_KEY); sessionStorage.setItem(AGAIN_KEY, "1"); } catch { /* private window */ }
+}
+const takeAgain = (): boolean => {
+  try { const on = sessionStorage.getItem(AGAIN_KEY) === "1"; sessionStorage.removeItem(AGAIN_KEY); return on; } catch { return false; }
+};
+
 /** Covers the page until the button is pressed. Nothing is sent. Screenshot robots are not asked. */
 export function mountAgree(): void {
+  const again = takeAgain();
   if (stored(() => sessionStorage) || (navigator as Navigator & { webdriver?: boolean }).webdriver) return;
   const dlg = document.createElement("dialog");
   dlg.setAttribute("aria-labelledby", "agree-title");
@@ -101,5 +112,5 @@ export function mountAgree(): void {
   document.body.append(dlg);
   dlg.addEventListener("cancel", (e) => e.preventDefault());   // Esc does not skip it
   dlg.showModal();
-  draw(!stored(() => localStorage));
+  draw(again || !stored(() => localStorage));
 }

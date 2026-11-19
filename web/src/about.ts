@@ -7,18 +7,21 @@ import { esc, fmtDay, type Meta } from "./ui/card";
 import { LOOKALIKES, SPECIES } from "./ui/species";
 import { COUNTER_SITE, countPage, mountCounter } from "./count";
 import { T } from "./i18n";
+import { fileUrl } from "./map/files";
+import { mountLangSwitch } from "./ui/lang";
 
 const A = T.about;
 
 applyTheme(systemTheme());
 mountEmergency([...document.querySelectorAll<HTMLElement>("[data-emergency]")]);
+mountLangSwitch("about.html");
 mountAgree();
 mountCounter();
 countPage("/about");
 // The note about counting shows only when a counter is set up.
 if (COUNTER_SITE) document.getElementById("counting")!.hidden = false;
 
-fetch(new URL("data/meta.json", document.baseURI), { cache: "no-cache" })
+fetch(fileUrl("data/meta.json"), { cache: "no-cache" })
   .then((r) => r.json() as Promise<Meta>)
   .then((m) => {
     document.getElementById("run")!.textContent = fmtDay(m.weather_run, { weekday: "long", day: "numeric", month: "long", year: "numeric" });

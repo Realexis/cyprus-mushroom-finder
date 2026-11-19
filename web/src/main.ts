@@ -8,7 +8,7 @@ import "./styles/app.css";
 
 import * as maplibregl from "maplibre-gl";
 import { Protocol } from "pmtiles";
-import { pmtiles } from "./map/files";
+import { fileUrl, pmtiles } from "./map/files";
 import { addOverlays, applyView, setRainData, setReplayFrame, setSelection } from "./map/layers";
 import { baseStyle } from "./map/style";
 import { Panel } from "./ui/controls";
@@ -22,8 +22,9 @@ import { mountSpecies } from "./ui/species";
 import { FullMap, readUrlView, trackMapReady } from "./ui/fullmap";
 import { countAction, countPage, mountCounter } from "./count";
 import { T } from "./i18n";
+import { mountLangSwitch } from "./ui/lang";
 
-const abs = (p: string) => new URL(p, document.baseURI).href;
+const abs = fileUrl;
 declare const __BUILD_ID__: string;                   // set by vite.config.ts, new for every build
 
 /** The double tap lands here: the 50 m shade squares show, each about 13 screen pixels wide,
@@ -52,6 +53,7 @@ async function main() {
   }
   mountCounter();
   countPage("/");
+  mountLangSwitch("");
   mountTips();
   mountEmergency([...document.querySelectorAll<HTMLElement>("[data-emergency]")]);
   mountAgree();                                        // first visit: the warning to agree to

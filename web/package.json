@@ -6,8 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "node scripts/check-words.mjs && tsc --noEmit && vite build",
-    "build:el-test": "VITE_LANG=el VITE_COUNTER=off VITE_NOINDEX=1 npm run build",
-    "dev:el": "VITE_LANG=el VITE_COUNTER=off vite",
+    "build:test-en": "VITE_COUNTER=off VITE_NOINDEX=1 VITE_OTHER_LANG_URL=el/ npm run build",
+    "build:el-test": "VITE_LANG=el VITE_COUNTER=off VITE_NOINDEX=1 VITE_OTHER_LANG_URL=../ VITE_FILES_BASE=../ npm run build",
+    "dev:el": "VITE_LANG=el VITE_COUNTER=off VITE_OTHER_LANG_URL=./ vite",
     "preview": "vite preview",
     "check:words": "node scripts/check-words.mjs",
     "predev": "node scripts/copy-worker.mjs && node scripts/views.mjs",

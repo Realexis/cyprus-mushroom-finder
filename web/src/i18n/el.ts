@@ -23,6 +23,9 @@ export const el: Strings = {
   inMonth: (m) => IN_MONTH[m - 1],
   num,
 
+  lang: { otherCode: "en", otherName: "English", otherShort: "EN", otherLabel: "English: this page in English",
+    otherTip: "English: opens this page in English. The warning is shown again." },
+
   safety: {
     line: "Μόνο συνθήκες. Ποτέ μην φάτε άγριο μανιτάρι με βάση τις πληροφορίες αυτής της σελίδας.",
     numbers: `Δηλητηρίαση: καλέστε το <a href="tel:112">112</a> · Κέντρο Δηλητηριάσεων <a href="tel:1401">1401</a>`,
