@@ -151,17 +151,19 @@ def public_credits(sources: dict) -> list:
 
 
 def weather_squares(w, t0, to_ll):
-    """One square per weather point for the replay: 30 past days + today + the forecast, per day.
+    """One square per weather point for the replay, one value per day.
 
-    d = rain (mm), t = mean air temperature (deg C), m = water in the top 7 cm of soil (% of volume).
+    d = rain (mm): the last 30 days up to today, then the forecast.
+    t = mean air temperature (deg C), m = water in the top 7 cm of soil (whole % of volume):
+    the last 30 days up to today only (the replay shows no more), to keep the file small.
     A day with no value is written as null (the map then leaves the square empty).
     """
     half = config.load("region")["grids"]["weather_m"] / 2
     p, tm, sm = w["precip"], w["tmean"], w["soil"]
-    sl = slice(t0 - 29, t0 + N_DAYS)
+    sl, past = slice(t0 - 29, t0 + N_DAYS), slice(t0 - 29, t0 + 1)
 
     def series(a, nd, k=1.0):
-        return [None if np.isnan(v) else round(float(v) * k, nd) for v in a]
+        return [None if np.isnan(v) else (round(float(v) * k, nd) if nd else int(round(float(v) * k))) for v in a]
 
     feats = []
     for i in range(len(w["x"])):
@@ -171,8 +173,9 @@ def weather_squares(w, t0, to_ll):
         props = {"r7": float(np.nansum(p[i, t0 - 6: t0 + 1])),
                  "r30": float(np.nansum(p[i, t0 - 29: t0 + 1])),
                  "d": [round(float(v), 1) for v in p[i, sl]],
-                 "t": series(tm[i, sl], 1),
-                 "m": series(sm[i, sl], 0, 100.0)}
+                 "t": series(tm[i, past], 1),
+                 # the weather model has no soil at some points (sea, lakes): always 0 there, so no value
+                 "m": series(sm[i, past], 0, 100.0) if np.nanmax(sm[i, past]) > 0 else [None] * 30}
         feats.append({"type": "Feature", "properties": props,
                       "geometry": {"type": "Polygon", "coordinates": [list(zip(xs, ys))]}})
     return feats

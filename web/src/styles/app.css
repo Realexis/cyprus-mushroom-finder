@@ -109,7 +109,8 @@ a { color: var(--accent); }
   min-height: 44px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line); cursor: pointer;
   background: var(--surface-2); color: var(--ink); font-size: var(--fs-1); font-weight: 700; white-space: nowrap;
 }
-.back-btn { border-radius: 12px; width: 100%; text-align: left; }
+.back-btn { border-radius: 12px; width: 100%; text-align: left; display: flex; align-items: center; gap: 10px; }
+.back-arrow { font-size: 1.7em; line-height: 1; font-weight: 700; color: var(--accent); margin-top: -0.12em; }
 .chip-btn:hover, .back-btn:hover { border-color: var(--accent); }
 .hint { color: var(--ink); }
 .no-rakes { margin-top: 10px !important; padding: 6px 10px; border-radius: 10px; font-size: var(--fs-0) !important;

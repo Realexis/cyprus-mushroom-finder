@@ -213,7 +213,7 @@ export class Panel {
   }
 
   private replayHTML() {
-    const back = `<button type="button" class="back-btn" id="replay-back" data-tip="Back to today's growing conditions.">← Back to today's map</button>`;
+    const back = `<button type="button" class="back-btn" id="replay-back" data-tip="Back to today's growing conditions."><span class="back-arrow" aria-hidden="true">←</span> Back to today's map</button>`;
     if (this.rainFailed) return `${back}<p>The replay could not load. Check your connection and try again.</p>`;
     if (!this.data || !this.rain) return `${back}<p class="muted">Loading the replay…</p>`;
     const tabs = LAYERS.filter((l) => this.data![l.id]);
