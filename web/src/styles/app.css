@@ -179,11 +179,35 @@ a { color: var(--accent); }
 
 /* ---------------------------------------------------------------- rain replay */
 .replay { margin-top: 10px; }
-.replay-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: var(--fs-1); }
-.tl { display: flex; gap: 2px; align-items: flex-end; height: 42px; margin-top: 8px; cursor: pointer; }
-.tl i { flex: 1; background: #4f97d1; border-radius: 2px 2px 0 0; opacity: 0.55; }
-.tl i.now { opacity: 1; outline: 2px solid var(--ink); }
-.replay input[type="range"] { width: 100%; margin: 6px 0 0; accent-color: var(--accent); min-height: 32px; }
+.replay-row { display: flex; align-items: center; gap: 12px; font-size: var(--fs-1); }
+/* two fixed lines, so the slider never jumps under the finger while the day changes */
+#replay-date { flex: 1; min-width: 0; line-height: 1.35; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.replay-avg { display: block; }
+/* One big slider: the bars, the track and the knob all take the drag (mouse or finger). */
+.scrub {
+  --at: 0%; position: relative; margin-top: 8px; padding: 6px 0 2px; border-radius: 10px;
+  cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent;
+}
+.scrub.drag { cursor: grabbing; }
+.scrub:focus-visible { outline: 2px solid var(--focus); outline-offset: 4px; }
+.tl { display: flex; gap: 2px; align-items: flex-end; height: 48px; pointer-events: none; }
+.tl i { flex: 1; background: #4f97d1; border-radius: 2px 2px 0 0; opacity: 0.6; }
+.tl i.now { opacity: 1; box-shadow: 0 0 0 2px var(--ink); }
+.scrub-track { position: relative; height: 6px; margin: 16px 0 14px; border-radius: 3px; background: var(--line); pointer-events: none; }
+.scrub-fill { position: absolute; inset: 0 auto 0 0; width: var(--at); border-radius: 3px; background: var(--accent); }
+.scrub-knob {
+  position: absolute; top: 50%; left: var(--at); width: 26px; height: 26px; margin: -13px 0 0 -13px; border-radius: 50%;
+  background: var(--accent); border: 3px solid var(--surface); box-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
+  transition: transform 0.12s ease;
+}
+.scrub.drag .scrub-knob { transform: scale(1.25); }
+/* a thin line from the knob up through its bar, so the day is easy to read */
+.scrub::before {
+  content: ""; position: absolute; left: var(--at); top: 6px; height: 64px; width: 2px; margin-left: -1px;
+  background: var(--ink); opacity: 0.35; pointer-events: none;
+}
+.scrub-ends { display: flex; justify-content: space-between; font-size: var(--fs-0, 12px); color: var(--ink-soft); pointer-events: none; }
+@media (prefers-reduced-motion: reduce) { .scrub-knob { transition: none; } }
 
 /* ---------------------------------------------------------------- emergency dialog */
 dialog.emergency {

@@ -18,6 +18,8 @@ export class Panel {
   mode: Mode = "conditions";
   replayIndex = REPLAY_DAYS - 1;
   private playing = false;
+  private scrubbing = false;               // a finger or the mouse is dragging the rain timeline
+  private resume = false;                  // it was playing when the drag began
   private timer = 0;
   private card: CardInput | null = null;
   private rain: number[] | null = null;
@@ -38,18 +40,43 @@ export class Panel {
       else if (t.closest("#replay-btn")) this.setMode("replay");
       else if (t.closest("#replay-back")) this.setMode("conditions");
       else if (t.closest("#play")) { if (this.playing) this.stop(); else this.play(); }
-      else if (t.closest(".tl")) {                                   // tap a day on the timeline
-        const r = t.closest(".tl")!.getBoundingClientRect();
-        this.stop();
-        this.replayIndex = Math.max(0, Math.min(REPLAY_DAYS - 1, Math.floor(((e as MouseEvent).clientX - r.left) / r.width * REPLAY_DAYS)));
-        this.updateReplay(); this.hooks.onFrame(this);
-      }
     });
-    this.el.addEventListener("input", (e) => {
-      const t = e.target as HTMLInputElement;
-      if (t.id !== "replay-slider") return;
-      this.stop(); this.replayIndex = Number(t.value);
-      this.updateReplay(); this.hooks.onFrame(this);
+    // The rain timeline is one big slider: press anywhere on it and drag (mouse or finger).
+    // Dragging holds the replay; letting go carries on playing from that day if it was playing.
+    this.el.addEventListener("pointerdown", (e) => {
+      const s = (e.target as Element).closest<HTMLElement>("#scrub");
+      if (!s || (e.pointerType === "mouse" && e.button !== 0)) return;
+      e.preventDefault();                                             // no text selection, no page drag
+      s.focus({ preventScroll: true });
+      try { s.setPointerCapture(e.pointerId); } catch { /* an old browser: taps still work */ }
+      this.resume = this.playing;
+      this.stop();
+      this.scrubbing = true;
+      s.classList.add("drag");
+      this.seek(e.clientX, s);
+    });
+    this.el.addEventListener("pointermove", (e) => {
+      if (!this.scrubbing) return;
+      const s = this.el.querySelector<HTMLElement>("#scrub");
+      if (s) this.seek(e.clientX, s);
+    });
+    const release = () => {
+      if (!this.scrubbing) return;
+      this.scrubbing = false;
+      this.el.querySelector("#scrub")?.classList.remove("drag");
+      if (this.resume && this.mode === "replay" && this.replayIndex < REPLAY_DAYS - 1) this.play();
+      this.resume = false;
+    };
+    this.el.addEventListener("pointerup", release);
+    this.el.addEventListener("pointercancel", release);
+    this.el.addEventListener("keydown", (e) => {
+      if (!(e.target as Element).closest("#scrub")) return;
+      const step: Record<string, number> = { ArrowLeft: -1, ArrowDown: -1, ArrowRight: 1, ArrowUp: 1, PageDown: -7, PageUp: 7,
+        Home: -REPLAY_DAYS, End: REPLAY_DAYS };
+      if (!(e.key in step)) return;
+      e.preventDefault();
+      this.stop();
+      this.setIndex(this.replayIndex + step[e.key]);
     });
     this.render();
   }
@@ -105,6 +132,21 @@ export class Panel {
     this.hooks.onFrame(this);
   }
 
+  /** Show one day of the replay (does nothing if it is already showing). */
+  private setIndex(i: number) {
+    i = Math.max(0, Math.min(REPLAY_DAYS - 1, i));
+    if (i === this.replayIndex) return;
+    this.replayIndex = i;
+    this.updateReplay();
+    this.hooks.onFrame(this);
+  }
+
+  /** The day under the pointer, read off the bars. */
+  private seek(clientX: number, scrub: HTMLElement) {
+    const r = (scrub.querySelector(".tl") ?? scrub).getBoundingClientRect();
+    if (r.width > 0) this.setIndex(Math.floor(((clientX - r.left) / r.width) * REPLAY_DAYS));
+  }
+
   private stop() {
     window.clearInterval(this.timer);
     this.playing = false;
@@ -123,9 +165,13 @@ export class Panel {
     const ago = REPLAY_DAYS - 1 - i;
     if (date && this.rain) date.innerHTML = `<b>${fmtDay(d, { weekday: "short", day: "numeric", month: "short" })}</b>
       ${ago === 0 ? "· today" : `· ${ago} day${ago === 1 ? "" : "s"} ago`}
-      <span class="muted">· island average ${this.rain[i].toFixed(1)} mm</span>`;
-    const sl = this.el.querySelector<HTMLInputElement>("#replay-slider");
-    if (sl) { sl.value = String(i); sl.setAttribute("aria-valuetext", fmtDay(d, { day: "numeric", month: "long" })); }
+      <span class="muted replay-avg">Island average ${this.rain[i].toFixed(1)} mm</span>`;
+    const sc = this.el.querySelector<HTMLElement>("#scrub");
+    if (sc) {
+      sc.setAttribute("aria-valuenow", String(i));
+      sc.setAttribute("aria-valuetext", fmtDay(d, { day: "numeric", month: "long" }));
+      sc.style.setProperty("--at", `${((i + 0.5) / REPLAY_DAYS) * 100}%`);
+    }
     this.el.querySelectorAll<HTMLElement>(".tl i").forEach((b, k) => b.classList.toggle("now", k === i));
   }
 
@@ -141,9 +187,13 @@ export class Panel {
         <h2 class="panel-h">Rain replay: the last 30 days</h2>
         <div class="replay-row"><button id="play" class="primary-btn" type="button"></button>
           <span id="replay-date" aria-live="polite"></span></div>
-        <div class="tl" aria-hidden="true" data-tip="Each bar is one day. Taller bar = more rain over the island. Tap a bar to jump to that day.">${bars}</div>
-        <input id="replay-slider" type="range" min="0" max="${REPLAY_DAYS - 1}" step="1" value="${this.replayIndex}"
-          aria-label="Day of the rain replay" data-tip="Drag to choose a day of the last 30 days." />
+        <div class="scrub" id="scrub" role="slider" tabindex="0" aria-label="Day of the rain replay"
+          aria-valuemin="0" aria-valuemax="${REPLAY_DAYS - 1}" aria-orientation="horizontal"
+          data-tip="Each bar is one day. Taller bar = more rain over the island. Drag anywhere here to move through the days.">
+          <div class="tl" aria-hidden="true">${bars}</div>
+          <div class="scrub-track" aria-hidden="true"><span class="scrub-fill"></span><span class="scrub-knob"></span></div>
+          <div class="scrub-ends" aria-hidden="true"><span>${REPLAY_DAYS - 1} days ago</span><span>Drag to move</span><span>Today</span></div>
+        </div>
         <p class="muted small">Daily rain for each ~3 km weather square.</p>
       </div>`;
   }
