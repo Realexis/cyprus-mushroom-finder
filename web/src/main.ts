@@ -21,6 +21,7 @@ import type { Heat50 } from "./map/heat50";
 import { mountSpecies } from "./ui/species";
 import { FullMap, readUrlView, trackMapReady } from "./ui/fullmap";
 import { countAction, countPage, mountCounter } from "./count";
+import { T } from "./i18n";
 
 const abs = (p: string) => new URL(p, document.baseURI).href;
 declare const __BUILD_ID__: string;                   // set by vite.config.ts, new for every build
@@ -47,7 +48,7 @@ async function main() {
   const previewLabel = (import.meta.env.VITE_PREVIEW_LABEL as string | undefined) ?? "Beta";
   if (previewLabel) {
     document.querySelector(".brand-sub")?.insertAdjacentHTML("afterend",
-      ` <span class="ver-badge" data-tip="Beta: a work in progress. Things may change or be wrong.">${previewLabel.replace(/[&<>"]/g, "")}</span>`);
+      ` <span class="ver-badge" data-tip="${T.main.betaTip}">${previewLabel.replace(/[&<>"]/g, "")}</span>`);
   }
   mountCounter();
   countPage("/");
@@ -79,8 +80,8 @@ async function main() {
   const day = found >= 0 ? found : 0;
   if (meta.weather_run < today) {
     const d = document.getElementById("delayed")!;
-    d.textContent = `Data delayed · last update ${meta.weather_run}`;
-    d.dataset.tip = "Today's weather update has not arrived yet. The map shows today from the last good update. It usually updates each morning at about 6:30 am Cyprus time.";
+    d.textContent = T.main.delayed(meta.weather_run);
+    d.dataset.tip = T.main.delayedTip;
     d.hidden = false;
   }
 
@@ -130,7 +131,7 @@ async function main() {
   });
   map.addControl(new maplibregl.GeolocateControl({ positionOptions: { enableHighAccuracy: true } }), "top-right");
   const geo = document.querySelector<HTMLButtonElement>(".maplibregl-ctrl-geolocate");
-  if (geo) { geo.removeAttribute("title"); geo.dataset.tip = "Show where you are on the map (needs location permission). Your position stays on your phone."; }
+  if (geo) { geo.removeAttribute("title"); geo.dataset.tip = T.main.geoTip; }
 
   const sheet = document.getElementById("sheet")!;
   const phone = matchMedia("(max-width: 899px)");
@@ -240,7 +241,7 @@ async function main() {
   // Loading message: hide once the map has drawn its layers for the first time.
   const loading = document.getElementById("loading")!;
   const slow = window.setTimeout(() => {
-    document.getElementById("loading-text")!.textContent = "Still loading… a slow connection can take a minute.";
+    document.getElementById("loading-text")!.textContent = T.main.slow;
   }, 12000);
   map.once("idle", () => {
     window.clearTimeout(slow);
@@ -314,7 +315,7 @@ async function main() {
     const s = (f.properties as Record<string, number>)[`s${day}`];
     const r = map.getCanvas().getBoundingClientRect();
     showAt(e.originalEvent.clientX || r.left + e.point.x, (e.originalEvent.clientY || r.top + e.point.y) - 6,
-      s === undefined || s === null ? "Not scored here." : `${words(Number(s))} · ${s}/100. Click for details.`);
+      s === undefined || s === null ? T.main.notScored : T.main.hover(words(Number(s)), s));
   });
   map.on("mouseout", () => hideTip());
   map.on("movestart", () => hideTip());
@@ -323,6 +324,6 @@ async function main() {
 main().catch((e) => {
   console.error(e);
   const t = document.getElementById("loading-text");
-  if (t) t.textContent = "The map could not load. Check your internet connection, then reload the page.";
+  if (t) t.textContent = T.main.failed;
   document.getElementById("loading")?.classList.add("failed");
 });

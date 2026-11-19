@@ -1,6 +1,7 @@
 // Basemap style: Protomaps OSM vector tiles, recoloured into our own calm palette.
 import { layers, namedFlavor, type Flavor } from "@protomaps/basemaps";
 import type { StyleSpecification } from "maplibre-gl";
+import { T } from "../i18n";
 
 export type Theme = "dark" | "light";
 
@@ -45,7 +46,7 @@ export function baseStyle(theme: Theme, basemapUrl: string): StyleSpecification 
       },
     },
     // Neutral map: no country names or country borders (this map is about forests).
-    layers: (layers("protomaps", flavor(theme), { lang: "en" }) as StyleSpecification["layers"])
+    layers: (layers("protomaps", flavor(theme), { lang: T.main.mapLang }) as StyleSpecification["layers"])
       .filter((l) => !/country|boundaries/.test(l.id)),
   };
 }

@@ -2,6 +2,12 @@
 // the 50 m shade squares close up, the rain replay and the closed nature reserves. (Shroomy Lite: today only.)
 import type { ExpressionSpecification, Map as MlMap } from "maplibre-gl";
 import type { Theme } from "./style";
+import { T } from "../i18n";
+
+/** The reserve's name in this build's language (the data file has the English spelling). */
+const RESERVE_NAME: ExpressionSpecification = Object.keys(T.main.reserveNames).length
+  ? ["match", ["get", "name"], ...Object.entries(T.main.reserveNames).flat(), ["get", "name"]] as unknown as ExpressionSpecification
+  : ["get", "name"];
 
 export type Mode = "conditions" | "replay";
 
@@ -154,7 +160,7 @@ export function addOverlays(map: MlMap, theme: Theme, urls: LayerUrls, v: View) 
     paint: { "line-color": theme === "dark" ? "#d6dbd8" : "#464c49", "line-width": 1.4 } }, firstSymbol);
   map.addLayer({
     id: "reserve-label", type: "symbol", source: "reserves", minzoom: 9.5,
-    layout: { "text-field": ["concat", "CLOSED\n", ["get", "name"]], "text-font": ["Noto Sans Medium"],
+    layout: { "text-field": ["concat", `${T.main.closedLabel}\n`, RESERVE_NAME], "text-font": ["Noto Sans Medium"],
       "text-size": 13, "text-max-width": 9, "symbol-placement": "point" },
     paint: { "text-color": theme === "dark" ? "#f2f4f3" : "#1b2620",
       "text-halo-color": theme === "dark" ? "#3a403d" : "#ffffff", "text-halo-width": 1.6 },

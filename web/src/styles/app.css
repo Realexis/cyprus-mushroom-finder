@@ -350,3 +350,15 @@ dialog.agree.short::backdrop { background: rgba(0, 0, 0, 0.55); backdrop-filter:
   .about-link, .sos { padding: 0 10px; }
   .map-legend { width: 156px; padding: 5px 8px 6px; }
 }
+
+/* ---------------------------------------------------------------- Greek build (html lang="el")
+   Greek words are longer than English ones. These rules only apply to the Greek pages. */
+:lang(el) .start-btns .chip-btn { flex: 1 1 0; white-space: normal; padding: 4px 10px; line-height: 1.2; }
+@media (max-width: 899px) {
+  :lang(el) .map-legend { width: 196px; }
+  :root.full-map:lang(el) .map-legend { width: 176px; }
+}
+@media (max-width: 480px) {
+  :lang(el) .replay-avg { font-size: var(--fs-0); }   /* "Μέσος όρος νησιού: 21% νερό" fits beside the button */
+  :lang(el) .safety { font-size: 0.8rem; }           /* the banner stays on two lines on a phone */
+}

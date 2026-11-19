@@ -9,6 +9,7 @@ import type * as maplibregl from "maplibre-gl";
 import "../styles/full-map.css";
 import { NUMBERS_LINE, SAFETY_LINE, WARN_ICON } from "./safety";
 import { hideMapTip } from "./tips";
+import { T } from "../i18n";
 
 /** The same frame in every version (spec). */
 export const FULL_BOUNDS: [[number, number], [number, number]] = [[32.25, 34.55], [34.6, 35.7]];
@@ -66,8 +67,8 @@ export class FullMap implements maplibregl.IControl {
     this.exitBtn = document.createElement("button");
     this.exitBtn.type = "button";
     this.exitBtn.className = "full-exit";
-    this.exitBtn.innerHTML = `${SHRINK}<span>Exit full map</span>`;
-    this.exitBtn.setAttribute("aria-label", "Exit full map (Esc)");
+    this.exitBtn.innerHTML = `${SHRINK}<span>${T.fullmap.exit}</span>`;
+    this.exitBtn.setAttribute("aria-label", T.fullmap.exitLabel);
     this.exitBtn.addEventListener("click", () => this.set(false));
     document.querySelector(".stage")?.append(this.line, this.exitBtn);
     document.addEventListener("keydown", (e) => {
@@ -88,10 +89,9 @@ export class FullMap implements maplibregl.IControl {
     this.btn = document.createElement("button");
     this.btn.type = "button";
     this.btn.className = "ctrl-full";
-    this.btn.innerHTML = `${EXPAND}<span>Full map</span>`;
-    this.btn.setAttribute("aria-label", "Full map: the whole island, nothing else");
-    this.btn.dataset.tip = "Show the whole island on the full screen, flat and north up, without the panels. "
-      + "Good for screenshots. Press Esc or \"Exit full map\" to come back.";
+    this.btn.innerHTML = `${EXPAND}<span>${T.fullmap.full}</span>`;
+    this.btn.setAttribute("aria-label", T.fullmap.fullLabel);
+    this.btn.dataset.tip = T.fullmap.tip;
     this.btn.addEventListener("click", () => this.set(true));
     div.append(this.btn);
     return div;

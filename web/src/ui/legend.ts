@@ -1,14 +1,13 @@
 // The small colour key that always sits on the map: today's growing conditions (with the
 // closed nature reserves), the 50 m shade close up, or one day of the replay (rain, temperature or soil wetness).
+import { T } from "../i18n";
 import { RAIN1_STOPS, SCORE_STOPS, SHADE_STOPS, SHADE_ZOOM, SOIL_STOPS, TEMP_STOPS, type View } from "../map/layers";
 
+const L = T.legend;
 const REPLAY_KEY = {
-  rain: { title: "Rain that day", stops: RAIN1_STOPS.slice(1), left: "0.5 mm", right: "30+ mm",
-    tip: "Rain on the day shown in the replay. Pale = a little, dark blue = a lot." },
-  temp: { title: "Temperature that day", stops: TEMP_STOPS, left: "0 °C", right: "30 °C",
-    tip: "Average air temperature on the day shown in the replay. Blue = cold, pale = mild, red = warm." },
-  soil: { title: "Soil wetness that day", stops: SOIL_STOPS, left: "Dry", right: "Wet",
-    tip: "How much water the top 7 cm of soil holds on the day shown, from the weather model. Sand = dry, dark blue = wet. Soils differ, so compare a place with itself over time." },
+  rain: { ...L.rain, stops: RAIN1_STOPS.slice(1) },
+  temp: { ...L.temp, stops: TEMP_STOPS },
+  soil: { ...L.soil, stops: SOIL_STOPS },
 };
 
 function gradient(stops: [number, string][]) {
@@ -21,20 +20,17 @@ export function renderLegend(el: HTMLElement, v: View, zoom: number, hasShade: b
   const shade = !replay && hasShade && !hasHeat && zoom >= SHADE_ZOOM;
   const fine = !replay && hasHeat && zoom >= SHADE_ZOOM;      // Lab: the 50 m heat map is showing
   const k = replay ? REPLAY_KEY[v.layer]
-    : shade ? { title: "Shade (50 m)", stops: SHADE_STOPS, left: "Sunny", right: "Deep shade",
-        tip: "Close up, the forest shows shade in 50 m squares: cool north-east slopes, valley bottoms and little autumn sun. Shade keeps the ground moist. Terrain only, no finer weather. Tap a square for its growing conditions. Zoom out to see the colours of the conditions." }
-    : fine ? { title: "Growing conditions today", stops: SCORE_STOPS, left: "Poor", right: "Very good",
-        tip: "Close up, each 50 m patch has its own colour and number: its 250 m square's conditions today, moved up where the patch is shadier than its square and down where it is sunnier. The size of that step is an educated guess. Rain, temperature and soil are the same for the whole area. Not a sign that mushrooms are there. Hatched grey = nature reserve, closed to picking." }
-    : { title: "Growing conditions today", stops: SCORE_STOPS, left: "Poor", right: "Very good",
-        tip: "Colour of each 250 m forest square: how good the growing conditions are today, from poor (dark green) to very good (orange-red). Not a sign that mushrooms are there. Hatched grey = nature reserve, closed to picking." };
+    : shade ? { ...L.shade, stops: SHADE_STOPS }
+    : fine ? { ...L.fine, stops: SCORE_STOPS }
+    : { ...L.cond, stops: SCORE_STOPS };
   const html = `
     <div class="ml-title">${k.title}</div>
     <div class="ml-bar" style="background:${gradient(k.stops)}" aria-hidden="true"></div>
     <div class="ml-scale"><span>${k.left}</span><span aria-hidden="true">→</span><span>${k.right}</span></div>
-    ${shade ? `<div class="ml-note">Zoom out to see the conditions</div>` : ""}
-    ${fine ? `<div class="ml-note">50 m patches · shade counted in</div>` : ""}
-    ${replay ? "" : `<div class="ml-closed"><span class="swatch-closed" aria-hidden="true"></span> Reserve: <b>closed</b></div>`}`;
+    ${shade ? `<div class="ml-note">${L.zoomOut}</div>` : ""}
+    ${fine ? `<div class="ml-note">${L.fineNote}</div>` : ""}
+    ${replay ? "" : `<div class="ml-closed"><span class="swatch-closed" aria-hidden="true"></span> ${L.reserve}</div>`}`;
   if (el.dataset.html !== html) { el.innerHTML = html; el.dataset.html = html; }
   el.dataset.tip = k.tip;
-  el.setAttribute("aria-label", `Colour key: ${k.title}, from ${k.left} to ${k.right}.${shade ? " Zoom out to see the conditions." : ""}${replay ? "" : " Hatched grey: nature reserve, closed."}`);
+  el.setAttribute("aria-label", L.aria(k.title, k.left, k.right, shade, replay));
 }

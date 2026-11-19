@@ -3,17 +3,17 @@
 // or the rain replay.
 import type { Mode, ReplayLayer, View } from "../map/layers";
 import { cardHTML, fmtDay, RAKES_TIP, type CardInput, type Meta } from "./card";
+import { T } from "../i18n";
+
+const P = T.panel;
 
 const REPLAY_DAYS = 30;
 /** Island average per day for each thing the replay can show (null = not in the data). */
 export type ReplayData = Record<ReplayLayer, number[] | null>;
 const LAYERS: { id: ReplayLayer; label: string; icon: string; color: string; fromZero: boolean; avg: (v: number) => string; tip: string }[] = [
-  { id: "rain", label: "Rain", icon: "🌧", color: "#4f97d1", fromZero: true, avg: (v) => `${v.toFixed(1)} mm`,
-    tip: "Rain on each day." },
-  { id: "temp", label: "Temperature", icon: "🌡", color: "#e08a3c", fromZero: false, avg: (v) => `${v.toFixed(1)} °C`,
-    tip: "Average air temperature on each day." },
-  { id: "soil", label: "Soil", icon: "💧", color: "#58a593", fromZero: false, avg: (v) => `${Math.round(v)}% water`,
-    tip: "How wet the top 7 cm of soil is on each day." },
+  { id: "rain", icon: "🌧", color: "#4f97d1", fromZero: true, ...P.layers.rain },
+  { id: "temp", icon: "🌡", color: "#e08a3c", fromZero: false, ...P.layers.temp },
+  { id: "soil", icon: "💧", color: "#58a593", fromZero: false, ...P.layers.soil },
 ];
 
 export interface PanelHooks {
@@ -178,14 +178,14 @@ export class Panel {
     const d = this.meta.rain_days[i];
     const btn = this.el.querySelector<HTMLButtonElement>("#play");
     if (btn) {
-      btn.textContent = this.playing ? "❚❚ Pause" : "▶ Play";
-      btn.setAttribute("aria-label", this.playing ? "Pause the rain replay" : "Play the rain replay");
+      btn.textContent = this.playing ? P.pause : P.play;
+      btn.setAttribute("aria-label", this.playing ? P.pauseLabel : P.playLabel);
     }
     const date = this.el.querySelector("#replay-date");
     const ago = REPLAY_DAYS - 1 - i;
     if (date && this.rain) date.innerHTML = `<b>${fmtDay(d, { weekday: "short", day: "numeric", month: "short" })}</b>
-      ${ago === 0 ? "· today" : `· ${ago} day${ago === 1 ? "" : "s"} ago`}
-      <span class="muted replay-avg">Island average ${LAYERS.find((l) => l.id === this.layer)!.avg(this.rain[i])}</span>`;
+      ${ago === 0 ? P.today : P.daysAgo(ago)}
+      <span class="muted replay-avg">${P.islandAvg(LAYERS.find((l) => l.id === this.layer)!.avg(this.rain[i]))}</span>`;
     const sc = this.el.querySelector<HTMLElement>("#scrub");
     if (sc) {
       sc.setAttribute("aria-valuenow", String(i));
@@ -213,26 +213,26 @@ export class Panel {
   }
 
   private replayHTML() {
-    const back = `<button type="button" class="back-btn" id="replay-back" data-tip="Back to today's growing conditions."><span class="back-arrow" aria-hidden="true">←</span> Back to today's map</button>`;
-    if (this.rainFailed) return `${back}<p>The replay could not load. Check your connection and try again.</p>`;
-    if (!this.data || !this.rain) return `${back}<p class="muted">Loading the replay…</p>`;
+    const back = `<button type="button" class="back-btn" id="replay-back" data-tip="${P.backTip}"><span class="back-arrow" aria-hidden="true">←</span> ${P.back}</button>`;
+    if (this.rainFailed) return `${back}<p>${P.replayFailed}</p>`;
+    if (!this.data || !this.rain) return `${back}<p class="muted">${P.replayLoading}</p>`;
     const tabs = LAYERS.filter((l) => this.data![l.id]);
-    const seg = tabs.length < 2 ? "" : `<div class="seg" role="group" aria-label="What the replay shows">${tabs.map((l) =>
+    const seg = tabs.length < 2 ? "" : `<div class="seg" role="group" aria-label="${P.segLabel}">${tabs.map((l) =>
       `<button type="button" data-layer="${l.id}" data-tip="${l.tip}"><span aria-hidden="true">${l.icon}</span> ${l.label}</button>`).join("")}</div>`;
     return `${back}
       <div class="replay" id="replay">
-        <h2 class="panel-h">Replay: the last 30 days</h2>
+        <h2 class="panel-h">${P.replayTitle}</h2>
         ${seg}
         <div class="replay-row"><button id="play" class="primary-btn" type="button"></button>
           <span id="replay-date" aria-live="polite"></span></div>
-        <div class="scrub" id="scrub" role="slider" tabindex="0" aria-label="Day of the rain replay"
+        <div class="scrub" id="scrub" role="slider" tabindex="0" aria-label="${P.scrubLabel}"
           aria-valuemin="0" aria-valuemax="${REPLAY_DAYS - 1}" aria-orientation="horizontal"
-          data-tip="Each bar is one day. Taller bar = more that day, over the whole island. Drag anywhere here to move through the days.">
+          data-tip="${P.scrubTip}">
           <div class="tl" aria-hidden="true">${"<i></i>".repeat(REPLAY_DAYS)}</div>
           <div class="scrub-track" aria-hidden="true"><span class="scrub-fill"></span><span class="scrub-knob"></span></div>
-          <div class="scrub-ends" aria-hidden="true"><span>${REPLAY_DAYS - 1} days ago</span><span>Drag to move</span><span>Today</span></div>
+          <div class="scrub-ends" aria-hidden="true"><span>${P.endAgo(REPLAY_DAYS - 1)}</span><span>${P.drag}</span><span>${P.endToday}</span></div>
         </div>
-        <p class="muted small">Daily values for each ~3 km weather square, from the weather model.</p>
+        <p class="muted small">${P.replayNote}</p>
       </div>`;
   }
 
@@ -252,13 +252,13 @@ export class Panel {
     const d = this.meta.days[this.day];
     this.el.innerHTML = `
       <div class="start-row">
-        <p class="today"><b>Today</b> · ${fmtDay(d.date, { weekday: "short", day: "numeric", month: "short" })}</p>
+        <p class="today"><b>${P.todayB}</b> · ${fmtDay(d.date, { weekday: "short", day: "numeric", month: "short" })}</p>
       </div>
       <div class="start-btns">
-        <button type="button" class="chip-btn" id="replay-btn" data-tip="Watch the last 30 days move over the island, day by day: rain, temperature and soil wetness.">🌧 Weather replay</button>
-        <button type="button" class="chip-btn" data-open-card="" data-tip="Photos, season, trees and the deadly lookalikes for each mushroom.">🍄 Mushroom cards</button>
+        <button type="button" class="chip-btn" id="replay-btn" data-tip="${P.replayBtnTip}">🌧 ${P.replayBtn}</button>
+        <button type="button" class="chip-btn" data-open-card="" data-tip="${P.cardsBtnTip}">🍄 ${P.cardsBtn}</button>
       </div>
-      <p class="hint"><b>Double tap</b> the map to zoom in. <b>Tap a square</b> to see its conditions.</p>
-      <p class="no-rakes" data-tip="${RAKES_TIP}"><b>No rakes.</b> Pick by hand or knife. Put the leaf litter back.</p>`;
+      <p class="hint">${P.hint}</p>
+      <p class="no-rakes" data-tip="${RAKES_TIP}">${T.card.noRakes}</p>`;
   }
 }

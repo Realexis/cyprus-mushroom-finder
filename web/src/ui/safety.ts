@@ -1,11 +1,12 @@
 // Safety banner text and the emergency box. Wording comes from the project brief.
 
-export const SAFETY_LINE =
-  "Conditions only. Never eat a wild mushroom based on this map, an app or an AI.";
+import { T } from "../i18n";
+const S = T.safety;
+
+export const SAFETY_LINE = S.line;
 
 /** The emergency numbers, as tap-to-call links (shown on every screen). */
-export const NUMBERS_LINE =
-  `Poisoning: call <a href="tel:112">112</a> · Poison Centre <a href="tel:1401">1401</a>`;
+export const NUMBERS_LINE = S.numbers;
 
 export const WARN_ICON = `<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
   <path fill="currentColor" d="M12 2 1 21h22L12 2Zm0 6c.6 0 1 .4 1 1v5a1 1 0 1 1-2 0V9c0-.6.4-1 1-1Zm0 11.2a1.3 1.3 0 1 1 0-2.6 1.3 1.3 0 0 1 0 2.6Z"/></svg>`;
@@ -13,23 +14,20 @@ export const WARN_ICON = `<svg width="20" height="20" viewBox="0 0 24 24" aria-h
 export function emergencyHTML(): string {
   return `
   <div class="em-head" id="em-title">
-    <h2>Mushroom poisoning?</h2>
-    <div>Act now. Do not wait for symptoms.</div>
+    <h2>${S.emTitle}</h2>
+    <div>${S.emSub}</div>
   </div>
   <div class="em-body">
     <a class="call" href="tel:112">
-      <span>Call 112<small>Ambulance</small></span><span aria-hidden="true">📞</span>
+      <span>${S.call112}<small>${S.ambulance}</small></span><span aria-hidden="true">📞</span>
     </a>
     <a class="call secondary" href="tel:1401">
-      <span>Cyprus Poison Centre: 1401</span><span aria-hidden="true">📞</span>
+      <span>${S.call1401}</span><span aria-hidden="true">📞</span>
     </a>
     <ul>
-      <li><b>Do not wait for symptoms.</b> Death cap poisons show no symptoms for <b>6–12 hours</b>.
-          Some Cyprus species act after about <b>48 hours</b>.</li>
-      <li><b>Bring the mushroom</b> (or what is left of it) to the hospital.</li>
-      <li><b>Cooking does not remove the poison.</b></li>
+      ${S.emList.map((l) => `<li>${l}</li>`).join("\n      ")}
     </ul>
-    <form method="dialog"><button class="em-close">Close</button></form>
+    <form method="dialog"><button class="em-close">${S.close}</button></form>
   </div>`;
 }
 
@@ -59,30 +57,26 @@ const store = (box: () => Storage): void => {
 
 const FULL_HTML = `
   <div class="em-head">
-    <h2 id="agree-title">${WARN_ICON} This is not a game</h2>
-    <div>Some wild mushrooms in Cyprus can kill. They can look just like others.</div>
+    <h2 id="agree-title">${WARN_ICON} ${S.fullTitle}</h2>
+    <div>${S.fullSub}</div>
   </div>
   <div class="em-body">
     <ul>
-      <li><b>Never eat a mushroom based on pictures or guesses.</b> Not from this site, an app or an AI.</li>
-      <li><b>Always have an experienced person check it,</b> in person. Trust them before any screen.</li>
-      <li><b>Learn first. Do not just go and guess.</b> Go out with people who know mushrooms.</li>
-      <li><b>Good conditions grow deadly mushrooms too.</b> A high score says nothing about what a mushroom is. This site is not enough to decide.</li>
+      ${S.fullList.map((l) => `<li>${l}</li>`).join("\n      ")}
     </ul>
     <div class="agree-foot">
       <p class="agree-numbers">${NUMBERS_LINE}</p>
-      <button type="button" class="agree-yes">I understand and agree</button>
-      <p class="agree-note">Shroomy is a hobby project in beta. It can be wrong.</p>
+      <button type="button" class="agree-yes">${S.agree}</button>
+      <p class="agree-note">${S.hobby}</p>
     </div>
   </div>`;
 
 const SHORT_HTML = `
   <div class="em-body">
-    <h2 id="agree-title" class="agree-short-title">${WARN_ICON} Not a game</h2>
-    <p class="agree-short-line"><b>Never eat a mushroom based on pictures or guesses.</b>
-      Always have an experienced person check it.</p>
-    <button type="button" class="agree-yes">OK, I agree</button>
-    <p class="agree-note">${NUMBERS_LINE} · <button type="button" class="agree-more">Read the full warning</button></p>
+    <h2 id="agree-title" class="agree-short-title">${WARN_ICON} ${S.shortTitle}</h2>
+    <p class="agree-short-line">${S.shortLine}</p>
+    <button type="button" class="agree-yes">${S.shortOk}</button>
+    <p class="agree-note">${NUMBERS_LINE} · <button type="button" class="agree-more">${S.readFull}</button></p>
   </div>`;
 
 /** Covers the page until the button is pressed. Nothing is sent. Screenshot robots are not asked. */

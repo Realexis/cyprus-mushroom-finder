@@ -8,7 +8,8 @@
 // The request is made with no Referer header, so the page address cannot leak through it.
 
 /** The GoatCounter site code: "abc" for abc.goatcounter.com. Empty = the counter is off. */
-export const COUNTER_SITE = "realexis";
+/** A test copy is built with VITE_COUNTER=off, so its visits never mix with the live numbers. */
+export const COUNTER_SITE = import.meta.env.VITE_COUNTER === "off" ? "" : "realexis";
 
 const nav = navigator as Navigator & { globalPrivacyControl?: boolean; webdriver?: boolean };
 const LOCAL = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) || location.protocol === "file:";
