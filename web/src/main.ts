@@ -142,6 +142,21 @@ async function main() {
       : { top: 24, right: 60, bottom: 24, left: sheet.offsetWidth + 40 };
     map.fitBounds(CYPRUS, { padding: pad, duration: 0 });
   };
+  // Phones: the replay panel is tall and would crop the island. Opening the replay glides the map
+  // out so the whole island sits above the panel; going back glides it to where it was.
+  let beforeReplay: { center: maplibregl.LngLat; zoom: number; bearing: number; pitch: number; padding: maplibregl.PaddingOptions } | null = null;
+  const frameReplay = (on: boolean) => {
+    const duration = matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 900;
+    if (on) {
+      if (!phone.matches || fullMap.on || beforeReplay) return;
+      beforeReplay = { center: map.getCenter(), zoom: map.getZoom(), bearing: map.getBearing(), pitch: map.getPitch(), padding: map.getPadding() };
+      map.fitBounds(CYPRUS, { padding: { top: 8, right: 8, left: 8, bottom: sheet.offsetHeight + 8 }, bearing: 0, pitch: 0, duration });
+    } else if (beforeReplay) {
+      const was = beforeReplay;
+      beforeReplay = null;
+      if (!fullMap.on) map.easeTo({ ...was, duration });
+    }
+  };
   // Full map mode (whole island, flat, north up; for screenshots) and <html data-map-ready>.
   const mapBusy = trackMapReady(map, () => !!map.getLayer("cells-fill"));
   const fullMap = new FullMap(map, { before: () => hideTip(), after: () => fitCyprus(), busy: mapBusy });
@@ -175,7 +190,7 @@ async function main() {
   const legendEl = document.getElementById("map-legend")!;
   const openSpecies = mountSpecies(() => Number(meta.days[day].date.slice(5, 7)));
   const panel: Panel = new Panel(sheet, meta, day, {
-    onMode: (p) => { mapBusy(); applyView(map, p.view); drawLegend(); },
+    onMode: (p) => { mapBusy(); applyView(map, p.view); drawLegend(); frameReplay(p.view.mode === "replay"); },
     onFrame: (p) => { setReplayFrame(map, p.view); drawLegend(); },
     loadRain: async () => {
       const rain = await fetch(abs("data/rain.geojson"), { cache: "no-cache" }).then((r) => {
