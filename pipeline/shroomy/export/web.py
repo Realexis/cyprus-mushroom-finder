@@ -150,6 +150,34 @@ def public_credits(sources: dict) -> list:
             for v in sources.values() if isinstance(v, dict) and "credit" in v and v.get("public", True)]
 
 
+def weather_squares(w, t0, to_ll):
+    """One square per weather point for the replay: 30 past days + today + the forecast, per day.
+
+    d = rain (mm), t = mean air temperature (deg C), m = water in the top 7 cm of soil (% of volume).
+    A day with no value is written as null (the map then leaves the square empty).
+    """
+    half = config.load("region")["grids"]["weather_m"] / 2
+    p, tm, sm = w["precip"], w["tmean"], w["soil"]
+    sl = slice(t0 - 29, t0 + N_DAYS)
+
+    def series(a, nd, k=1.0):
+        return [None if np.isnan(v) else round(float(v) * k, nd) for v in a]
+
+    feats = []
+    for i in range(len(w["x"])):
+        x, y = float(w["x"][i]), float(w["y"][i])
+        xs, ys = to_ll.transform([x - half, x + half, x + half, x - half, x - half],
+                                 [y - half, y - half, y + half, y + half, y - half])
+        props = {"r7": float(np.nansum(p[i, t0 - 6: t0 + 1])),
+                 "r30": float(np.nansum(p[i, t0 - 29: t0 + 1])),
+                 "d": [round(float(v), 1) for v in p[i, sl]],
+                 "t": series(tm[i, sl], 1),
+                 "m": series(sm[i, sl], 0, 100.0)}
+        feats.append({"type": "Feature", "properties": props,
+                      "geometry": {"type": "Polygon", "coordinates": [list(zip(xs, ys))]}})
+    return feats
+
+
 def build(run, private=True):            # `private` is kept for old callers; everything is public now
     w = np.load(run)
     today = date.fromisoformat(str(w["today"]))
@@ -253,19 +281,7 @@ def build(run, private=True):            # `private` is kept for old callers; ev
     print(f" - {len(feats)} public hexagons ({sum(z['score'] is not None for z in zones)} on the general map)")
 
     # ---------------------------------------------------------- rain squares (public)
-    half = config.load("region")["grids"]["weather_m"] / 2
-    p = w["precip"]
-    rfeats = []
-    for i in range(len(w["x"])):
-        x, y = float(w["x"][i]), float(w["y"][i])
-        xs, ys = to_ll.transform([x - half, x + half, x + half, x - half, x - half],
-                                 [y - half, y - half, y + half, y + half, y - half])
-        props = {"r7": float(np.nansum(p[i, t0 - 6: t0 + 1])),
-                 "r30": float(np.nansum(p[i, t0 - 29: t0 + 1])),
-                 "d": [round(float(v), 1) for v in p[i, t0 - 29: t0 + N_DAYS]]}
-        rfeats.append({"type": "Feature", "properties": props,
-                       "geometry": {"type": "Polygon", "coordinates": [list(zip(xs, ys))]}})
-    _write_geojson(PUBLIC / "rain.geojson", rfeats, ndigits=4)
+    _write_geojson(PUBLIC / "rain.geojson", weather_squares(w, t0, to_ll), ndigits=4)
 
     # ---------------------------------------------------------- reserves (public info)
     shutil.copy(STATIC / "reserves.geojson", PUBLIC / "reserves.geojson")

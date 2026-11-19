@@ -1,6 +1,15 @@
 // The small colour key that always sits on the map: today's growing conditions (with the
-// closed nature reserves), the 50 m shade close up, or the rain of one day during the rain replay.
-import { RAIN1_STOPS, SCORE_STOPS, SHADE_STOPS, SHADE_ZOOM, type View } from "../map/layers";
+// closed nature reserves), the 50 m shade close up, or one day of the replay (rain, temperature or soil wetness).
+import { RAIN1_STOPS, SCORE_STOPS, SHADE_STOPS, SHADE_ZOOM, SOIL_STOPS, TEMP_STOPS, type View } from "../map/layers";
+
+const REPLAY_KEY = {
+  rain: { title: "Rain that day", stops: RAIN1_STOPS.slice(1), left: "0.5 mm", right: "30+ mm",
+    tip: "Rain on the day shown in the replay. Pale = a little, dark blue = a lot." },
+  temp: { title: "Temperature that day", stops: TEMP_STOPS, left: "0 °C", right: "30 °C",
+    tip: "Average air temperature on the day shown in the replay. Blue = cold, pale = mild, red = warm." },
+  soil: { title: "Soil wetness that day", stops: SOIL_STOPS, left: "Dry", right: "Wet",
+    tip: "How much water the top 7 cm of soil holds on the day shown, from the weather model. Sand = dry, dark blue = wet. Soils differ, so compare a place with itself over time." },
+};
 
 function gradient(stops: [number, string][]) {
   const lo = stops[0][0], hi = stops[stops.length - 1][0];
@@ -11,9 +20,7 @@ export function renderLegend(el: HTMLElement, v: View, zoom: number, hasShade: b
   const replay = v.mode === "replay";
   const shade = !replay && hasShade && !hasHeat && zoom >= SHADE_ZOOM;
   const fine = !replay && hasHeat && zoom >= SHADE_ZOOM;      // Lab: the 50 m heat map is showing
-  const k = replay
-    ? { title: "Rain that day", stops: RAIN1_STOPS.slice(1), left: "0.5 mm", right: "30+ mm",
-        tip: "Rain on the day shown in the replay. Pale = a little, dark blue = a lot." }
+  const k = replay ? REPLAY_KEY[v.layer]
     : shade ? { title: "Shade (50 m)", stops: SHADE_STOPS, left: "Sunny", right: "Deep shade",
         tip: "Close up, the forest shows shade in 50 m squares: cool north-east slopes, valley bottoms and little autumn sun. Shade keeps the ground moist. Terrain only, no finer weather. Tap a square for its growing conditions. Zoom out to see the colours of the conditions." }
     : fine ? { title: "Growing conditions today", stops: SCORE_STOPS, left: "Poor", right: "Very good",

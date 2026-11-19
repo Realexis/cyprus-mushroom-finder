@@ -176,16 +176,24 @@ async function main() {
   const openSpecies = mountSpecies(() => Number(meta.days[day].date.slice(5, 7)));
   const panel: Panel = new Panel(sheet, meta, day, {
     onMode: (p) => { mapBusy(); applyView(map, p.view); drawLegend(); },
-    onFrame: (p) => setReplayFrame(map, p.view),
+    onFrame: (p) => { setReplayFrame(map, p.view); drawLegend(); },
     loadRain: async () => {
       const rain = await fetch(abs("data/rain.geojson"), { cache: "no-cache" }).then((r) => {
         if (!r.ok) throw new Error(`rain ${r.status}`);
         return r.json() as Promise<GeoJSON.FeatureCollection>;
       });
       setRainData(map, rain);
-      const sum = new Array(30).fill(0);                // island-average rain per day, for the timeline
-      for (const f of rain.features) (f.properties as { d: number[] }).d.forEach((x, k) => { if (k < 30) sum[k] += x ?? 0; });
-      return sum.map((x) => (rain.features.length ? x / rain.features.length : 0));
+      // island average per day, for the timeline (temperature and soil: only if the file has them)
+      const mean = (key: "d" | "t" | "m"): number[] | null => {
+        const sum = new Array(30).fill(0), n = new Array(30).fill(0);
+        for (const f of rain.features) {
+          const a = (f.properties as Record<string, (number | null)[] | undefined>)[key];
+          if (!a) continue;
+          for (let k = 0; k < 30; k++) if (typeof a[k] === "number") { sum[k] += a[k] as number; n[k]++; }
+        }
+        return n.every((c) => c > 0) ? sum.map((x, k) => x / n[k]) : null;
+      };
+      return { rain: mean("d") ?? new Array(30).fill(0), temp: mean("t"), soil: mean("m") };
     },
     onCardClosed: () => { picked = null; applySelection(); },
     openSpecies,

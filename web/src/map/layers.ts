@@ -6,7 +6,9 @@ import type { Theme } from "./style";
 export type Mode = "conditions" | "replay";
 
 /** What the map shows: today's score (day = index in meta.days), or one day of the rain replay. */
-export interface View { day: number; mode: Mode; replayIndex: number; }
+export interface View { day: number; mode: Mode; replayIndex: number; layer: ReplayLayer; }
+/** What the replay shows, day by day, for each ~3 km weather square. */
+export type ReplayLayer = "rain" | "temp" | "soil";
 
 // Score colours: calm at the low end, warm glow at the top. Lite: brighter top than V5
 // (V5: 70 #d9b44a, 85 #ee8e4a, 100 #ff6a4d), so "Good" and "Very good" stand out.
@@ -30,7 +32,20 @@ function ramp(prop: ExpressionSpecification, stops: [number, string][]): Express
 }
 
 const cellColor = (v: View) => ramp(["to-number", ["get", `s${v.day}`], 0], SCORE_STOPS);
-const rainColor = (v: View) => ramp(["to-number", ["at", v.replayIndex, ["get", "d"]], 0], RAIN1_STOPS);
+/** Daily mean air temperature (deg C): cold = blue, mild = pale, warm = orange-red. */
+export const TEMP_STOPS: [number, string][] = [[0, "#2b4c9b"], [8, "#6fa8dc"], [13, "#f3ecd2"], [18, "#f6c177"], [23, "#e07b39"], [30, "#a3261a"]];
+/** Water in the top 7 cm of soil (% of volume): dry = sand, wet = deep blue-green. */
+export const SOIL_STOPS: [number, string][] = [[5, "#ead9b0"], [15, "#b9cf8f"], [25, "#58a593"], [35, "#2a6f97"], [45, "#173a6b"]];
+const REPLAY: Record<ReplayLayer, { prop: string; stops: [number, string][] }> = {
+  rain: { prop: "d", stops: RAIN1_STOPS }, temp: { prop: "t", stops: TEMP_STOPS }, soil: { prop: "m", stops: SOIL_STOPS },
+};
+const rainColor = (v: View): ExpressionSpecification => {
+  const { prop, stops } = REPLAY[v.layer];
+  const val = ["at", v.replayIndex, ["get", prop]] as unknown as ExpressionSpecification;
+  if (v.layer === "rain") return ramp(["to-number", val, 0], stops);
+  // a square with no value that day stays empty (never drawn as 0)
+  return ["case", ["==", ["typeof", val], "number"], ramp(["to-number", val, 0], stops), "rgba(0,0,0,0)"] as unknown as ExpressionSpecification;
+};
 
 function hatch(theme: Theme): ImageData {
   const s = 16, c = document.createElement("canvas");

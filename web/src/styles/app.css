@@ -183,6 +183,14 @@ a { color: var(--accent); }
 /* two fixed lines, so the slider never jumps under the finger while the day changes */
 #replay-date { flex: 1; min-width: 0; line-height: 1.35; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .replay-avg { display: block; }
+/* rain / temperature / soil: one row of three big buttons */
+.seg { display: flex; gap: 4px; margin: 2px 0 12px; padding: 4px; border-radius: 14px; background: var(--surface-2); border: 1px solid var(--line); }
+.seg button {
+  flex: 1 1 auto; min-width: 0; min-height: 44px; padding: 6px 4px; border: 0; border-radius: 10px; background: transparent;
+  color: var(--ink); font: inherit; font-size: var(--fs-1); font-weight: 600; cursor: pointer; white-space: nowrap;
+}
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+.seg button:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 /* One big slider: the bars, the track and the knob all take the drag (mouse or finger). */
 .scrub {
   --at: 0%; position: relative; margin-top: 8px; padding: 6px 0 2px; border-radius: 10px;
