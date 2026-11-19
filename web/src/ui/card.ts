@@ -3,7 +3,7 @@
 // 4 Google Maps link, 5 the mushroom clock. Today only. Growing conditions only.
 import { SCORE_STOPS } from "../map/layers";
 import { served } from "../map/files";
-import { inSeasonHere, spText } from "./species";
+import { inSeasonHere, nameLines } from "./species";
 import { heat50, type Heat50 } from "../map/heat50";
 import { T } from "../i18n";
 
@@ -223,7 +223,7 @@ export function cardHTML(c: CardInput, meta: Meta, day: number): string {
     ${sp.length ? `<ul class="sp-list">${sp.map((s) => `<li><button type="button" class="sp-open" data-open-card="${s.code}"
         data-tip="${C.openCardTip}">
         ${s.photos[0] ? `<img class="sp-thumb" src="${esc(s.photos[0].url)}" alt="" loading="lazy" referrerpolicy="no-referrer" />` : `<span class="sp-thumb"></span>`}
-        <span class="sp-name"><i>${esc(s.latin)}</i><span class="sp-common">${esc(spText(s).common)}</span></span>
+        <span class="sp-name">${nameLines(s)[0]}<span class="sp-common">${nameLines(s)[1]}</span></span>
         <span class="sp-open-go" aria-hidden="true">›</span></button></li>`).join("")}</ul>
       <p class="muted small">${C.fitNote}</p>`
       : `<p class="muted small">${C.noneInSeason(month)}</p>`}`;

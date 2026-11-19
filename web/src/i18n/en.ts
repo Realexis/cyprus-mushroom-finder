@@ -17,7 +17,7 @@ export interface FieldNotes {
   check: string[];            // things still to confirm (behind the info button)
 }
 /** Text that comes from the pipeline inside species.json. English uses the file's own text (null). */
-export interface SpeciesText { common: string; local: string; trees_text: string; altitude_text: string; season_text: string; notes: string[]; }
+export interface SpeciesText { /** The name shown big, when it is not the Latin name (Greek build). */ title?: string; common: string; local: string; trees_text: string; altitude_text: string; season_text: string; notes: string[]; }
 
 export const en = {
   locale: "en-GB",

@@ -355,10 +355,15 @@ dialog.agree.short::backdrop { background: rgba(0, 0, 0, 0.55); backdrop-filter:
    Greek words are longer than English ones. These rules only apply to the Greek pages. */
 :lang(el) .start-btns .chip-btn { flex: 1 1 0; white-space: normal; padding: 4px 10px; line-height: 1.2; }
 @media (max-width: 899px) {
-  :lang(el) .map-legend { width: 196px; }
+  :lang(el) .map-legend { width: 218px; }
+  :lang(el) .ml-closed { white-space: nowrap; font-size: 13px; }
   :root.full-map:lang(el) .map-legend { width: 176px; }
 }
 @media (max-width: 480px) {
   :lang(el) .replay-avg { font-size: var(--fs-0); }   /* "Μέσος όρος νησιού: 21% νερό" fits beside the button */
   :lang(el) .safety { font-size: 0.8rem; }           /* the banner stays on two lines on a phone */
 }
+/* The Greek name is the big one; the Latin name sits small under it. */
+:lang(el) .sp-name { font-weight: 700; font-size: var(--fs-1); }
+:lang(el) .sp-name .sp-common { font-weight: 400; }
+:lang(el) .sp-name .sp-common i { font-weight: 400; font-size: inherit; }

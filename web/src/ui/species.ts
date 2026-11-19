@@ -35,6 +35,12 @@ const MONTH_LETTER = T.monthLetter, MONTH_SHORT = T.monthShort, MONTH_LONG = T.m
 
 /** A species' text in the language of this build (English: as written in species.json). */
 export const spText = (sp: Species): SpeciesText => X.text?.[sp.code] ?? sp;
+/** The two name lines: [big, small]. English: Latin name, then the common name.
+ *  Greek: the Greek name big, the Latin name small (Real, 19 Nov 2026). Both are escaped HTML. */
+export function nameLines(sp: Species): [string, string] {
+  const tx = spText(sp);
+  return tx.title ? [esc(tx.title), `<i>${esc(sp.latin)}</i>`] : [`<i>${esc(sp.latin)}</i>`, esc(tx.common)];
+}
 const lkText = (l: Lookalike): { common: string; note: string } => X.lookText?.[l.latin] ?? l;
 
 // ------------------------------------------------------------------ field notes (researched 2026-11-12)
@@ -149,8 +155,8 @@ export function mountSpecies(month: () => number): (code?: string) => void {
         data-tip="${X.rowTip}">
       ${s.photos[0] ? `<img src="${esc(s.photos[0].url)}" alt="" loading="lazy" referrerpolicy="no-referrer" />` : ""}
       <span class="sc-row-text">
-        <b><i>${esc(s.latin)}</i></b>
-        <span class="sc-soft">${esc(spText(s).common)}</span>
+        <b>${nameLines(s)[0]}</b>
+        <span class="sc-soft">${nameLines(s)[1]}</span>
         ${on ? `<span class="sc-chip on">${icon("check", 16)}${X.inSeason}</span>` : `<span class="sc-chip">${esc(spText(s).season_text)}</span>`}
       </span>
       ${icon("next")}
@@ -180,6 +186,8 @@ export function mountSpecies(month: () => number): (code?: string) => void {
   const speciesHTML = (sp: Species) => {
     const f = FIELD[sp.code];
     const tx = spText(sp);
+    // The big name already is the local name: do not repeat it (unless its spelling is still to confirm).
+    const sameName = !!tx.title && tx.title.toLowerCase() === tx.local && sp.local_confirmed;
     const shots = sets[`sp-${sp.code}`];
     const onNow = inSeason(sp, now);
     const k = monthsUntil(sp, now), nextM = ((now - 1 + k) % 12) + 1;
@@ -195,8 +203,8 @@ export function mountSpecies(month: () => number): (code?: string) => void {
           </ul>
           ${shots.length > 1 ? `<div class="sc-dots" aria-hidden="true">${shots.map((_, i) => `<i class="${i ? "" : "on"}"></i>`).join("")}</div>` : ""}
         </div>
-        <h3 class="sc-name"><i>${esc(sp.latin)}</i></h3>
-        <p class="sc-sub">${X.subLine(esc(tx.common), esc(tx.local))}${sp.local_confirmed ? "" : `<span class="sc-q" tabindex="0"
+        <h3 class="sc-name">${nameLines(sp)[0]}</h3>
+        <p class="sc-sub">${tx.title ? nameLines(sp)[1] : ""}${sameName ? "" : `${tx.title ? ". " : ""}${X.subLine(tx.title ? "" : esc(tx.common), esc(tx.local))}`}${sp.local_confirmed ? "" : `<span class="sc-q" tabindex="0"
           data-tip="${X.spellTip}">?</span>`}</p>
         <a class="sc-jump" href="#sc-danger-h" data-act="jump">${WARN_ICON}<span>${X.jump(nDeadly)}</span></a>
       </section>
@@ -239,7 +247,7 @@ export function mountSpecies(month: () => number): (code?: string) => void {
     const back = `<button type="button" class="sc-round" data-act="list" aria-label="${X.backAll}" data-tip="${X.backAllTip}">${icon("back")}</button>`;
     if (view.kind === "sp") {
       const sp = speciesByCode(view.code)!;
-      return `${back}<h2 class="sc-title"><i>${esc(sp.latin)}</i><span>${esc(spText(sp).common)}</span></h2>`;
+      return `${back}<h2 class="sc-title">${nameLines(sp)[0]}<span>${nameLines(sp)[1]}</span></h2>`;
     }
     if (view.kind === "looks") return `${back}<h2 class="sc-title">${X.looksTitle}<span>${X.looksSub}</span></h2>`;
     return `<h2 class="sc-title">${X.listTitle}<span>${X.listSub}</span></h2>`;

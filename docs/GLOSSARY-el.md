@@ -4,6 +4,8 @@
 Real asked that the Greek stay as close as possible to the official sources the project already used.
 
 **Not checked by a native speaker.** Every Greek sentence on the site was written by an AI from these terms.
+On 19 Nov 2026 two independent AI proofreads were done (one for grammar and natural wording, one a blind
+back-translation of the safety texts) and their findings were fixed. That is not a native speaker's check.
 
 **How to read "Source".**
 
@@ -58,7 +60,7 @@ Some of the sources say that a mushroom can be eaten. The site never repeats tha
 | the sickener (*Russula emetica*) | "κόκκινη έως ροζ Russula" | Own translation | A description, not a name. No Greek name in a source |
 | yellowdrop milk cap (*Lactarius chrysorrheus*) | Latin name only | - | No Greek name in a source |
 | false morel (*Gyromitra*) | ψεύτικη μορχέλα | AG481 | |
-| chanterelle | κανθαρέλλα (Cantharellus) | Own translation | Not in a source |
+| chanterelle | κανθαρέλα (Cantharellus) | Own translation | Not in a source |
 
 ## 2. Mushroom parts and general words
 
@@ -90,14 +92,14 @@ Some of the sources say that a mushroom can be eaten. The site never repeats tha
 | habitat | οικότοπος | FD-M, FD-HAB |
 | altitude; low, middle, high | υψόμετρο; χαμηλό, μεσαίο, ψηλό | FD-M («χαμηλά και μεσαία υψόμετρα»), KYK («στα ψηλότερα υψόμετρα») |
 | Cyprus Mycological Association | Μυκητολογικός Σύνδεσμος Κύπρου | AG481, DIA |
-| rating words: very good, good, fair, poor | πολύ καλές, καλές, μέτριες, φτωχές (συνθήκες) | Own translation |
+| rating words: very good, good, fair, poor | πολύ καλές, καλές, μέτριες, κακές (συνθήκες) | Own translation |
 | mushroom clock | ρολόι των μανιταριών | Own translation |
 | 250 m square; 50 m patch | τετράγωνο 250 m; κομμάτι 50 m | Own translation |
 | shade | σκιά | Own translation |
 | score | βαθμολογία | Own translation |
 | weather replay | αναδρομή καιρού | Own translation |
 | mushroom cards | κάρτες μανιταριών | Own translation |
-| field notes | σημειώσεις πεδίου | Own translation |
+| field notes | περιγραφές | Own translation |
 | public records, sightings | δημόσιες καταγραφές, παρατηρήσεις | Own translation |
 
 ## 3. Trees and forests
@@ -120,7 +122,7 @@ Some of the sources say that a mushroom can be eaten. The site never repeats tha
 | recently burned areas | πρόσφατα καμένες περιοχές | KYK |
 | slopes and valleys | πλαγιές και κοιλάδες | FD-M |
 | pine needles | πευκοβελόνες | AG481 |
-| leaf litter | φυλλάδα | FD-ANN (the newest text; it explains the word). FD-M and LAW say φυλλοτάπητας, AG481 φυλλοστρωμνή |
+| leaf litter | τα πεσμένα φύλλα; φυλλάδα only on the About page, with an explanation | φυλλάδα: FD-ANN (the newest text; it explains the word). To most readers φυλλάδα means a pamphlet, so the short lines say "τα πεσμένα φύλλα" (own wording, from FD-ANN «πεσμένα φύλλα»). FD-M and LAW say φυλλοτάπητας, AG481 φυλλοστρωμνή |
 | forest track | δασικός δρόμος | LAW, KYK |
 | state forests | Κρατικά Δάση | FD-M, LAW |
 | Troodos | Τρόοδος, του Τροόδους | FD-PA, AG481 |
@@ -135,12 +137,12 @@ Some of the sources say that a mushroom can be eaten. The site never repeats tha
 |---|---|---|
 | nature reserve | φυσικό απόθεμα | FD-M, FD-PA, LAW |
 | Picking is allowed in state forests, but not in nature reserves | Η συλλογή μανιταριών από τα Κρατικά Δάση επιτρέπεται, όχι όμως στα φυσικά αποθέματα | FD-M («η συλλογή μανιταριών από τα Κρατικά Δάση επιτρέπεται (εξαιρούνται οι περιοχές που κηρύσσονται ως φυσικό απόθεμα)») |
-| rakes and tools | τσουγκράνες και εργαλεία | FD-ANN («Δεν χρησιμοποιούμε τσουγκράνες, «χτένες» ή άλλα εργαλεία»), LAW («τσουγκράνα ή άλλο εργαλείο») |
+| rakes and tools | τσουγκράνες και άλλα εργαλεία που σκαλίζουν το έδαφος | FD-ANN («Δεν χρησιμοποιούμε τσουγκράνες, «χτένες» ή άλλα εργαλεία»), LAW («τσουγκράνα ή άλλο εργαλείο») |
 | is banned | απαγορεύεται | FD-ANN |
 | up to 1 year in prison, up to €5,000 fine, or both | φυλάκιση μέχρι ένα έτος ή χρηματική ποινή μέχρι €5.000 ή και οι δύο ποινές | LAW art. 33; plain wording as in FD-EASTER |
 | no fires in forests or within 2 km | όχι φωτιές μέσα στα δάση ή σε απόσταση 2 km από αυτά | FD-EASTER («εντός των κρατικών δασών ή σε απόσταση 2Κm»), LAW art. 32 |
 | without a permit | χωρίς άδεια | FD-EASTER |
-| Put the leaf litter back | Βάζουμε τη φυλλάδα πίσω στη θέση της | FD-ANN («την επανατοποθετούμε στη θέση της») |
+| Put the leaf litter back | Βάζουμε τα πεσμένα φύλλα πίσω στη θέση τους | FD-ANN («την επανατοποθετούμε στη θέση της») |
 | Pick by hand or knife | Συλλέγουμε με το χέρι ή με μαχαίρι | Own translation (the "we" form follows FD-ANN) |
 | Department of Forests | Τμήμα Δασών | FD-M |
 | closed (reserve) | κλειστό | Own translation |
@@ -154,7 +156,7 @@ Some of the sources say that a mushroom can be eaten. The site never repeats tha
 | poisoning | δηλητηρίαση | AG481, DIA |
 | symptoms | συμπτώματα | AG481 |
 | Do not wait for symptoms | Μην περιμένετε συμπτώματα | **Own translation.** No official Greek wording found |
-| Bring the mushroom to the hospital | Φέρτε το μανιτάρι στο νοσοκομείο | **Own translation.** No official Greek wording found |
+| Bring the mushroom to the hospital | Πάρτε μαζί σας το μανιτάρι στο νοσοκομείο | **Own translation.** No official Greek wording found |
 | Cooking does not remove the poison | Το μαγείρεμα δεν αφαιρεί το δηλητήριο | Own translation |
 | safety banner: "Conditions only. Never eat a wild mushroom based on this map, an app or an AI." | Μόνο συνθήκες. Ποτέ μην φάτε άγριο μανιτάρι με βάση αυτόν τον χάρτη, μια εφαρμογή ή το AI. | Own translation |
 | "This is not a game" | Αυτό δεν είναι παιχνίδι | Own translation |
