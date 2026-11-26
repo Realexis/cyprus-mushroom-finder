@@ -5,7 +5,9 @@
 > full map (`?full=1`). Same scores as V5 (the pipeline is unchanged).
 > Preview: https://realexis.github.io/cyprus-mushroom-finder-preview/lite/
 > Daily update: Real's Mac runs `scripts/lite-daily.sh` (launchd `local.shroomy.lite-daily`, 06:30 Cyprus time,
-> retries later in the day). It builds the saved `lite` branch and publishes only the preview's `lite/` folder.
+> retries later in the day) from the robot's own copy in `~/Library/Application Support/shroomy-lite-robot/repo`
+> (macOS blocks timed jobs from the Desktop). Set up with `scripts/lite-robot-setup.sh`. Each run takes the newest
+> pushed `lite` code from GitHub and publishes only the preview's `lite/` folder.
 
 A map of Cyprus showing where **growing conditions** are right for wild mushrooms.
 

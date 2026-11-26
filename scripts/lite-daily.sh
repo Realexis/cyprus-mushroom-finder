@@ -1,8 +1,15 @@
 #!/usr/bin/env bash
-# Shroomy Lite daily update, run by this Mac (launchd: ~/Library/LaunchAgents/local.shroomy.lite-daily.plist).
+# Shroomy Lite daily update, run by this Mac (launchd: ~/Library/LaunchAgents/local.shroomy.lite-daily.plist,
+# made by scripts/lite-robot-setup.sh).
 #
+# It runs from the robot's OWN copy of the project, in
+#   ~/Library/Application Support/shroomy-lite-robot/repo
+# and never from the Desktop: macOS does not let a timed job read the Desktop folder
+# ("Operation not permitted"), so a job pointing at the Desktop never started (14-26 Nov 2026).
+#
+# 0. Take the newest SAVED version of the `lite` branch from GitHub (never half-done edits).
 # 1. Fetch today's weather and score the squares (the same engine as V5: pipeline/shroomy/daily.py).
-# 2. Build the site from the last SAVED version of the `lite` branch (never from half-done edits).
+# 2. Build the site.
 # 3. Publish ONLY the lite/ folder of the preview site (repo cyprus-mushroom-finder-preview,
 #    branch gh-pages). Other folders are never touched. Never a force-push.
 #
@@ -16,6 +23,7 @@ export PATH="$HOME/Library/pnpm/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/b
 
 REPO="$(cd "$(dirname "$0")/.." && pwd)"
 HOME_DIR="$HOME/Library/Application Support/shroomy-lite-robot"
+case "$REPO" in "$HOME_DIR"/*) ;; *) echo "Run the robot's own copy ($HOME_DIR/repo/scripts/lite-daily.sh), not $REPO"; exit 1 ;; esac
 CLONE="$HOME_DIR/preview"
 PREVIEW_URL=https://github.com/Realexis/cyprus-mushroom-finder-preview.git
 TODAY=$(TZ=Asia/Nicosia date +%F)
@@ -34,24 +42,39 @@ if ! mkdir "$LOCK" 2>/dev/null; then
   # A lock older than 3 hours is left over from a crash.
   if [ -n "$(find "$LOCK" -maxdepth 0 -mmin +180 2>/dev/null)" ]; then rm -rf "$LOCK"; mkdir "$LOCK"; else say "another run is busy"; exit 0; fi
 fi
-TMP=$(mktemp -d)
-trap 'rm -rf "$LOCK" "$TMP"' EXIT
+trap 'rm -rf "$LOCK"' EXIT
 
 if [ -z "${FORCE:-}" ] && [ "$(cat "$HOME_DIR/last_ok" 2>/dev/null)" = "$TODAY" ]; then say "already published for $TODAY"; exit 0; fi
 say "▶ Shroomy Lite daily update for $TODAY"
+
+# 0. Newest saved code. If GitHub cannot be reached, carry on with the code already here.
+WAS=$(git -C "$REPO" rev-parse HEAD)
+if git -C "$REPO" fetch -q origin lite 2>/dev/null; then
+  git -C "$REPO" merge -q --ff-only FETCH_HEAD || fail "the robot's copy has its own changes, cannot take the new code"
+  # New code came in: start again so THIS run uses it (bash has already read the old script).
+  if [ "$WAS" != "$(git -C "$REPO" rev-parse HEAD)" ] && [ -z "${LITE_RESTARTED:-}" ]; then
+    say "new code, starting again with it"
+    rm -rf "$LOCK"; trap - EXIT
+    LITE_RESTARTED=1 exec /bin/bash "$0" "$@"
+  fi
+else
+  say "could not reach GitHub for new code, using the code already here"
+fi
+say "code: $(git -C "$REPO" log -1 --format='%h %s')"
+LOCKSUM=$(shasum "$REPO/web/package-lock.json" | cut -d' ' -f1)
+if [ "$LOCKSUM" != "$(cat "$HOME_DIR/npm_ok" 2>/dev/null)" ] || [ ! -d "$REPO/web/node_modules" ]; then
+  (cd "$REPO/web" && npm ci >"$HOME_DIR/npm.log" 2>&1) || fail "could not install the site's building tools"
+  echo "$LOCKSUM" > "$HOME_DIR/npm_ok"
+fi
 
 # 1. Weather + scores -> web/public/data (today + 7 days, public files only).
 (cd "$REPO/pipeline" && uv run python -m shroomy.daily --public) || fail "weather or scoring step failed"
 RUN=$(python3 -c "import json,sys; print(json.load(open(sys.argv[1]))['weather_run'])" "$REPO/web/public/data/meta.json")
 [ "$RUN" = "$TODAY" ] || fail "scores are for $RUN, not $TODAY"
 
-# 2. Build from the saved `lite` branch, with this Mac's data and map tiles.
-git -C "$REPO" archive lite | tar -x -C "$TMP"
-ln -s "$REPO/web/node_modules" "$TMP/web/node_modules"
-mkdir -p "$TMP/web/public"
-for d in data tiles; do cp -cR "$REPO/web/public/$d" "$TMP/web/public/" 2>/dev/null || cp -R "$REPO/web/public/$d" "$TMP/web/public/"; done
-(cd "$TMP/web" && VITE_PREVIEW_LABEL="Preview" npm run build >"$TMP/build.log" 2>&1) || { cat "$TMP/build.log"; fail "site build failed"; }
-DIST="$TMP/web/dist"
+# 2. Build (the robot's copy only ever holds saved code from GitHub).
+(cd "$REPO/web" && VITE_PREVIEW_LABEL="Preview" npm run build >"$HOME_DIR/build.log" 2>&1) || { cat "$HOME_DIR/build.log"; fail "site build failed"; }
+DIST="$REPO/web/dist"
 if find "$DIST" -iname "*private*" -o -iname "*finds*" | grep -q .; then fail "private files in the build, not publishing"; fi
 
 # 3. Publish lite/ only.
