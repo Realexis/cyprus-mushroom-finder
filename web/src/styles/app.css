@@ -22,10 +22,16 @@ a { color: var(--accent); }
   padding: 6px 12px; background: var(--surface); border-bottom: 1px solid var(--line);
 }
 .brand { display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1; text-decoration: none; color: inherit; }
-.brand svg { flex: none; }
+/* The ShroomyMap.cy logo (26 Nov 2026): traced from Real's picture, see docs/brand. Light and dark files.
+   Full logo = tile + name + dotted trail + X. "name" = tile + name only (no trail, no X). */
+.brand-logo {
+  flex: 0 1 auto; display: block; min-width: 0; height: 52px; aspect-ratio: 1120 / 346;
+  background: url("../brand/logo-light.svg") left center / contain no-repeat;
+}
+:root[data-theme="dark"] .brand-logo { background-image: url("../brand/logo-dark.svg"); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .brand-logo { background-image: url("../brand/logo-dark.svg"); } }
 .brand-text { min-width: 0; overflow: hidden; }
-.brand-name, .brand-sub { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2; }
-.brand-name { font-weight: 700; font-size: var(--fs-2); }
+.brand-sub { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2; }
 .brand-sub { font-size: 0.8rem; color: var(--ink-soft); }
 .about-link {
   flex: none; min-height: 44px; display: inline-flex; align-items: center; padding: 0 12px; border-radius: 12px;
@@ -343,8 +349,8 @@ dialog.agree.short::backdrop { background: rgba(0, 0, 0, 0.55); backdrop-filter:
 @media (max-width: 420px) {
   .topbar { gap: 6px; padding: 6px 8px; }
   .brand { gap: 6px; }
-  .brand svg { width: 26px; height: 26px; }
-  .brand-name { font-size: 1.05rem; }
+  /* Phone: the full logo, as wide as the row allows (never wider than its 44 px tall size). */
+  .brand-logo { height: auto; width: 100%; max-width: 143px; }
   .app .brand-sub { display: none; }
   .app .ver-badge { margin-left: 0; }
   .about-link, .sos { padding: 0 10px; }
@@ -376,4 +382,17 @@ dialog.agree.short::backdrop { background: rgba(0, 0, 0, 0.55); backdrop-filter:
   .lang-long { display: none; }
   .lang-short { display: inline; }
   .topbar:has(.lang-link) .about-link, .topbar:has(.lang-link) .sos { padding: 0 8px; }
+}
+
+/* ---------------------------------------------------------------- logo on phones: options to compare
+   TEST ONLY (26 Nov 2026), until Real picks one: add ?logo=b, c or d to the address. No ?logo = option A.
+   A: full logo in the row.  B: tile + name, no trail.  C: tile only.  D: full logo on its own row. */
+@media (max-width: 420px) {
+  :root[data-logo="b"] .brand-logo { aspect-ratio: 1022 / 200; max-width: 160px; background-image: url("../brand/logo-name-light.svg"); }
+  :root[data-logo="b"][data-theme="dark"] .brand-logo { background-image: url("../brand/logo-name-dark.svg"); }
+  :root[data-logo="c"] .brand-logo { aspect-ratio: 1; width: 40px; background-image: url("../brand/icon.svg"); }
+  :root[data-logo="d"] .topbar { flex-wrap: wrap; row-gap: 4px; }
+  :root[data-logo="d"] .brand { flex: 1 0 100%; justify-content: center; }
+  :root[data-logo="d"] .brand-logo { max-width: 230px; }
+  :root[data-logo="d"] .about-link, :root[data-logo="d"] .sos { flex: 1 1 auto; justify-content: center; }
 }

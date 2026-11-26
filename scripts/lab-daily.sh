@@ -29,6 +29,8 @@ REPO="$(cd "$(dirname "$0")/.." && pwd)"
 HOME_DIR="$HOME/Library/Application Support/shroomy-lab-robot"
 CLONE="$HOME_DIR/site"
 SITE_REPO=https://github.com/Realexis/shroomy.git
+# The site's address. When shroomymap.cy is switched on (docs/DOMAIN-shroomymap-cy.md), change this one
+# line to https://shroomymap.cy/ : it is used for the share picture and the "done" line.
 SITE=https://realexis.github.io/shroomy/
 TODAY=$(TZ=Asia/Nicosia date +%F)
 mkdir -p "$HOME_DIR"
@@ -89,18 +91,21 @@ HEAT=$(python3 -c "import json,sys; print(json.load(open(sys.argv[1]))['weather_
 #    English build's data and map files (VITE_FILES_BASE=../), so those are published once.
 DIST="$REPO/web/dist"
 EL="$HOME_DIR/dist-el"
-(cd "$REPO/web" && VITE_LANG=el VITE_OTHER_LANG_URL=../ VITE_FILES_BASE=../ npm run build >"$HOME_DIR/build-el.log" 2>&1) \
+(cd "$REPO/web" && VITE_SITE_URL="$SITE" VITE_LANG=el VITE_OTHER_LANG_URL=../ VITE_FILES_BASE=../ npm run build >"$HOME_DIR/build-el.log" 2>&1) \
   || { cat "$HOME_DIR/build-el.log"; fail "site build failed (Greek)"; }
 grep -q '<html lang="el">' "$DIST/index.html" || fail "the Greek build is not in Greek"
 rm -rf "$EL"; mkdir -p "$EL"
 rsync -a --exclude=data --exclude=tiles --exclude=vendor "$DIST/" "$EL/"
-(cd "$REPO/web" && VITE_OTHER_LANG_URL=el/ npm run build >"$HOME_DIR/build.log" 2>&1) || { cat "$HOME_DIR/build.log"; fail "site build failed"; }
+(cd "$REPO/web" && VITE_SITE_URL="$SITE" VITE_OTHER_LANG_URL=el/ npm run build >"$HOME_DIR/build.log" 2>&1) || { cat "$HOME_DIR/build.log"; fail "site build failed"; }
 grep -q '<html lang="en">' "$DIST/index.html" || fail "the English build is not in English"
 rsync -a "$EL/" "$DIST/el/"
 [ -f "$DIST/el/index.html" ] && [ -f "$DIST/el/about.html" ] || fail "the Greek pages are missing from the build"
 if find "$DIST" -iname "*private*" -o -iname "*finds*" -o -iname "static_key*" | grep -q .; then fail "private files in the build, not publishing"; fi
 
-# 4. Publish. README.md and .nojekyll on the site branch are kept as they are.
+# 4. Publish. README.md, .nojekyll and CNAME on the site branch are kept as they are.
+#    CNAME is the file that tells GitHub the site's own domain (shroomymap.cy). GitHub writes it when
+#    the domain is entered in the site project's settings. The copy below deletes everything that is
+#    not in today's build, so CNAME is on the keep list: a daily update can never remove the domain.
 if [ ! -d "$CLONE/.git" ]; then
   rm -rf "$CLONE"
   git clone -q --filter=blob:none --branch gh-pages "$SITE_REPO" "$CLONE"
@@ -109,7 +114,7 @@ cd "$CLONE"
 for try in 1 2 3; do
   git fetch -q origin gh-pages
   git reset -q --hard origin/gh-pages          # local copy only: start from what is online now
-  rsync -a --delete --exclude=.git --exclude=.nojekyll --exclude=README.md "$DIST/" ./
+  rsync -a --delete --exclude=.git --exclude=.nojekyll --exclude=README.md --exclude=CNAME "$DIST/" ./
   git add -A
   if git diff --cached --name-only | grep -i "private\|finds\|static_key" | grep -q .; then fail "private files staged, not publishing"; fi
   if git diff --cached --quiet; then say "nothing new to publish"; break; fi

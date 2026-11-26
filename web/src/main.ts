@@ -5,6 +5,7 @@ import "@fontsource/atkinson-hyperlegible/400.css";
 import "@fontsource/atkinson-hyperlegible/700.css";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./styles/app.css";
+import "./ui/logo-test";
 
 import * as maplibregl from "maplibre-gl";
 import { Protocol } from "pmtiles";

@@ -1,0 +1,14 @@
+{
+  "name": "ShroomyMap",
+  "short_name": "ShroomyMap",
+  "description": "Today's growing conditions for wild mushrooms in Cyprus forests. Conditions only.",
+  "start_url": "./",
+  "display": "browser",
+  "background_color": "#f3f0e7",
+  "theme_color": "#14211b",
+  "icons": [
+    { "src": "brand/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "brand/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "brand/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

@@ -16,8 +16,8 @@ const index: Pairs = [
     'content="Οι σημερινές συνθήκες ανάπτυξης για τα άγρια μανιτάρια στα δάση της Κύπρου. Μόνο συνθήκες. Ποτέ μην φάτε άγριο μανιτάρι με βάση τις πληροφορίες αυτής της σελίδας."'],
   [`content="Today's growing conditions for wild mushrooms in Cyprus forests. Conditions only."`,
     'content="Οι σημερινές συνθήκες ανάπτυξης για τα άγρια μανιτάρια στα δάση της Κύπρου. Μόνο συνθήκες."'],
-  ["<title>Shroomy · mushroom growing conditions in Cyprus</title>", "<title>Shroomy · συνθήκες ανάπτυξης μανιταριών στην Κύπρο</title>"],
-  ['aria-label="Shroomy, home" data-tip="Reload the map."', 'aria-label="Shroomy, αρχική" data-tip="Φόρτωση του χάρτη ξανά."'],
+  ["<title>ShroomyMap · mushroom growing conditions in Cyprus</title>", "<title>ShroomyMap · συνθήκες ανάπτυξης μανιταριών στην Κύπρο</title>"],
+  ['aria-label="ShroomyMap, home" data-tip="Reload the map."', 'aria-label="ShroomyMap, αρχική" data-tip="Φόρτωση του χάρτη ξανά."'],
   ['<span class="brand-sub">Conditions today</span>', '<span class="brand-sub">Συνθήκες σήμερα</span>'],
   ['data-tip="What this map shows, where the data comes from, and its limits.">About</a>',
     'data-tip="Τι δείχνει αυτός ο χάρτης, από πού προέρχονται τα δεδομένα και ποια είναι τα όριά του.">Σχετικά</a>'],
@@ -29,11 +29,12 @@ const index: Pairs = [
 ];
 
 const about: Pairs = [
-  ["<title>About · Shroomy</title>", "<title>Σχετικά · Shroomy</title>"],
+  ["<title>About · ShroomyMap</title>", "<title>Σχετικά · ShroomyMap</title>"],
   ["← Back to the map", "← Πίσω στον χάρτη"],
+  ['aria-label="ShroomyMap, back to the map"', 'aria-label="ShroomyMap, πίσω στον χάρτη"'],
   ["<h1>About this map</h1>", "<h1>Σχετικά με αυτόν τον χάρτη</h1>"],
-  ["<strong>Beta.</strong> Shroomy is a work in progress. Things may change, and some numbers are still being checked.",
-    "<strong>Beta.</strong> Το Shroomy είναι έργο σε εξέλιξη. Κάποια πράγματα μπορεί να αλλάξουν, και ορισμένοι αριθμοί ελέγχονται ακόμη."],
+  ["<strong>Beta.</strong> ShroomyMap is a work in progress. Things may change, and some numbers are still being checked.",
+    "<strong>Beta.</strong> Το ShroomyMap είναι έργο σε εξέλιξη. Κάποια πράγματα μπορεί να αλλάξουν, και ορισμένοι αριθμοί ελέγχονται ακόμη."],
 
   ["<h2>What it shows</h2>", "<h2>Τι δείχνει</h2>"],
   [`The map shows <b>growing conditions</b> in the forests of Cyprus, <b>today</b>.
@@ -104,8 +105,8 @@ const about: Pairs = [
     'Καλέστε το <a href="tel:112"><b>112</b></a> (ασθενοφόρο) ή το Κέντρο Δηλητηριάσεων Κύπρου <a href="tel:1401"><b>1401</b></a>. <b>Μην περιμένετε συμπτώματα.</b> Πάρτε μαζί σας το μανιτάρι στο νοσοκομείο.'],
 
   ["<h2>Counting visits</h2>", "<h2>Μέτρηση επισκέψεων</h2>"],
-  ["Shroomy counts visits, so we can see which parts people use. It is a beta, and this helps us fix it.",
-    "Το Shroomy μετρά τις επισκέψεις, για να βλέπουμε ποια κομμάτια του χρησιμοποιούνται. Είναι beta, και αυτό μας βοηθά να το διορθώνουμε."],
+  ["ShroomyMap counts visits, so we can see which parts people use. It is a beta, and this helps us fix it.",
+    "Το ShroomyMap μετρά τις επισκέψεις, για να βλέπουμε ποια κομμάτια του χρησιμοποιούνται. Είναι beta, και αυτό μας βοηθά να το διορθώνουμε."],
   ["<b>No cookies.</b> Nothing is stored on your phone.", "<b>Χωρίς cookies.</b> Τίποτα δεν αποθηκεύεται στο τηλέφωνό σας."],
   ["<b>Never the place you look at.</b> Not the square you tap, not your location.",
     "<b>Ποτέ το μέρος που κοιτάζετε.</b> Ούτε το τετράγωνο που πατάτε, ούτε η θέση σας."],

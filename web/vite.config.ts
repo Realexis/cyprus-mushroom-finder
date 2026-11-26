@@ -37,7 +37,9 @@ function privateData(): Plugin {
 // title, the share text and the first paint are Greek. A piece that is no longer in the page stops
 // the build: the two languages cannot drift apart unnoticed.
 // VITE_NOINDEX=1 (test copies) asks search engines to skip the site.
-function pageLanguage(lang: string, noindex: boolean): Plugin {
+// VITE_SITE_URL (the site's full address, set by the daily update) adds the share picture: chat apps
+// and social sites need its full address, so it is only added when the address is known.
+function pageLanguage(lang: string, noindex: boolean, siteUrl: string): Plugin {
   const squash = (s: string) => s.replace(/\s+/g, " ");
   return {
     name: "page-language",
@@ -55,6 +57,10 @@ function pageLanguage(lang: string, noindex: boolean): Plugin {
             out = out.split(key).join(el);
           }
         }
+        if (siteUrl && !ctx.path.includes("about")) {
+          const img = siteUrl.replace(/\/?$/, "/") + "brand/social.png";
+          out = out.replace("</title>", `</title>\n  <meta property="og:image" content="${img}" />\n  <meta property="og:image:width" content="1200" />\n  <meta property="og:image:height" content="630" />\n  <meta name="twitter:card" content="summary_large_image" />`);
+        }
         if (noindex) out = out.replace("<head>", '<head>\n  <meta name="robots" content="noindex, nofollow" />');
         return out;
       },
@@ -69,7 +75,7 @@ export default defineConfig(({ mode }) => {
   // A new id for every build. Map files carry it in their address, so a phone that has pieces of an
   // older upload never mixes them with the new one (that left the map empty until you zoomed).
   define: { __BUILD_ID__: JSON.stringify(Date.now().toString(36)) },
-  plugins: [privateData(), pageLanguage(env.VITE_LANG ?? "en", env.VITE_NOINDEX === "1")],
+  plugins: [privateData(), pageLanguage(env.VITE_LANG ?? "en", env.VITE_NOINDEX === "1", env.VITE_SITE_URL ?? "")],
   build: {
     rollupOptions: {
       input: { main: resolve(__dirname, "index.html"), about: resolve(__dirname, "about.html") },
