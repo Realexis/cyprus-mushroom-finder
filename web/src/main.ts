@@ -48,7 +48,7 @@ async function main() {
   // The key version has no badge in the header (Real, 26 Nov 2026: the logo needs the room; "Beta" stays on the About page).
   const previewLabel = (import.meta.env.VITE_PREVIEW_LABEL as string | undefined) ?? "";
   if (previewLabel) {
-    document.querySelector(".brand-sub")?.insertAdjacentHTML("afterend",
+    document.querySelector(".brand-text")?.insertAdjacentHTML("beforeend",
       ` <span class="ver-badge" data-tip="${T.main.betaTip}">${previewLabel.replace(/[&<>"]/g, "")}</span>`);
   }
   mountCounter();

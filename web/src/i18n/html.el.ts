@@ -18,7 +18,6 @@ const index: Pairs = [
     'content="Οι σημερινές συνθήκες ανάπτυξης για τα άγρια μανιτάρια στα δάση της Κύπρου. Μόνο συνθήκες."'],
   ["<title>ShroomyMap · mushroom growing conditions in Cyprus</title>", "<title>ShroomyMap · συνθήκες ανάπτυξης μανιταριών στην Κύπρο</title>"],
   ['aria-label="ShroomyMap, home" data-tip="Reload the map."', 'aria-label="ShroomyMap, αρχική" data-tip="Φόρτωση του χάρτη ξανά."'],
-  ['<span class="brand-sub">Conditions today</span>', '<span class="brand-sub">Συνθήκες σήμερα</span>'],
   ['data-tip="What this map shows, where the data comes from, and its limits.">About</a>',
     'data-tip="Τι δείχνει αυτός ο χάρτης, από πού προέρχονται τα δεδομένα και ποια είναι τα όριά του.">Σχετικά</a>'],
   ['data-tip="Mushroom poisoning help: call 112 (ambulance) or the Cyprus Poison Centre 1401. Do not wait for symptoms."',
