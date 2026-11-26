@@ -1,7 +1,6 @@
 import "@fontsource/atkinson-hyperlegible/400.css";
 import "@fontsource/atkinson-hyperlegible/700.css";
 import "./styles/app.css";
-import "./ui/logo-test";
 import { mountAgree, mountEmergency } from "./ui/safety";
 import { applyTheme, systemTheme } from "./ui/theme";
 import { esc, fmtDay, type Meta } from "./ui/card";

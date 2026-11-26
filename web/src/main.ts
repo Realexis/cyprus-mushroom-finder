@@ -5,7 +5,6 @@ import "@fontsource/atkinson-hyperlegible/400.css";
 import "@fontsource/atkinson-hyperlegible/700.css";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./styles/app.css";
-import "./ui/logo-test";
 
 import * as maplibregl from "maplibre-gl";
 import { Protocol } from "pmtiles";
@@ -46,8 +45,8 @@ async function main() {
   const theme = urlView.theme ?? systemTheme();
   applyTheme(theme);
   // Test copies say so in the header (VITE_PREVIEW_LABEL in web/.env.local, not in git).
-  // The key version says "Beta": a work in progress (Real, 15 Nov 2026). The daily update builds without the setting.
-  const previewLabel = (import.meta.env.VITE_PREVIEW_LABEL as string | undefined) ?? "Beta";
+  // The key version has no badge in the header (Real, 26 Nov 2026: the logo needs the room; "Beta" stays on the About page).
+  const previewLabel = (import.meta.env.VITE_PREVIEW_LABEL as string | undefined) ?? "";
   if (previewLabel) {
     document.querySelector(".brand-sub")?.insertAdjacentHTML("afterend",
       ` <span class="ver-badge" data-tip="${T.main.betaTip}">${previewLabel.replace(/[&<>"]/g, "")}</span>`);

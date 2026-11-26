@@ -347,10 +347,14 @@ dialog.agree.short::backdrop { background: rgba(0, 0, 0, 0.55); backdrop-filter:
    The name was cut off ("Shroomy L…") and the top bar took three lines at 360 px. One tidy row instead,
    so the map gets the room. The About page keeps its "Back to the map" line. */
 @media (max-width: 420px) {
-  .topbar { gap: 6px; padding: 6px 8px; }
   .brand { gap: 6px; }
-  /* Phone: the full logo, as wide as the row allows (never wider than its 44 px tall size). */
-  .brand-logo { height: auto; width: 100%; max-width: 143px; }
+  /* Phone (Real, 26 Nov 2026: option A, as big as the row allows). The logo takes all the room left of
+     the buttons. It may be taller than the bar: the dotted trail then runs past the top edge and under
+     the warning line below, and the bar keeps its height (the negative margin). Letters stay clear. */
+  .topbar { gap: 4px; padding: 6px; }
+  .app .brand-logo { height: auto; width: 100%; max-width: 190px; margin-block: -10px; }
+  .app .brand { gap: 0; }
+  .brand-logo { height: auto; width: 100%; max-width: 150px; }
   .app .brand-sub { display: none; }
   .app .ver-badge { margin-left: 0; }
   .about-link, .sos { padding: 0 10px; }
@@ -382,17 +386,4 @@ dialog.agree.short::backdrop { background: rgba(0, 0, 0, 0.55); backdrop-filter:
   .lang-long { display: none; }
   .lang-short { display: inline; }
   .topbar:has(.lang-link) .about-link, .topbar:has(.lang-link) .sos { padding: 0 8px; }
-}
-
-/* ---------------------------------------------------------------- logo on phones: options to compare
-   TEST ONLY (26 Nov 2026), until Real picks one: add ?logo=b, c or d to the address. No ?logo = option A.
-   A: full logo in the row.  B: tile + name, no trail.  C: tile only.  D: full logo on its own row. */
-@media (max-width: 420px) {
-  :root[data-logo="b"] .brand-logo { aspect-ratio: 1022 / 200; max-width: 160px; background-image: url("../brand/logo-name-light.svg"); }
-  :root[data-logo="b"][data-theme="dark"] .brand-logo { background-image: url("../brand/logo-name-dark.svg"); }
-  :root[data-logo="c"] .brand-logo { aspect-ratio: 1; width: 40px; background-image: url("../brand/icon.svg"); }
-  :root[data-logo="d"] .topbar { flex-wrap: wrap; row-gap: 4px; }
-  :root[data-logo="d"] .brand { flex: 1 0 100%; justify-content: center; }
-  :root[data-logo="d"] .brand-logo { max-width: 230px; }
-  :root[data-logo="d"] .about-link, :root[data-logo="d"] .sos { flex: 1 1 auto; justify-content: center; }
 }
