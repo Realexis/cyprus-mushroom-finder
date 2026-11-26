@@ -1,5 +1,10 @@
 # Moving the site to shroomymap.cy
 
+> **Update, later on 26 Nov 2026:** Real set the DNS in Cloudflare (4 A records, `www` CNAME, DNS only).
+> The domain file now lives in the source, `web/public/CNAME`, so every build carries it, and the robot
+> stops if it is missing. `SITE` in `scripts/lab-daily.sh` is `https://shroomymap.cy/`. The custom domain
+> and HTTPS are set with `gh api -X PUT repos/realexis/shroomy/pages`. The notes below are the first plan.
+
 Written 26 Nov 2026. DNS values are from the GitHub Pages documentation, read that day:
 https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/managing-a-custom-domain-for-your-github-pages-site
 Check that page again on the day you do it.
